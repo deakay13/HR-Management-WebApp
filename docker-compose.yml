@@ -1,0 +1,20 @@
+name: HR-System
+services:
+  # Backend:
+  #   image: node:24-alpine
+  #   container_name: Backend
+  #   working_dir: /usr/src/Backend
+  #   volumes:
+  #     - ./Backend:/usr/src/Backend
+  #   command: ["node", "server.js"]
+  #   depends_on:
+  #     - mssql
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-server
+    environment:
+      - ACCEPT_EULA=${ACCEPT_EULA}
+      - SA_PASSWORD=${SA_PASSWORD}
+      - MSSQL_PID=${MSSQL_PID}
+    ports:
+      - "1433:1433"
