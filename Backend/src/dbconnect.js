@@ -9,10 +9,14 @@ const sequelize = new Sequelize(
     {
         host: process.env.DB_HOST,
         dialect: process.env.DB_DIALECT,
-        port: process.env.DB_PORT,
+        port: Number(process.env.DB_PORT),
         dialectOptions: {
-        options: { trustServerCertificate: true }
-        },logging: false,
+        options: {
+            encrypt: false,
+            trustServerCertificate: true
+        }
+        },
+        logging: false
     }
 );
 

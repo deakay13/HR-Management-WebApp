@@ -8,9 +8,10 @@ export default {
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
     dialect: process.env.DB_DIALECT,
-    port: process.env.DB_PORT,
+    port: Number(process.env.DB_PORT),
     dialectOptions: {
       options: {
+        encrypt: false,
         trustServerCertificate: true
       }
     }
