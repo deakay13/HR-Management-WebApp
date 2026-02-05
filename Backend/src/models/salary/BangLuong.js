@@ -10,7 +10,6 @@ const BangLuong = sequelize.define('BangLuong', {
     MaGL: { type: DataTypes.STRING, allowNull: false },
     Thang : { type: DataTypes.DATEONLY, allowNull: false },
     TongLuong: { type: DataTypes.DECIMAL(10,2) , allowNull: false },
-
 }, {
     tableName: 'BangLuong',
     timestamps: false
