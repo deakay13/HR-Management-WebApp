@@ -6,7 +6,7 @@ import TaiKhoan from "../../models/auth/TaiKhoan.js"
 import Session from "../../models/auth/Session.js";
 
 const ACCESS_TOKEN_TTL= '15m';
-const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
+const REFRESH_TOKEN_TTL = 60000;
 dotenv.config();
 
 export const signIn = async (req, res) => {
@@ -92,7 +92,7 @@ export const signOut = async (req, res) => {
         //respon No content
         return res.sendStatus(204);
     } catch (error) {
-        console.error("signOut error:",error);
-        return res.status(500).json({ message: "system error" });
+        console.error("Lỗi khi gọi",error);
+        return res.status(500).json({ message: "Lỗi hệ thống." });
     }
 }

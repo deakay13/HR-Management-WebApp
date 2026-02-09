@@ -9,7 +9,7 @@ export const cookieParserMiddleware = cookieParser();
 //verify Account
 export const protectedRoute = async (req, res, next) => {
     try {
-        // Lấy token từ header Authorization: Bearer <token>
+        //get token header Authorization: Bearer <token>
         const authHeader = req.headers["authorization"];
         const token = authHeader && authHeader.split(" ")[1];
 
@@ -40,7 +40,7 @@ export const protectedRoute = async (req, res, next) => {
             }
         );
     } catch (error) {
-        console.error("Error in protectedRoute:", error);
-        return res.status(500).json({ message: "System error." });
+        console.error("Lỗi khi gọi", error);
+        return res.status(500).json({ message: "Lỗi hệ thống." });
     }
 };
