@@ -39,7 +39,7 @@ export default {
           MaTK: row.MaTK,
           MaNV: row.MaNV,
           MaVT: row.MaVT,
-          TaiKhoan: row.TaiKhoan, 
+          TenTaiKhoan: row.TenTaiKhoan, 
           MatKhau: hashedPassword,
           createdAt: new Date(),
           updatedAt: new Date(),
