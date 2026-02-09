@@ -16,7 +16,7 @@ export default {
           key: 'MaVT'
         },
       },
-      TaiKhoan:{ type: Sequelize.STRING, allowNull: false },
+      TenTaiKhoan:{ type: Sequelize.STRING, allowNull: false },
       MatKhau: { type: Sequelize.STRING, allowNull: false },
             createdAt: { 
         type: Sequelize.DATE, 
