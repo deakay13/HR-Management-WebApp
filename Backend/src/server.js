@@ -1,9 +1,11 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import './jobs/sessionCleanup.js';
 import accountRoutes from './routes/accountRoutes.js';
 import authRoute from './routes/authRoute.js';
-import {protectedRoute} from './middlewares/middlewareJson.js';
+import { protectedRoute } from './middlewares/middlewareVerifyJWT.js';
+
 dotenv.config();
 const app = express();
 app.use(express.json());
