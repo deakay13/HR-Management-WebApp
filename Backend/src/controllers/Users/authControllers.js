@@ -6,7 +6,7 @@ import TaiKhoan from "../../models/auth/TaiKhoan.js"
 import Session from "../../models/auth/Session.js";
 
 const ACCESS_TOKEN_TTL= '15m';
-const REFRESH_TOKEN_TTL = 60000;
+const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
 dotenv.config();
 
 export const signIn = async (req, res) => {
