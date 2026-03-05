@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import dotenv from 'dotenv';
+import { z } from 'zod';
 import TaiKhoan from "../../models/auth/TaiKhoan.js"
 import Session from "../../models/auth/Session.js";
 
@@ -9,8 +10,37 @@ const ACCESS_TOKEN_TTL= '15m';
 const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
 dotenv.config();
 
+const accountSchema = z.object({
+    TenTaiKhoan: z
+        .string()
+        .min(5, "Tài Khoản đăng nhập phải có ít nhất 5 ký tự")
+        .max(50, "Tài khoản đăng nhập không quá 50 ký tự")
+        .regex(/^[a-zA-Z0-9._]+$/, "Chỉ cho phép chữ, số, dấu chấm và gạch dưới"),
+    MatKhau: z
+        .string()
+        .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
+        .regex(/[A-Z]/, "Phải có ít nhất một chữ hoa")
+        .regex(/[a-z]/, "Phải có ít nhất một chữ thường")
+        .regex(/[0-9]/, "Phải có ít nhất một chữ số")
+        .regex(/[@#$%!^&*]/, "Phải có ít nhất một ký tự đặc biệt"),
+});
+
 export const signIn = async (req, res) => {
     try {
+        const parsed = accountSchema.safeParse({
+            TenTaiKhoan: req.body.TenTaiKhoan,
+            MatKhau: req.body.MatKhau,
+        });
+        
+        //check Validate TenTaiKhoan và MatKhau
+        if (!parsed.success) {
+            const errorMessages = parsed.error.issues.map(issue => ({
+                field: issue.path[0],
+                message: issue.message,
+            }));
+            return res.status(400).json({ errors: errorMessages });
+        }
+
         //get data
         const { TenTaiKhoan, MatKhau } = req.body;
         if (!TenTaiKhoan || !MatKhau) { 

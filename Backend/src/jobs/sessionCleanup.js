@@ -5,9 +5,9 @@ import Session from '../models/auth/Session.js';
 cron.schedule('0 0 * * *', async () => {
     try {
         await Session.destroy({
-        where: {
-            expiresAt: { [Op.lt]: new Date() }
-        }
+            where: {
+                expiresAt: { [Op.lt]: new Date() }
+            }
         });
         console.log("Đã xoá session hết hạn");
     } catch (error) {
