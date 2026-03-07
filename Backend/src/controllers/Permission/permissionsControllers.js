@@ -90,9 +90,25 @@ export const getPermissionsById = async (req, res) => {
 }
 export const updatePermission = async (req, res) => {
     try {
-        
+        const parsed = updatePermissionSchema.safeParse({
+            TenQuyen: req.body.TenQuyen
+        });
+        if (!parsed.success) {
+            const errorMessages = parsed.error.issues.map(issue => ({
+                field: issue.path[0],
+                message: issue.message,
+            }));
+            return res.status(400).json({ errors: errorMessages });
+        }
+
+        const permission = await Quyen.findByPk(req.params.ID);
+        if (!permission) return res.status(404).json({ message: "Không tìm thấy vai trò" });
+
+        await permission.update({ TenQuyen: parsed.data.TenQuyen });
+        res.status(200).json({ message: "Cập nhật thành công", permission});
     } catch (error) {
-        
+        console.error("Lỗi khi gọi", error);
+        res.status(500).json({ message: "Lỗi hệ thống" });
     }
 }
 export const deletePermission = async (req, res) => {

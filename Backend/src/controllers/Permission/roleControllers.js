@@ -103,7 +103,7 @@ export const updateRole = async (req,res) => {
         }
 
         const role = await VaiTro.findByPk(req.params.ID);
-        if (!role) return res.status(404).json({ message: "Role not found" });
+        if (!role) return res.status(404).json({ message: "không tìm thấy vai trò" });
 
         await role.update({ TenVaiTro: parsed.data.TenVaiTro });
         res.status(200).json({ message: "Cập nhật thành công", role});
