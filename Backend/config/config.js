@@ -6,9 +6,9 @@ export default {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    host: "localhost",
-    port: 1433,
-    dialect: "mssql",
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: process.env.DB_DIALECT,
     dialectOptions: {
       options: {
         encrypt: false,
