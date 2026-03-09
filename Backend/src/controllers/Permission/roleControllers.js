@@ -7,8 +7,8 @@ const createroleSchema = z.object({
         .min(1, "Mã vai trò không được để trống")
         .regex(/^VT\d{3}$/, "Mã vai trò phải có dạng VTxxx"),
     TenVaiTro: z.string()
-    .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
-    .min(1, "Tên vai trò không được để trống"),
+        .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
+        .min(1, "Tên vai trò không được để trống"),
 });
 const updateRoleSchema = z.object({
     TenVaiTro: z.string()
@@ -50,6 +50,7 @@ export const createRole = async (req, res) => {
         
         //respon status 200
         return res.status(200).json({ message: "Tạo Vai trò thành công", role });
+        
     } catch (error) {
         console.error("Lỗi khi gọi", error);
         res.status(500).json({ message: "Lỗi hệ thống" });

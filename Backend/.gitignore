@@ -1,0 +1,22 @@
+# ✅ Bỏ qua file môi trường
+**/.env
+
+# ✅ Bỏ qua thư mục node_modules (cả frontend và backend)
+**/node_modules/
+
+# ✅ Bỏ qua file log
+*.log
+
+**/dist/
+**/build/
+
+# ✅ Bỏ qua cache của VSCode
+.vscode/
+*.swp
+
+# ✅ Bỏ qua file lock nếu không muốn theo dõi
+package-lock.json
+
+# ✅ Bỏ qua Docker volumes hoặc file tạm
+**/.docker/
+**/tmp/

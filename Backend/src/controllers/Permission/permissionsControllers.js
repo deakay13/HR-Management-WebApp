@@ -5,7 +5,7 @@ const createPermissionSchema = z.object({
     MaQuyen: z
         .string()
         .min(1, "Mã vai trò không được để trống")
-        .regex(/^MQ\d{3}$/, "Mã vai trò phải có dạng VTxxx"),
+        .regex(/^MQ\d{3}$/, "Mã vai trò phải có dạng MQxxx"),
     TenQuyen: z.string()
     .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
     .min(1, "Tên vai trò không được để trống"),

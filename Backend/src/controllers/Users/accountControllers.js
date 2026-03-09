@@ -9,7 +9,8 @@ const accountSchema = z.object({
         .string()
         .min(5, "Tài Khoản đăng nhập phải có ít nhất 5 ký tự")
         .max(50, "Tài khoản đăng nhập không quá 50 ký tự")
-        .regex(/^[a-zA-Z0-9._]+$/, "Chỉ cho phép chữ, số, dấu chấm và gạch dưới"),
+        .regex(/^[a-zA-Z0-9._]+$/, "Chỉ cho phép chữ, số, dấu chấm và gạch dưới")
+        .regex(/^TK\d{3}$/, "Mã vai trò phải có dạng VTxxx"),
     MatKhau: z
         .string()
         .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
