@@ -1,48 +1,103 @@
 export default {
-  async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('BangLuong', { 
-      MaBL: { type: Sequelize.STRING, allowNull: false, primaryKey: true },
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable("BangLuong", {
+      
+      MaBL: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        primaryKey: true,
+      },
+
       MaNV: {
-        type: Sequelize.STRING, allowNull: false,
+        type: Sequelize.STRING,
+        allowNull: false,
         references: {
-          model: 'NhanVien',
-          key: 'MaNV'
+          model: "NhanVien",
+          key: "MaNV",
         },
       },
+
       MaLCB: {
-        type: Sequelize.STRING, allowNull: false,
+        type: Sequelize.STRING,
+        allowNull: false,
         references: {
-          model: 'LuongCoBan',
-          key: 'MaLCB'
+          model: "LuongCoBan",
+          key: "MaLCB",
         },
       },
+
       MaPC: {
-        type: Sequelize.STRING, allowNull: false,
+        type: Sequelize.STRING,
+        allowNull: false,
         references: {
-          model: 'PhuCap',
-          key: 'MaPC'
+          model: "PhuCap",
+          key: "MaPC",
         },
       },
+
       MaKT: {
-        type: Sequelize.STRING, allowNull: false,
+        type: Sequelize.STRING,
+        allowNull: false,
         references: {
-          model: 'KhauTru',
-          key: 'MaKT'
+          model: "KhauTru",
+          key: "MaKT",
         },
       },
+
       MaGL: {
-        type: Sequelize.STRING, allowNull: false,
+        type: Sequelize.STRING,
+        allowNull: false,
         references: {
-          model: 'GioLam',
-          key: 'MaGL'
+          model: "GioLam",
+          key: "MaGL",
         },
       },
-      Thang : { type: Sequelize.DATEONLY, allowNull: false },
-      TongLuong: { type: Sequelize.DECIMAL(10,2) , allowNull: false },
+
+      Thang: {
+        type: Sequelize.DATEONLY,
+        allowNull: false,
+      },
+
+      LuongCoBan: {
+        type: Sequelize.DECIMAL(12,2),
+        allowNull: false,
+      },
+
+      TienPhuCap: {
+        type: Sequelize.DECIMAL(12,2),
+        allowNull: false,
+      },
+
+      TienKhauTru: {
+        type: Sequelize.DECIMAL(12,2),
+        allowNull: false,
+      },
+
+      SoGioLam: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+
+      TongLuong: {
+        type: Sequelize.DECIMAL(12,2),
+        allowNull: false,
+      },
+
+      NgayTinhLuong: {
+        type: Sequelize.DATE,
+        allowNull: false,
+        defaultValue: Sequelize.NOW,
+      },
+
+      TrangThai: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        defaultValue: "DA_TINH",
+      },
     });
   },
 
-  async down (queryInterface) {
-    await queryInterface.dropTable('BangLuong');
-  }
+  async down(queryInterface) {
+    await queryInterface.dropTable("BangLuong");
+  },
 };

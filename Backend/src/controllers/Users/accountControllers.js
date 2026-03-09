@@ -85,7 +85,7 @@ export const createAccount = async (req, res) => {
     }
 }
 
-export const readAllAccount = async (res) => {
+export const readAllAccount = async ( req, res) => {
     try {
         const accounts = await TaiKhoan.findAll();
         return res.status(200).json(accounts);

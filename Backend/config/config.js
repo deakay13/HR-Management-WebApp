@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 export default {
@@ -6,9 +6,9 @@ export default {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
-    port: Number(process.env.DB_PORT),
+    host: "localhost",
+    port: 1433,
+    dialect: "mssql",
     dialectOptions: {
       options: {
         encrypt: false,
