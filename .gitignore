@@ -20,5 +20,3 @@ package-lock.json
 # ✅ Bỏ qua Docker volumes hoặc file tạm
 **/.docker/
 **/tmp/
-
-/frontend/
