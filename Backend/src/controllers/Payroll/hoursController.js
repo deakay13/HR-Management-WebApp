@@ -1,4 +1,5 @@
 import GioLam from "../../models/salary/GioLam.js"
+import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod"
 
 const createHourSchema = z.object({
@@ -71,19 +72,26 @@ export const createHour = async (req, res) => {
     }
 };
 export const getHours = async (req, res) => {
-    try {
+     try {
+        //set page and size rows in papge
+        const { offset, limit, page, finalSize} = Pagination(req.query);
 
-        const hours = await GioLam.findAll()
 
-        return res.status(200).json(hours)
+        //get data and rows with limit and offset
+        const { count, rows } = await GioLam.findAndCountAll({limit, offset});
+
+        //respon status 200
+        return res.status(200).json({
+            totalItems: count,
+            totalPages: Math.ceil(count / finalSize),
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows
+        });
 
     } catch (error) {
-
-        console.error("Lỗi khi lấy danh sách giờ làm:", error)
-
-        return res.status(500).json({
-            message: "Lỗi hệ thống"
-        })
+        console.error("Lỗi không tìm thấy danh sách", error);
+        return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
 export const getHourById = async (req, res) => {

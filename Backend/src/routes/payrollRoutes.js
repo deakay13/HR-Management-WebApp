@@ -9,7 +9,7 @@ const router = express.Router();
 // Base Salary routes
 router.post("/basesalary", createBaseSalary);
 router.get("/basesalary", getBaseSalaries);
-router.get("/basesalary/ID", getBaseSalaryById);
+router.get("/basesalary/:ID", getBaseSalaryById);
 router.put("/basesalary/:ID", updateBaseSalary);
 router.delete("/basesalary/:ID", deleteBaseSalary);
 // Deduction routes
@@ -36,6 +36,6 @@ router.get("/payrolls", getPayrolls);
 router.get("/payrolls/:ID", getPayrollById);
 router.delete("/payrolls/:ID", deletePayroll);
 router.get("/payrolls/month/:month", getPayrollByMonth);
-router.get("/payrolls/employee/:MaNV", getPayrollByEmployee);
+router.get("/payrolls/employee/:ID", getPayrollByEmployee);
 
 export default router;

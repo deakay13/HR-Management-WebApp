@@ -1,4 +1,5 @@
 import KhauTru from "../../models/salary/KhauTru.js";
+import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
 
 const createDeductionSchema = z.object({
@@ -75,15 +76,22 @@ export const createDeduction = async (req, res) => {
 };
 export const getDeductions = async (req, res) => {
     try {
+        //set page and size rows in papge
+        const { offset, limit, page, finalSize} = Pagination(req.query);
 
-        const deductions = await KhauTru.findAll();
+        //get data and rows with limit and offset
+        const { count, rows } = await KhauTru.findAndCountAll({limit, offset});
 
-        return res.status(200).json(deductions);
-
+        //respon status 200
+        return res.status(200).json({
+            totalItems: count,
+            totalPages: Math.ceil(count / finalSize),
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows
+        });
     } catch (error) {
-
-        console.error("Lỗi không tìm thấy danh sách khấu trừ", error);
-
+        console.error("Lỗi không tìm thấy danh sách", error);
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };

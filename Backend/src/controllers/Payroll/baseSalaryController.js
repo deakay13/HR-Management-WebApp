@@ -1,4 +1,5 @@
 import LuongCoBan from "../../models/salary/LuongCoBan.js";
+import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
 const createBaseSalarySchema = z.object({
     MaLCB: z    
@@ -115,13 +116,26 @@ export const updateBaseSalary = async (req, res) => {
     }
 };
 export const getBaseSalaries = async (req, res) => {
-    try {
-        const baseSalaries = await LuongCoBan.findAll();
-        return res.status(200).json(baseSalaries);
-    } catch (error) {
-        console.error("Lỗi không tìm thấy danh sách lương cơ bản", error);
-        return res.status(500).json({ message: "Lỗi hệ thống" });
-    }
+     try {
+            //set page and size rows in papge
+            const { offset, limit, page, finalSize} = Pagination(req.query);
+    
+            //get data and rows with limit and offset
+            const { count, rows } = await LuongCoBan.findAndCountAll({limit, offset});
+    
+            //respon status 200
+            return res.status(200).json({
+                totalItems: count,
+                totalPages: Math.ceil(count / finalSize),
+                currentPage: page,
+                pageSize: finalSize,
+                data: rows
+            });
+    
+        } catch (error) {
+            console.error("Lỗi không tìm thấy danh sách", error);
+            return res.status(500).json({ message: "Lỗi hệ thống" });
+        }
 };
 export const getBaseSalaryById = async (req, res) => {
     try {
