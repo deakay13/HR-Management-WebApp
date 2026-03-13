@@ -10,12 +10,14 @@ const storage = multer.diskStorage({
     }
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    const prefix = file.fieldname === 'HinhAnh' ? 'avatar' : 'hopdong';
-    
-    // Không dùng req.body nữa để tránh "unknown"
-    cb(null, `${prefix}-${uniqueSuffix}${ext}`);
+    const id = req.body.MaNV || req.body.MaHopDong || 'unknown';
+
+    const now = new Date();
+    const dateStr = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
+
+    const ext = path.extname(file.originalname).toLowerCase();
+
+    cb(null, `${id}-${dateStr}${ext}`);
   }
 });
 
@@ -24,13 +26,13 @@ const fileFilter = (req, file, cb) => {
     if (['image/jpeg', 'image/png', 'image/jpg'].includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Chỉ được upload ảnh jpg/png cho avatar!'), false);
+      cb(new Error('Avatar phải là định dạng ảnh (jpg, png, jpeg)!'), false);
     }
   } else if (file.fieldname === 'HinhAnhHopDong') {
     if (file.mimetype === 'application/pdf') {
       cb(null, true);
     } else {
-      cb(new Error('Chỉ được upload file PDF cho hợp đồng!'), false);
+      cb(new Error('Hợp đồng bắt buộc phải là file định dạng PDF!'), false);
     }
   }
 };
@@ -38,7 +40,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ 
   storage, 
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // Giới hạn 5MB
+  limits: { fileSize: 10 * 1024 * 1024 } 
 });
 
 export default upload;
