@@ -9,6 +9,7 @@ import accountRoutes from './routes/accountRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import permissionRoutes from './routes/permissionsRoutes.js';
 import payRollRoutes from './routes/payrollRoutes.js';
+import informationRoutes from './routes/infomationRoutes.js';
 
 //import middlewares
 import { protectedRoute } from './middlewares/middlewareVerifyJWT.js';
@@ -31,6 +32,7 @@ app.use(protectedRoute);
 app.use('/api/account', accountRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/payroll', payRollRoutes);
+app.use('/api/information', informationRoutes);
 
 
 

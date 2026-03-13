@@ -10,6 +10,7 @@ const NhanVien = sequelize.define('NhanVien', {
   DiaChi: { type: DataTypes.STRING, allowNull: false },
   NgayVaoLam:{ type: DataTypes.DATEONLY, allowNull: false },
   SDT: { type: DataTypes.STRING, allowNull: false },
+  HinhAnh: { type: DataTypes.STRING, allowNull: true },
 }, {
   tableName: 'NhanVien',
   timestamps: false

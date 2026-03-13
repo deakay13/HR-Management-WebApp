@@ -19,6 +19,7 @@ export default {
     //Path infor
     const PhongBan = await readCSV('seeders/seed-data/PhongBan.csv');
     const nhanvien = await readCSV('seeders/seed-data/NhanVien.csv');
+    const HopDong = await readCSV('seeders/seed-data/HopDong.csv');
     //Path salary
     const KhauTru = await readCSV('seeders/seed-data/KhauTru.csv');
     const GioLam = await readCSV('seeders/seed-data/GioLam.csv');
@@ -50,6 +51,7 @@ export default {
     //Insert infor
     await queryInterface.bulkInsert('PhongBan', PhongBan);
     await queryInterface.bulkInsert('NhanVien', nhanvien);
+    await queryInterface.bulkInsert('HopDong', HopDong);
     //Insert salary
     await queryInterface.bulkInsert('KhauTru', KhauTru);
     await queryInterface.bulkInsert('GioLam', GioLam);
@@ -75,6 +77,7 @@ export default {
     await queryInterface.bulkDelete('KhauTru', null, {});
     await queryInterface.bulkDelete('BangLuong', null, {});
     //Disconnect infor
+    await queryInterface.bulkDelete('HopDong', null, {});
     await queryInterface.bulkDelete('NhanVien', null, {});
     await queryInterface.bulkDelete('PhongBan', null, {});
   }
