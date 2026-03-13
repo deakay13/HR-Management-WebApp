@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from "cors";
 import './jobs/sessionCleanup.js';
-import { sequelize } from './models/index.js';
 
 //import router
 import accountRoutes from './routes/accountRoutes.js';
