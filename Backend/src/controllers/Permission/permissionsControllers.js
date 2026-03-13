@@ -5,7 +5,7 @@ const createPermissionSchema = z.object({
     MaQuyen: z
         .string()
         .min(1, "Mã vai trò không được để trống")
-        .regex(/^MQ\d{3}$/, "Mã vai trò phải có dạng VTxxx"),
+        .regex(/^MQ\d{3}$/, "Mã vai trò phải có dạng MQxxx"),
     TenQuyen: z.string()
     .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
     .min(1, "Tên vai trò không được để trống"),
@@ -57,9 +57,29 @@ export const createPermission = async (req, res) => {
 }
 export const getPermissions = async (req, res) => {
     try {
+        //set page and size rows in papge
+        const page = parseInt(req.query.page) || 1;
+        const size = parseInt(req.query.size) || 10;
 
-        const permissions = await Quyen.findAll();
-        return res.status(200).json(permissions);
+        //Rows per page
+        const allowedSizes = [10, 20, 30, 40, 50];
+        const finalSize = allowedSizes.includes(size) ? size : 10; 
+
+        //set offset and limit
+        const offset = (page - 1) * finalSize;
+        const limit = finalSize;
+
+        //get data and rows with limit and offset
+        const { count, rows } = await Quyen.findAndCountAll({limit, offset});
+
+        //respon status 200
+        return res.status(200).json({
+            totalItems: count,
+            totalPages: Math.ceil(count / finalSize),
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows
+        });
 
     } catch (error) {
         console.error("Lỗi không tìm thấy danh sách", error);

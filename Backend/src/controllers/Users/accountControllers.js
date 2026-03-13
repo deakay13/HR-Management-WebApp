@@ -7,6 +7,7 @@ import VaiTro from '../../models/auth/VaiTro.js';
 const accountSchema = z.object({
     TenTaiKhoan: z
         .string()
+        .min(1,"Tài khoản đăng nhập không được bỏ trống")
         .min(5, "Tài Khoản đăng nhập phải có ít nhất 5 ký tự")
         .max(50, "Tài khoản đăng nhập không quá 50 ký tự")
         .regex(/^[a-zA-Z0-9._]+$/, "Chỉ cho phép chữ, số, dấu chấm và gạch dưới"),
@@ -17,7 +18,7 @@ const accountSchema = z.object({
         .regex(/[a-z]/, "Phải có ít nhất một chữ thường")
         .regex(/[0-9]/, "Phải có ít nhất một chữ số")
         .regex(/[@#$%!^&*]/, "Phải có ít nhất một ký tự đặc biệt"),
-});
+}); 
 
 export const createAccount = async (req, res) => {
     try {
@@ -124,6 +125,21 @@ export const readAccountById = async (req, res) => {
 
 export const updateAccountById = async (req, res) => {
     try {
+         //get input TenTaiKhoan và MatKhau
+        const parsed = accountSchema.safeParse({
+            TenTaiKhoan: req.body.TenTaiKhoan,
+            MatKhau: req.body.MatKhau,
+        });
+
+        //check Validate TenTaiKhoan và MatKhau
+        if (!parsed.success) {
+            const errorMessages = parsed.error.issues.map(issue => ({
+                field: issue.path[0],
+                message: issue.message,
+            }));
+            return res.status(400).json({ errors: errorMessages });
+        }
+
         const { ID } = req.params;
         //check MaTK
         if (!ID) {

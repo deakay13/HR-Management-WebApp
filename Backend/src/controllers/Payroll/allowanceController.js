@@ -6,15 +6,11 @@ const createPhuCapSchema = z.object({
         .string()
         .min(1, "Mã phụ cấp không được để trống")
         .regex(/^PC\d{3}$/, "Mã phụ cấp phải có dạng PCxxx"),
-
     LoaiPC: z
         .string()
         .min(1, "Loại phụ cấp không được để trống"),
-
     SoTien: z.coerce
-        .number(
-             "Số tiền phải là số"
-    )
+        .number("Số tiền phải là số")
         .min(1000, "Số tiền phải lớn hơn 1000")
 });
 const updatePhuCapSchema = z.object({
@@ -22,9 +18,7 @@ const updatePhuCapSchema = z.object({
         .string()
         .min(1, "Loại phụ cấp không được để trống"),
     SoTien: z.coerce
-        .number(
-             "Số tiền phải là số"
-        )
+        .number("Số tiền phải là số")
         .min(1000, "Số tiền phải lớn hơn 1000")
 });
 export const createAllowance = async (req, res) => {
