@@ -89,9 +89,9 @@ export const getHours = async (req, res) => {
 export const getHourById = async (req, res) => {
     try {
 
-        const { MaGL } = req.params
+        const { ID } = req.params
 
-        const hour = await GioLam.findByPk(MaGL)
+        const hour = await GioLam.findByPk(ID)
 
         if (!hour) {
             return res.status(404).json({
@@ -113,7 +113,7 @@ export const getHourById = async (req, res) => {
 export const updateHour = async (req, res) => {
     try {
 
-        const { MaGL } = req.params
+        const { ID } = req.params
 
         const parsed = updateHourSchema.safeParse({
             SoGioLam: req.body.SoGioLam
@@ -129,7 +129,7 @@ export const updateHour = async (req, res) => {
             return res.status(400).json({ errors })
         }
 
-        const hour = await GioLam.findByPk(MaGL)
+        const hour = await GioLam.findByPk(ID)
 
         if (!hour) {
             return res.status(404).json({
@@ -157,9 +157,9 @@ export const updateHour = async (req, res) => {
 export const deleteHour = async (req, res) => {
     try {
 
-        const { MaGL } = req.params
+        const { ID } = req.params
 
-        const hour = await GioLam.findByPk(MaGL)
+        const hour = await GioLam.findByPk(ID)
 
         if (!hour) {
             return res.status(404).json({

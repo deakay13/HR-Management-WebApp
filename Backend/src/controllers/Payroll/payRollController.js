@@ -53,22 +53,16 @@ export const calculatePayroll = async (req, res) => {
             + allowance
             - deductionAmount
 
-        const payroll = await BangLuong.create({
-
-            MaBL,
-            MaNV,
-            MaLCB,
-            MaPC,
-            MaKT,
-            MaGL,
-            Thang,
-
-            LuongCoBan: baseSalary,
-            TienPhuCap: allowance,
-            TienKhauTru: deductionAmount,
-            SoGioLam: hours,
-            TongLuong: totalSalary
-        })
+       const payroll = await BangLuong.create({
+                MaBL,
+                MaNV,
+                MaLCB,
+                MaPC,
+                MaKT,   
+                MaGL,
+                Thang,
+                TongLuong: totalSalary
+            }) 
 
         return res.status(201).json({
             message: "Tính lương thành công",
@@ -103,9 +97,9 @@ export const getPayrolls = async (req, res) => {
 export const getPayrollById = async (req, res) => {
     try {
 
-        const { MaBL } = req.params
+        const { ID } = req.params
 
-        const payroll = await BangLuong.findByPk(MaBL)
+        const payroll = await BangLuong.findByPk(ID)
 
         if (!payroll) {
             return res.status(404).json({
@@ -127,9 +121,9 @@ export const getPayrollById = async (req, res) => {
 export const deletePayroll = async (req, res) => {
     try {
 
-        const { MaBL } = req.params
+        const { ID } = req.params
 
-        const payroll = await BangLuong.findByPk(MaBL)
+        const payroll = await BangLuong.findByPk(ID)
 
         if (!payroll) {
             return res.status(404).json({

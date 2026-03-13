@@ -90,13 +90,13 @@ export const getDeductions = async (req, res) => {
 export const getDeductionById = async (req, res) => {
     try {
 
-        const { MaKT } = req.params;
+        const { ID } = req.params;
 
-        if (!MaKT) {
-            return res.status(400).json({ message: "Thiếu MaKT" });
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID" });
         }
 
-        const deduction = await KhauTru.findByPk(MaKT);
+        const deduction = await KhauTru.findByPk(ID);
 
         if (!deduction) {
             return res.status(404).json({ message: "Khấu trừ không tồn tại" });
@@ -126,8 +126,12 @@ export const updateDeduction = async (req, res) => {
             }));
             return res.status(400).json({ errors: errorMessages });
         }
+        const { ID } = req.params;
 
-        const deduction = await KhauTru.findByPk(req.params.MaKT);
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID để cập nhật khấu trừ" });
+        }
+        const deduction = await KhauTru.findByPk(ID);
 
         if (!deduction) {
             return res.status(404).json({ message: "Khấu trừ không tồn tại" });
@@ -159,13 +163,13 @@ export const updateDeduction = async (req, res) => {
 export const deleteDeduction = async (req, res) => {
     try {
 
-        const { MaKT } = req.params;
+        const { ID } = req.params;
 
-        if (!MaKT) {
-            return res.status(400).json({ message: "Thiếu MaKT để xóa khấu trừ" });
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID để xóa khấu trừ" });
         }
 
-        const deduction = await KhauTru.findByPk(MaKT);
+        const deduction = await KhauTru.findByPk(ID);
 
         if (!deduction) {
             return res.status(404).json({ message: "Khấu trừ không tồn tại" });

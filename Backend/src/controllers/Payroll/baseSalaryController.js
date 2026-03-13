@@ -81,9 +81,9 @@ export const updateBaseSalary = async (req, res) => {
             }));
             return res.status(400).json({ errors: errorMessages });
         }
-
+        const { ID } = req.params;
         // Find base salary by primary key
-        const luong = await LuongCoBan.findByPk(req.params.MaLCB);
+        const luong = await LuongCoBan.findByPk(ID);
 
         if (!luong) {
             return res.status(404).json({ message: "Không tìm thấy lương cơ bản" });
@@ -125,15 +125,15 @@ export const getBaseSalaries = async (req, res) => {
 };
 export const getBaseSalaryById = async (req, res) => {
     try {
-        const { MaLCB } = req.params;
+        const { ID } = req.params;
 
-        // Check MaLCB
-        if (!MaLCB) {
-            return res.status(400).json({ message: "Thiếu MaLCB" });
+        // Check ID
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID" });
         }
 
-        // Get base salary by MaLCB
-        const baseSalary = await LuongCoBan.findByPk(MaLCB);
+        // Get base salary by ID
+        const baseSalary = await LuongCoBan.findByPk(ID);
 
         if (!baseSalary) {
             return res.status(404).json({ message: "Lương cơ bản không tồn tại" });
@@ -151,15 +151,15 @@ export const getBaseSalaryById = async (req, res) => {
 }
 export const deleteBaseSalary = async (req, res) => {
     try {
-        const { MaLCB } = req.params;
+        const { ID } = req.params;
 
-        // Check if MaLCB is provided
-        if (!MaLCB) {
-            return res.status(400).json({ message: "Thiếu MaLCB để xóa lương cơ bản" });
+        // Check if ID is provided
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID để xóa lương cơ bản" });
         }
 
         // Find base salary by primary key
-        const luong = await LuongCoBan.findByPk(MaLCB);
+        const luong = await LuongCoBan.findByPk(ID);
 
         if (!luong) {
             return res.status(404).json({ message: "Lương cơ bản không tồn tại" });

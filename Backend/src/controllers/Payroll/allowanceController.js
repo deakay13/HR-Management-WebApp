@@ -96,9 +96,9 @@ export const getAllowances = async (req, res) => {
 export const getAllowanceById = async (req, res) => {
     try {
 
-        const { MaPC } = req.params;
+        const { ID } = req.params;
 
-        const phuCap = await PhuCap.findByPk(MaPC);
+        const phuCap = await PhuCap.findByPk(ID);
 
         if (!phuCap) {
             return res.status(404).json({
@@ -118,9 +118,24 @@ export const getAllowanceById = async (req, res) => {
 export const updateAllowance = async (req, res) => {
     try {
 
-        const { MaPC } = req.params;
+        const parsed = updatePhuCapSchema.safeParse({
+            LoaiPC: req.body.LoaiPC,
+            SoTien: req.body.SoTien
+        });
 
-        const phuCap = await PhuCap.findByPk(MaPC);
+        if (!parsed.success) {
+
+            const errorMessages = parsed.error.issues.map(issue => ({
+                field: issue.path[0],
+                message: issue.message
+            }));
+
+            return res.status(400).json({ errors: errorMessages });
+        }
+
+        const { ID } = req.params;
+
+        const phuCap = await PhuCap.findByPk(ID);
 
         if (!phuCap) {
             return res.status(404).json({
@@ -129,8 +144,8 @@ export const updateAllowance = async (req, res) => {
         }
 
         await phuCap.update({
-            LoaiPC: req.body.LoaiPC,
-            SoTien: req.body.SoTien
+            LoaiPC: parsed.data.LoaiPC,
+            SoTien: parsed.data.SoTien
         });
 
         return res.status(200).json({
@@ -142,15 +157,17 @@ export const updateAllowance = async (req, res) => {
 
         console.error("Lỗi khi cập nhật phụ cấp:", error);
 
-        return res.status(500).json({ message: "Lỗi hệ thống" });
+        return res.status(500).json({
+            message: "Lỗi hệ thống"
+        });
     }
 };
 export const deleteAllowance = async (req, res) => {
     try {
 
-        const { MaPC } = req.params;
+        const { ID } = req.params;
 
-        const phuCap = await PhuCap.findByPk(MaPC);
+        const phuCap = await PhuCap.findByPk(ID);
 
         if (!phuCap) {
             return res.status(404).json({
