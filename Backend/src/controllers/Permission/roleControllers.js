@@ -58,8 +58,30 @@ export const createRole = async (req, res) => {
 }
 export const getRoles = async (req, res) => {
     try {
-        const roles = await VaiTro.findAll();
-        return res.status(200).json(roles);
+        //set page and size rows in papge
+        const page = parseInt(req.query.page) || 1;
+        const size = parseInt(req.query.size) || 10;
+
+        //Rows per page
+        const allowedSizes = [10, 20, 30, 40, 50];
+        const finalSize = allowedSizes.includes(size) ? size : 10; 
+
+        //set offset and limit
+        const offset = (page - 1) * finalSize;
+        const limit = finalSize;
+
+        //get data and rows with limit and offset
+        const { count, rows } = await VaiTro.findAndCountAll({limit, offset});
+
+        //respon status 200
+        return res.status(200).json({
+            totalItems: count,
+            totalPages: Math.ceil(count / finalSize),
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows
+        });
+
     } catch (error) {
         console.error("Lỗi không tìm thấy danh sách", error);
         return res.status(500).json({ message: "Lỗi hệ thống" });
@@ -107,7 +129,8 @@ export const updateRole = async (req,res) => {
         if (!role) return res.status(404).json({ message: "không tìm thấy vai trò" });
 
         await role.update({ TenVaiTro: parsed.data.TenVaiTro });
-        res.status(200).json({ message: "Cập nhật thành công", role});
+        res.status(200).json({ message: "Cập nhật thành công", role });
+
     } catch (error) {
         console.error("Lỗi khi gọi", error);
         res.status(500).json({ message: "Lỗi hệ thống" });
