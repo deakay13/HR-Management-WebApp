@@ -1,4 +1,5 @@
 import PhuCap from "../../models/salary/PhuCap.js";
+import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
 
 const createPhuCapSchema = z.object({
@@ -74,25 +75,32 @@ export const createAllowance = async (req, res) => {
     }
 };
 export const getAllowances = async (req, res) => {
-    try {
-
-        const phuCaps = await PhuCap.findAll();
-
-        return res.status(200).json(phuCaps);
-
-    } catch (error) {
-
-        console.error("Lỗi khi lấy danh sách phụ cấp:", error);
-
-        return res.status(500).json({ message: "Lỗi hệ thống" });
-    }
+     try {
+            const { offset, limit, page, finalSize} = Pagination(req.query);
+    
+            //get data and rows with limit and offset
+            const { count, rows } = await PhuCap.findAndCountAll({limit, offset});
+    
+            //respon status 200
+            return res.status(200).json({
+                totalItems: count,
+                totalPages: Math.ceil(count / finalSize),
+                currentPage: page,
+                pageSize: finalSize,
+                data: rows
+            });
+    
+        } catch (error) {
+            console.error("Lỗi không tìm thấy danh sách", error);
+            return res.status(500).json({ message: "Lỗi hệ thống" });
+        }
 };
 export const getAllowanceById = async (req, res) => {
     try {
 
-        const { MaPC } = req.params;
+        const { ID } = req.params;
 
-        const phuCap = await PhuCap.findByPk(MaPC);
+        const phuCap = await PhuCap.findByPk(ID);
 
         if (!phuCap) {
             return res.status(404).json({
@@ -112,9 +120,24 @@ export const getAllowanceById = async (req, res) => {
 export const updateAllowance = async (req, res) => {
     try {
 
-        const { MaPC } = req.params;
+        const parsed = updatePhuCapSchema.safeParse({
+            LoaiPC: req.body.LoaiPC,
+            SoTien: req.body.SoTien
+        });
 
-        const phuCap = await PhuCap.findByPk(MaPC);
+        if (!parsed.success) {
+
+            const errorMessages = parsed.error.issues.map(issue => ({
+                field: issue.path[0],
+                message: issue.message
+            }));
+
+            return res.status(400).json({ errors: errorMessages });
+        }
+
+        const { ID } = req.params;
+
+        const phuCap = await PhuCap.findByPk(ID);
 
         if (!phuCap) {
             return res.status(404).json({
@@ -123,8 +146,8 @@ export const updateAllowance = async (req, res) => {
         }
 
         await phuCap.update({
-            LoaiPC: req.body.LoaiPC,
-            SoTien: req.body.SoTien
+            LoaiPC: parsed.data.LoaiPC,
+            SoTien: parsed.data.SoTien
         });
 
         return res.status(200).json({
@@ -136,15 +159,17 @@ export const updateAllowance = async (req, res) => {
 
         console.error("Lỗi khi cập nhật phụ cấp:", error);
 
-        return res.status(500).json({ message: "Lỗi hệ thống" });
+        return res.status(500).json({
+            message: "Lỗi hệ thống"
+        });
     }
 };
 export const deleteAllowance = async (req, res) => {
     try {
 
-        const { MaPC } = req.params;
+        const { ID } = req.params;
 
-        const phuCap = await PhuCap.findByPk(MaPC);
+        const phuCap = await PhuCap.findByPk(ID);
 
         if (!phuCap) {
             return res.status(404).json({

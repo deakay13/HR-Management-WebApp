@@ -1,7 +1,7 @@
 export default {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable("BangLuong", {
-      
+
       MaBL: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -58,26 +58,6 @@ export default {
         allowNull: false,
       },
 
-      LuongCoBan: {
-        type: Sequelize.DECIMAL(12,2),
-        allowNull: false,
-      },
-
-      TienPhuCap: {
-        type: Sequelize.DECIMAL(12,2),
-        allowNull: false,
-      },
-
-      TienKhauTru: {
-        type: Sequelize.DECIMAL(12,2),
-        allowNull: false,
-      },
-
-      SoGioLam: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-      },
-
       TongLuong: {
         type: Sequelize.DECIMAL(12,2),
         allowNull: false,
@@ -94,6 +74,7 @@ export default {
         allowNull: false,
         defaultValue: "DA_TINH",
       },
+
     });
   },
 

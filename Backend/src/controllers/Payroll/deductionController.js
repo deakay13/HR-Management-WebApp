@@ -1,4 +1,5 @@
 import KhauTru from "../../models/salary/KhauTru.js";
+import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
 
 const createDeductionSchema = z.object({
@@ -75,28 +76,35 @@ export const createDeduction = async (req, res) => {
 };
 export const getDeductions = async (req, res) => {
     try {
+        //set page and size rows in papge
+        const { offset, limit, page, finalSize} = Pagination(req.query);
 
-        const deductions = await KhauTru.findAll();
+        //get data and rows with limit and offset
+        const { count, rows } = await KhauTru.findAndCountAll({limit, offset});
 
-        return res.status(200).json(deductions);
-
+        //respon status 200
+        return res.status(200).json({
+            totalItems: count,
+            totalPages: Math.ceil(count / finalSize),
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows
+        });
     } catch (error) {
-
-        console.error("Lỗi không tìm thấy danh sách khấu trừ", error);
-
+        console.error("Lỗi không tìm thấy danh sách", error);
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
 export const getDeductionById = async (req, res) => {
     try {
 
-        const { MaKT } = req.params;
+        const { ID } = req.params;
 
-        if (!MaKT) {
-            return res.status(400).json({ message: "Thiếu MaKT" });
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID" });
         }
 
-        const deduction = await KhauTru.findByPk(MaKT);
+        const deduction = await KhauTru.findByPk(ID);
 
         if (!deduction) {
             return res.status(404).json({ message: "Khấu trừ không tồn tại" });
@@ -126,8 +134,12 @@ export const updateDeduction = async (req, res) => {
             }));
             return res.status(400).json({ errors: errorMessages });
         }
+        const { ID } = req.params;
 
-        const deduction = await KhauTru.findByPk(req.params.MaKT);
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID để cập nhật khấu trừ" });
+        }
+        const deduction = await KhauTru.findByPk(ID);
 
         if (!deduction) {
             return res.status(404).json({ message: "Khấu trừ không tồn tại" });
@@ -159,13 +171,13 @@ export const updateDeduction = async (req, res) => {
 export const deleteDeduction = async (req, res) => {
     try {
 
-        const { MaKT } = req.params;
+        const { ID } = req.params;
 
-        if (!MaKT) {
-            return res.status(400).json({ message: "Thiếu MaKT để xóa khấu trừ" });
+        if (!ID) {
+            return res.status(400).json({ message: "Thiếu ID để xóa khấu trừ" });
         }
 
-        const deduction = await KhauTru.findByPk(MaKT);
+        const deduction = await KhauTru.findByPk(ID);
 
         if (!deduction) {
             return res.status(404).json({ message: "Khấu trừ không tồn tại" });

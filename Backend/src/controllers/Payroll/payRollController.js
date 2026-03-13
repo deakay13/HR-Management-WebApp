@@ -3,6 +3,7 @@ import LuongCoBan from "../../models/salary/LuongCoBan.js"
 import PhuCap from "../../models/salary/PhuCap.js"
 import KhauTru from "../../models/salary/KhauTru.js"
 import GioLam from "../../models/salary/GioLam.js"
+import { Pagination } from '../../utils/paginations.js';
 import { Op } from "sequelize";
 
 
@@ -53,22 +54,16 @@ export const calculatePayroll = async (req, res) => {
             + allowance
             - deductionAmount
 
-        const payroll = await BangLuong.create({
-
-            MaBL,
-            MaNV,
-            MaLCB,
-            MaPC,
-            MaKT,
-            MaGL,
-            Thang,
-
-            LuongCoBan: baseSalary,
-            TienPhuCap: allowance,
-            TienKhauTru: deductionAmount,
-            SoGioLam: hours,
-            TongLuong: totalSalary
-        })
+       const payroll = await BangLuong.create({
+                MaBL,
+                MaNV,
+                MaLCB,
+                MaPC,
+                MaKT,   
+                MaGL,
+                Thang,
+                TongLuong: totalSalary
+            }) 
 
         return res.status(201).json({
             message: "Tính lương thành công",
@@ -86,26 +81,32 @@ export const calculatePayroll = async (req, res) => {
 };
 export const getPayrolls = async (req, res) => {
     try {
+        //set page and size rows in papge
+        const { offset, limit, page, finalSize} = Pagination(req.query);
 
-        const payrolls = await BangLuong.findAll()
+        //get data and rows with limit and offset
+        const { count, rows } = await BangLuong.findAndCountAll({limit, offset});
 
-        return res.status(200).json(payrolls)
+        //respon status 200
+        return res.status(200).json({
+            totalItems: count,
+            totalPages: Math.ceil(count / finalSize),
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows
+        });
 
     } catch (error) {
-
-        console.error("Lỗi khi lấy danh sách bảng lương:", error)
-
-        return res.status(500).json({
-            message: "Lỗi hệ thống"
-        })
+        console.error("Lỗi không tìm thấy danh sách", error);
+        return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
 export const getPayrollById = async (req, res) => {
     try {
 
-        const { MaBL } = req.params
+        const { ID } = req.params
 
-        const payroll = await BangLuong.findByPk(MaBL)
+        const payroll = await BangLuong.findByPk(ID)
 
         if (!payroll) {
             return res.status(404).json({
@@ -127,9 +128,9 @@ export const getPayrollById = async (req, res) => {
 export const deletePayroll = async (req, res) => {
     try {
 
-        const { MaBL } = req.params
+        const { ID } = req.params
 
-        const payroll = await BangLuong.findByPk(MaBL)
+        const payroll = await BangLuong.findByPk(ID)
 
         if (!payroll) {
             return res.status(404).json({
@@ -181,10 +182,10 @@ export const getPayrollByEmployee = async (req, res) => {
 
   try {
 
-    const { MaNV } = req.params;
+    const { ID } = req.params;
 
     const payrolls = await BangLuong.findAll({
-      where: { MaNV }
+      where: { MaNV : ID }
     });
 
     return res.status(200).json(payrolls);

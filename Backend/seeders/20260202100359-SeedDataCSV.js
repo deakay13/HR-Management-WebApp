@@ -69,11 +69,11 @@ export default {
     await queryInterface.bulkDelete('Quyen', null, {});
     await queryInterface.bulkDelete('VaiTro', null, {});
     //Disconnect salary
-    await queryInterface.bulkDelete('BangLuong', null, {});
     await queryInterface.bulkDelete('PhuCap', null, {});
     await queryInterface.bulkDelete('LuongCoBan', null, {});
     await queryInterface.bulkDelete('GioLam', null, {});
     await queryInterface.bulkDelete('KhauTru', null, {});
+    await queryInterface.bulkDelete('BangLuong', null, {});
     //Disconnect infor
     await queryInterface.bulkDelete('NhanVien', null, {});
     await queryInterface.bulkDelete('PhongBan', null, {});

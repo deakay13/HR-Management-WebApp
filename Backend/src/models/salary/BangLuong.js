@@ -1,84 +1,20 @@
-import { DataTypes } from 'sequelize'
-import sequelize from '../../config/dbconnect.js'
+import { DataTypes } from "sequelize";
+import sequelize from "../../config/dbconnect.js";
 
-const BangLuong = sequelize.define('BangLuong', {
+const BangLuong = sequelize.define("BangLuong", {
+  MaBL:{type:DataTypes.STRING,allowNull:false,primaryKey:true},
+  MaNV:{type:DataTypes.STRING,allowNull:false},
+  MaLCB:{type:DataTypes.STRING,allowNull:false},
+  MaPC:{type:DataTypes.STRING,allowNull:false},
+  MaKT:{type:DataTypes.STRING,allowNull:false},
+  MaGL:{type:DataTypes.STRING,allowNull:false},
+  Thang:{type:DataTypes.DATEONLY,allowNull:false},
+  TongLuong:{type:DataTypes.DECIMAL(12,2),allowNull:false},
+  NgayTinhLuong:{type:DataTypes.DATE,allowNull:false,defaultValue:DataTypes.NOW},
+  TrangThai:{type:DataTypes.STRING,allowNull:false,defaultValue:"DA_TINH"}
+},{
+  tableName:"BangLuong",
+  timestamps:false
+});
 
-    MaBL: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        primaryKey: true
-    },
-
-    MaNV: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    MaLCB: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    MaPC: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    MaKT: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    MaGL: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-
-    Thang: {
-        type: DataTypes.DATEONLY,
-        allowNull: false
-    },
-
-    LuongCoBan: {
-        type: DataTypes.DECIMAL(12,2),
-        allowNull: false
-    },
-
-    TienPhuCap: {
-        type: DataTypes.DECIMAL(12,2),
-        allowNull: false
-    },
-
-    TienKhauTru: {
-        type: DataTypes.DECIMAL(12,2),
-        allowNull: false
-    },
-
-    SoGioLam: {
-        type: DataTypes.INTEGER,
-        allowNull: false
-    },
-
-    TongLuong: {
-        type: DataTypes.DECIMAL(12,2),
-        allowNull: false
-    },
-
-    NgayTinhLuong: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
-    },
-
-    TrangThai: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: "DA_TINH"
-    }
-
-}, {
-    tableName: 'BangLuong',
-    timestamps: false
-})
-
-export default BangLuong
+export default BangLuong;

@@ -9,33 +9,33 @@ const router = express.Router();
 // Base Salary routes
 router.post("/basesalary", createBaseSalary);
 router.get("/basesalary", getBaseSalaries);
-router.get("/basesalary/:MaLCB", getBaseSalaryById);
-router.put("/basesalary/:MaLCB", updateBaseSalary);
-router.delete("/basesalary/:MaLCB", deleteBaseSalary);
+router.get("/basesalary/:ID", getBaseSalaryById);
+router.put("/basesalary/:ID", updateBaseSalary);
+router.delete("/basesalary/:ID", deleteBaseSalary);
 // Deduction routes
 router.post("/deductions", createDeduction);
 router.get("/deductions", getDeductions);
-router.get("/deductions/:MaKT", getDeductionById);
-router.put("/deductions/:MaKT", updateDeduction);
-router.delete("/deductions/:MaKT", deleteDeduction);
+router.get("/deductions/:ID", getDeductionById);
+router.put("/deductions/:ID", updateDeduction);
+router.delete("/deductions/:ID", deleteDeduction);
 // Allowance routes will be added here in the future
 router.post("/allowances", createAllowance);
 router.get("/allowances", getAllowances);
-router.get("/allowances/:MaPC", getAllowanceById);
-router.put("/allowances/:MaPC", updateAllowance);
-router.delete("/allowances/:MaPC", deleteAllowance);
+router.get("/allowances/:ID", getAllowanceById);
+router.put("/allowances/:ID", updateAllowance);
+router.delete("/allowances/:ID", deleteAllowance);
 // Hour routes
 router.post("/hours", createHour);
 router.get("/hours", getHours);
-router.get("/hours/:MaGL", getHourById);
-router.put("/hours/:MaGL", updateHour);
-router.delete("/hours/:MaGL", deleteHour);
+router.get("/hours/:ID", getHourById);
+router.put("/hours/:ID", updateHour);
+router.delete("/hours/:ID", deleteHour);
 // Payroll calculation routes
 router.post("/payrolls", calculatePayroll);
 router.get("/payrolls", getPayrolls);
-router.get("/payrolls/:MaBL", getPayrollById);
-router.delete("/payrolls/:MaBL", deletePayroll);
+router.get("/payrolls/:ID", getPayrollById);
+router.delete("/payrolls/:ID", deletePayroll);
 router.get("/payrolls/month/:month", getPayrollByMonth);
-router.get("/payrolls/employee/:MaNV", getPayrollByEmployee);
+router.get("/payrolls/employee/:ID", getPayrollByEmployee);
 
 export default router;
