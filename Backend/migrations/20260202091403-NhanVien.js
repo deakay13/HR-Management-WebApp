@@ -15,6 +15,7 @@ export default {
       DiaChi: { type: Sequelize.STRING, allowNull: false },
       NgayVaoLam:{ type: Sequelize.DATEONLY, allowNull: false },
       SDT: { type: Sequelize.STRING, allowNull: false },
+      HinhAnh: { type: Sequelize.STRING, allowNull: true },
     });
   },
 

@@ -12,7 +12,7 @@ export default{
       LoaiHD: { type: Sequelize.STRING, allowNull: false },
       NgayBatDau: { type: Sequelize.DATEONLY, allowNull: false },
       NgayKetThuc: { type: Sequelize.DATEONLY, allowNull: false},
-      LuongCoBan: { type: Sequelize.DECIMAL(10,2) , allowNull: false },
+      HinhAnhHopDong: { type: Sequelize.STRING, allowNull: true }
     });
   },
 
