@@ -1,4 +1,5 @@
 import VaiTro from '../../models/auth/VaiTro.js';
+import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
 
 const createroleSchema = z.object({
@@ -59,17 +60,7 @@ export const createRole = async (req, res) => {
 export const getRoles = async (req, res) => {
     try {
         //set page and size rows in papge
-        const page = parseInt(req.query.page) || 1;
-        const size = parseInt(req.query.size) || 10;
-
-        //Rows per page
-        const allowedSizes = [10, 20, 30, 40, 50];
-        const finalSize = allowedSizes.includes(size) ? size : 10; 
-
-        //set offset and limit
-        const offset = (page - 1) * finalSize;
-        const limit = finalSize;
-
+        const { offset, limit, page, finalSize } = Pagination(req.query);
         //get data and rows with limit and offset
         const { count, rows } = await VaiTro.findAndCountAll({limit, offset});
 
