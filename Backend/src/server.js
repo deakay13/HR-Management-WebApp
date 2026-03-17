@@ -14,6 +14,8 @@ import informationRoutes from './routes/infomationRoutes.js';
 //import middlewares
 import { protectedRoute } from './middlewares/middlewareVerifyJWT.js';
 
+import { currentAccount } from './controllers/Users/CurrentAccount.js';
+
 //config
 dotenv.config();
 const app = express();
@@ -29,11 +31,10 @@ app.use('/api/auth', authRoutes);
 
 //private Route
 app.use(protectedRoute);
+app.use('/api/current', currentAccount);
 app.use('/api/account', accountRoutes);
 app.use('/api/permissions', permissionRoutes);
 app.use('/api/payroll', payRollRoutes);
 app.use('/api/information', informationRoutes);
-
-
 
 app.listen(PORT, () => { console.log(`🚀 Server chạy ở cổng ${PORT}`);});

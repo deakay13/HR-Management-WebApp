@@ -6,7 +6,7 @@ import { z } from 'zod';
 import TaiKhoan from "../../models/auth/TaiKhoan.js"
 import Session from "../../models/auth/Session.js";
 
-const ACCESS_TOKEN_TTL= '15m';
+const ACCESS_TOKEN_TTL= '30m';
 const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
 dotenv.config();
 
@@ -57,7 +57,7 @@ export const signIn = async (req, res) => {
         if (!dungMatKhau) {
             return res.status(401).json({ message: "Tên Tài Khoản hoặc mật khẩu không đúng" });
         }
-
+        
         //create accesstoken with JWT
         const accessToken = jwt.sign(
             {
@@ -70,7 +70,6 @@ export const signIn = async (req, res) => {
                 expiresIn: ACCESS_TOKEN_TTL
             }
         );
-
         //refresh
         const refreshToken = crypto.randomBytes(64).toString("hex");
         
@@ -121,6 +120,50 @@ export const signOut = async (req, res) => {
         }
         //respon No content
         return res.sendStatus(204);
+    } catch (error) {
+        console.error("Lỗi khi gọi",error);
+        return res.status(500).json({ message: "Lỗi hệ thống." });
+    }
+}
+export const refreshToken = async (req,res) => {
+    try {
+        //get refreshToken from cookie
+        const token = req.cookies?.refreshToken;
+        if (!token) {
+            return res.status(401).json({ message: "Token không tồn tại" });
+        }
+
+        //compare refreshToken with DB
+        const session = await Session.findOne({ where: { refreshToken: token } });
+        
+        //check account in Session DB
+        const account = await Session.findOne({ where: { MaTK: session.MaTK } });
+        if (!account) {
+        return res.status(404).json({ message: "Không tìm thấy tài khoản" });
+        }
+
+        if (!session) {
+            return res.status(403).json({ message: "Token không hợp lệ hoặc hết hạn" });
+        }
+
+        //check expires
+        if (new Date(session.expiresAt) < new Date()) {
+            return res.status(403).json({ message: "Token không hợp lệ hoặc hết hạn" });
+        }
+        //create new accesssToken
+        const accessToken = jwt.sign(
+            {
+                MaTK: account.MaTK,
+                MaNV: account.MaNV,
+                MaVT: account.MaVT
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+                expiresIn: ACCESS_TOKEN_TTL
+            }
+        );
+        //return
+        return res.status(200).json({ accessToken });
     } catch (error) {
         console.error("Lỗi khi gọi",error);
         return res.status(500).json({ message: "Lỗi hệ thống." });

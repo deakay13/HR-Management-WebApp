@@ -8,18 +8,14 @@ const createBaseSalarySchema = z.object({
         .regex(/^LCB\d{3}$/, "Mã lương cơ bản phải có dạng LCBxxx"),
 
     LuongCB: z.coerce
-        .number(
-             "Lương cơ bản phải là số"
-        )
+        .number("Lương cơ bản phải là số")
         .min(1000000, "Lương cơ bản phải lớn hơn 1.000.000")
         .max(1000000000, "Lương cơ bản không được vượt quá 1.000.000.000"),
 });
 // const updateLuongCoBanSchema
 const updateBaseSalarySchema = z.object({
     LuongCB:z.coerce
-        .number(
-         "Lương cơ bản phải là số"
-        )
+        .number("Lương cơ bản phải là số")
         .min(1000000, "Lương cơ bản phải lớn hơn 1.000.000")
         .max(1000000000, "Lương cơ bản không được vượt quá 1.000.000.000"),
 });
@@ -116,7 +112,7 @@ export const updateBaseSalary = async (req, res) => {
     }
 };
 export const getBaseSalaries = async (req, res) => {
-     try {
+    try {
             //set page and size rows in papge
             const { offset, limit, page, finalSize} = Pagination(req.query);
     
