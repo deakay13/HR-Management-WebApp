@@ -59,18 +59,22 @@ export const createPermission = async (req, res) => {
 export const getPermissions = async (req, res) => {
     try {
         //set page and size rows in papge
-        const { offset, limit, page, finalSize} = Pagination(req.query);
+        const { offset, limit, page, finalSize } = Pagination(req.query);
 
-        //get data and rows with limit and offset
-        const { count, rows } = await Quyen.findAndCountAll({limit, offset});
+        const options = {};
+        if (limit !== null) {
+        options.limit = limit;
+        options.offset = offset;
+        }
 
-        //respon status 200
+        const { count, rows } = await Quyen.findAndCountAll(options);
+
         return res.status(200).json({
-            totalItems: count,
-            totalPages: Math.ceil(count / finalSize),
-            currentPage: page,
-            pageSize: finalSize,
-            data: rows
+        totalItems: count,
+        totalPages: limit ? Math.ceil(count / finalSize) : 1,
+        currentPage: page,
+        pageSize: finalSize,
+        data: rows,
         });
 
     } catch (error) {
@@ -112,10 +116,10 @@ export const updatePermission = async (req, res) => {
             }));
             return res.status(400).json({ errors: errorMessages });
         }
-
+        
         const permission = await Quyen.findByPk(req.params.ID);
-        if (!permission) return res.status(404).json({ message: "Không tìm thấy vai trò" });
-
+        if (!permission) return res.status(404).json({ message: "Không tìm thấy Quyền" });
+        if(permission) return res.status(404).json({ message: "không được thay đổi Mã Quyền" });
         await permission.update({ TenQuyen: parsed.data.TenQuyen });
         res.status(200).json({ message: "Cập nhật thành công", permission});
     } catch (error) {

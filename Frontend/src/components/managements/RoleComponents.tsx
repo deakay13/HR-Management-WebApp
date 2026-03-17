@@ -1,20 +1,20 @@
-import { useAccountsStore } from "@/stores/authStores/accountStore";
+import { useRolesStore } from "@/stores/permissionStores/RolesStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { AccountsTable } from "../Table/AccountsTable";
+import { RolesTable } from "../Table/RolesTable";
 
-export default function RolesComponents() {
-  const { accounts, initializing, getAccounts } = useAccountsStore();
+const AccountsComponents = () => {
+  const { Roles, initializing, getRoles } = useRolesStore();
   const { accessToken } = useAuthStore();
 
   useEffect(() => {
     const init = async () => {
       if (accessToken) {
-        await getAccounts();
+        await getRoles();
       }
     };
     init();
-  }, [accessToken, getAccounts]);
+  }, [accessToken, getRoles]);
 
   if (initializing) {
     return (
@@ -26,8 +26,10 @@ export default function RolesComponents() {
   return (
     <div className="@container/main flex flex-1 flex-col gap-2">
       <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-        <AccountsTable data={accounts} />
+        <RolesTable data={Roles} />
       </div>
     </div>
   );
-}
+};
+
+export default AccountsComponents;

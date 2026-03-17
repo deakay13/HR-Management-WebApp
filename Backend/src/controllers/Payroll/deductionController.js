@@ -13,9 +13,7 @@ const createDeductionSchema = z.object({
         .min(1, "Loại khấu trừ không được để trống"),
 
     PhanTram: z.coerce
-        .number(
-             "Phần trăm phải là số"
-        )
+        .number("Phần trăm phải là số")
         .min(0, "Phần trăm không hợp lệ")
         .max(100, "Phần trăm không được vượt quá 100")
 });
@@ -26,9 +24,7 @@ const updateDeductionSchema = z.object({
         .min(1, "Loại khấu trừ không được để trống"),
 
     PhanTram: z.coerce
-        .number(
-             "Phần trăm phải là số"
-        )
+        .number("Phần trăm phải là số")
         .min(0, "Phần trăm không hợp lệ")
         .max(100, "Phần trăm không được vượt quá 100")
 });
@@ -135,7 +131,7 @@ export const updateDeduction = async (req, res) => {
             return res.status(400).json({ errors: errorMessages });
         }
         const { ID } = req.params;
-
+        
         if (!ID) {
             return res.status(400).json({ message: "Thiếu ID để cập nhật khấu trừ" });
         }

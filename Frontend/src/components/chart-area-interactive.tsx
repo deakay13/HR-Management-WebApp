@@ -180,8 +180,7 @@ export function ChartAreaInteractive() {
             value={timeRange}
             onValueChange={setTimeRange}
             variant="outline"
-            className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
-          >
+            className="hidden *:data-[slot=toggle-group-item]:px-4! @[767px]/card:flex">
             <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
             <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
             <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
@@ -190,8 +189,7 @@ export function ChartAreaInteractive() {
             <SelectTrigger
               className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
               size="sm"
-              aria-label="Select a value"
-            >
+              aria-label="Select a value">
               <SelectValue placeholder="Last 3 months" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -211,8 +209,7 @@ export function ChartAreaInteractive() {
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-[250px] w-full"
-        >
+          className="aspect-auto h-62.5 w-full">
           <AreaChart data={filteredData}>
             <defs>
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
@@ -248,11 +245,11 @@ export function ChartAreaInteractive() {
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = new Date(value)
+                const date = new Date(value);
                 return date.toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
-                })
+                });
               }}
             />
             <ChartTooltip
@@ -263,7 +260,7 @@ export function ChartAreaInteractive() {
                     return new Date(value).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
-                    })
+                    });
                   }}
                   indicator="dot"
                 />
@@ -287,5 +284,5 @@ export function ChartAreaInteractive() {
         </ChartContainer>
       </CardContent>
     </Card>
-  )
+  );
 }

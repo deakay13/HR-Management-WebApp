@@ -3,13 +3,9 @@ import {
   IconDotsVertical,
   IconId,
   IconLogout2,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,26 +14,26 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
-import { useAuthStore } from "@/stores/useAuthStore"
-import { useNavigate } from "react-router"
+} from "@/components/ui/sidebar";
+import { useAuthStore } from "@/stores/authStores/useAuthStore";
+import { useNavigate } from "react-router";
 
-export function NavUser({
+export function NavUserMini({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
-  }) {
-  const { isMobile } = useSidebar()
+    name: string;
+    email: string;
+    avatar: string;
+  };
+}) {
+  const { isMobile } = useSidebar();
   const { signOut } = useAuthStore();
   const navigate = useNavigate();
   const handleSignOut = async () => {
@@ -47,7 +43,7 @@ export function NavUser({
     } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
     <SidebarMenu>

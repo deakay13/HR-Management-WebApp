@@ -59,19 +59,24 @@ export const createRole = async (req, res) => {
 }
 export const getRoles = async (req, res) => {
     try {
-        //set page and size rows in papge
         const { offset, limit, page, finalSize } = Pagination(req.query);
-        //get data and rows with limit and offset
-        const { count, rows } = await VaiTro.findAndCountAll({limit, offset});
 
-        //respon status 200
+        const options = {};
+        if (limit !== null) {
+        options.limit = limit;
+        options.offset = offset;
+        }
+
+        const { count, rows } = await VaiTro.findAndCountAll(options);
+
         return res.status(200).json({
-            totalItems: count,
-            totalPages: Math.ceil(count / finalSize),
-            currentPage: page,
-            pageSize: finalSize,
-            data: rows
+        totalItems: count,
+        totalPages: limit ? Math.ceil(count / finalSize) : 1,
+        currentPage: page,
+        pageSize: finalSize,
+        data: rows,
         });
+
 
     } catch (error) {
         console.error("Lỗi không tìm thấy danh sách", error);

@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import TaiKhoan from '../../models/auth/TaiKhoan.js';
 import NhanVien from '../../models/information/NhanVien.js';
+import { Pagination } from '../../utils/paginations.js';
 import VaiTro from '../../models/auth/VaiTro.js';
 
 const accountSchema = z.object({
@@ -19,6 +20,7 @@ const accountSchema = z.object({
         .regex(/[0-9]/, "Phải có ít nhất một chữ số")
         .regex(/[@#$%!^&*]/, "Phải có ít nhất một ký tự đặc biệt"),
 }); 
+
 
 export const createAccount = async (req, res) => {
     try {
@@ -85,11 +87,27 @@ export const createAccount = async (req, res) => {
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 }
-
 export const readAllAccount = async ( req, res) => {
     try {
-        const accounts = await TaiKhoan.findAll();
-        return res.status(200).json(accounts);
+        const { offset, limit, page, finalSize } = Pagination(req.query);
+
+        const options = {};
+        if (limit !== null) {
+            options.limit = limit;
+            options.offset = offset;
+        }
+
+        const { count, rows } = await TaiKhoan.findAndCountAll(options);
+
+        return res.status(200).json({
+            totalItems: count,
+            totalPages: limit ? Math.ceil(count / finalSize) : 1,
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows,
+        });
+
+
     } catch (error) {
         //Only show error for dev, Can't show detail error for client
         console.error("Lỗi không tìm thấy danh sách tài khoản", error);

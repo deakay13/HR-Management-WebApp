@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useNavigate } from "react-router";
 
 const signInSchema = z.object({
@@ -31,7 +31,10 @@ const signInSchema = z.object({
 
 type signInFormValues = z.infer<typeof signInSchema>;
 
-export function SignInFrom({ className, ...props }: React.ComponentProps<"div">) {
+export function SignInFrom({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
   const { signIn } = useAuthStore();
   const navigate = useNavigate();
   const {
@@ -44,7 +47,7 @@ export function SignInFrom({ className, ...props }: React.ComponentProps<"div">)
   const onSubmit = async (data: signInFormValues) => {
     const { TenTaiKhoan, MatKhau } = data;
     await signIn(TenTaiKhoan, MatKhau);
-    navigate("/DashBoard");
+    navigate("/PortalPage/DashBoard");
   };
 
   return (
@@ -54,13 +57,13 @@ export function SignInFrom({ className, ...props }: React.ComponentProps<"div">)
           <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
-                <h1 className="text-2xl font-bold">Sign In</h1>
+                <h1 className="text-2xl font-bold">Đăng Nhập</h1>
                 <p className="text-muted-foreground text-balance">
-                  Login to your account
+                  Đăng nhập tài khoản của bạn bên dưới
                 </p>
               </div>
               <Field>
-                <FieldLabel htmlFor="UserName">User Name</FieldLabel>
+                <FieldLabel htmlFor="UserName">Tên tài khoản</FieldLabel>
                 <Input id="UserName" {...register("TenTaiKhoan")} />
                 {errors.TenTaiKhoan && (
                   <p className="text-destructive text-sm">
@@ -70,12 +73,7 @@ export function SignInFrom({ className, ...props }: React.ComponentProps<"div">)
               </Field>
               <Field>
                 <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline">
-                    Forgot your password?
-                  </a>
+                  <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
                 </div>
                 <Input id="password" type="password" {...register("MatKhau")} />
                 {errors.MatKhau && (
@@ -86,7 +84,7 @@ export function SignInFrom({ className, ...props }: React.ComponentProps<"div">)
               </Field>
               <Field>
                 <Button type="submit" disabled={isSubmitting}>
-                  Login
+                  Đăng nhập
                 </Button>
               </Field>
             </FieldGroup>

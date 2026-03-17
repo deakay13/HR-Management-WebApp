@@ -4,7 +4,7 @@ import {
     deleteAccount,
     readAllAccount,
     readAccountById,
-    updateAccountById
+    updateAccountById,
 } from "../controllers/Users/accountControllers.js";
 
 const router = express.Router();
@@ -14,5 +14,6 @@ router.get("/Accounts", readAllAccount);
 router.get("/Accounts/:ID", readAccountById);
 router.put("/Accounts/:ID", updateAccountById)
 router.delete("/Accounts/:ID", deleteAccount);
+
 
 export default router;
