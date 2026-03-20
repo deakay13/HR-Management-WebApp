@@ -24,7 +24,7 @@ router.get("/allowances", getAllowances);
 router.get("/allowances/:ID", getAllowanceById);
 router.put("/allowances/:ID", updateAllowance);
 router.delete("/allowances/:ID", deleteAllowance);
-// Hour routes
+// Hour routes 
 router.post("/hours", createHour);
 router.get("/hours", getHours);
 router.get("/hours/:ID", getHourById);
