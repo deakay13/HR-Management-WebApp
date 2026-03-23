@@ -3,9 +3,10 @@ import { toast } from "sonner";
 import { RolesServices } from "@/services/permissionServices/RolesServices";
 import type { RolesTypes } from "@/types/permissionTypes/RolesTypes";
 
-export const useRolesStore = create<RolesTypes>((set) => ({
+export const useRolesStore = create<RolesTypes>()((set, get) => ({
     Roles: [],
     initializing: true,
+
     clearState: () => {
         set({ Roles: [] });
     },
@@ -20,7 +21,19 @@ export const useRolesStore = create<RolesTypes>((set) => ({
             console.error("Lỗi khi lấy danh sách tài khoản", error);
             toast.error("Không thể lấy danh sách tài khoản");
         } finally {
-            set({ initializing: false });
+        set({ initializing: false });
+        }
+    },
+    deleteRole: async (ID: string) => {
+        try {
+            await RolesServices.deleteRole(ID);
+            set({
+                Roles: get().Roles.filter((r) => r.MaVT !== ID),
+            });
+            toast.success("Xoá Vai trò thành công");
+        } catch (error) {
+            console.error("Lỗi khi xoá Vai trò", error);
+            toast.error("Không thể xoá Vai trò");
         }
     },
 }));

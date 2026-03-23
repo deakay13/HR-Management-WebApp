@@ -9,12 +9,10 @@ const createroleSchema = z.object({
         .regex(/^VT\d{3}$/, "Mã vai trò phải có dạng VTxxx"),
     TenVaiTro: z.string()
         .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
-        .min(1, "Tên vai trò không được để trống"),
 });
 const updateRoleSchema = z.object({
     TenVaiTro: z.string()
         .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
-        .min(1, "Tên vai trò không được để trống"),
 });
 
 export const createRole = async (req, res) => {

@@ -5,16 +5,14 @@ import { z } from "zod";
 const createPermissionSchema = z.object({
     MaQuyen: z
         .string()
-        .min(1, "Mã vai trò không được để trống")
-        .regex(/^MQ\d{3}$/, "Mã vai trò phải có dạng MQxxx"),
+        .min(1, "Mã Quyền không được để trống")
+        .regex(/^MQ\d{3}$/, "Mã Quyền phải có dạng MQxxx"),
     TenQuyen: z.string()
-    .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
-    .min(1, "Tên vai trò không được để trống"),
+    .min(3, "Tên vai Quyền phải có ít nhất 3 ký tự")
 });
 const updatePermissionSchema = z.object({
     TenQuyen: z.string()
-        .min(3, "Tên vai trò phải có ít nhất 3 ký tự")
-        .min(1, "Tên vai trò không được để trống"),
+        .min(3, "Tên vai Quyền phải có ít nhất 3 ký tự")
 });
 
 export const createPermission = async (req, res) => {
@@ -37,19 +35,19 @@ export const createPermission = async (req, res) => {
         //check Quyen by MaQuyen
         const permissionId= await Quyen.findByPk(MaQuyen);
         if (permissionId) {
-            return res.status(400).json({ message: "Vai trò đã tồn tại" });
+            return res.status(400).json({ message: "Quyền đã tồn tại" });
         }
 
         //check TenVaiTro
         const permissionName = await Quyen.findOne({ where: { TenQuyen } });
         if (permissionName) {
-            return res.status(400).json({ message: "Tên vai trò đã tồn tại" });
+            return res.status(400).json({ message: "Tên Quyền đã tồn tại" });
         }
 
         const permission = await Quyen.create({ MaQuyen, TenQuyen });
         
         //respon status 200
-        return res.status(200).json({ message: "Tạo Vai trò thành công", permission });
+        return res.status(201).json({ message: "Tạo Quyền thành công", permission });
 
     } catch (error) {
         console.error("Lỗi khi gọi", error);
@@ -117,9 +115,18 @@ export const updatePermission = async (req, res) => {
             return res.status(400).json({ errors: errorMessages });
         }
         
+        const { ID } = req.params;
         const permission = await Quyen.findByPk(req.params.ID);
         if (!permission) return res.status(404).json({ message: "Không tìm thấy Quyền" });
-        if(permission) return res.status(404).json({ message: "không được thay đổi Mã Quyền" });
+
+        const existName = await Quyen.findOne({
+            where: { TenQuyen: parsed.data.TenQuyen }
+        });
+
+        if (existName && existName.MaQuyen !== ID) {
+            return res.status(400).json({ message: "Tên Quyền đã tồn tại" });
+        }
+
         await permission.update({ TenQuyen: parsed.data.TenQuyen });
         res.status(200).json({ message: "Cập nhật thành công", permission});
     } catch (error) {
