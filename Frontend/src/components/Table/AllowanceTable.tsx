@@ -66,14 +66,15 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./Columns/allowancesColumns";
-import type { AllowanceType } from "@/components/Table/Schema/allowanceSchema";
+import type { Allowance } from "@/types/payRollTypes/allowanceTypes";
+import { useAllowanceStore } from "@/stores/payRollStores/allowanceStores";
 import { Link } from "react-router-dom";
 
 export function AllowanceTable({
   data,
   loading,
 }: {
-  data: AllowanceType[];
+  data: Allowance[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -83,12 +84,32 @@ export function AllowanceTable({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+
+
+  const { createAllowance } = useAllowanceStore();
+  const [formData, setFormData] = React.useState({
+    MaPC: "",
+    LoaiPC: "",
+    SoTien: 0,
+  });
+  const handleCreate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  await createAllowance(formData);
+
+  setFormData({
+    MaPC: "",
+    LoaiPC: "",
+    SoTien: 0,
+    });
+  };
+
+  
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const table = useReactTable<AllowanceType>({
+  const table = useReactTable<Allowance>({
     data,
     columns,
     state: {
@@ -181,43 +202,110 @@ export function AllowanceTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-
+                
           {/* Button create */}
-          <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setFormData({
+                  MaPC: "",
+                  LoaiPC: "",
+                  SoTien: 0,
+                })
+              }
+            >
+              <IconPlus />
+              <span className="hidden lg:inline">Tạo mới</span>
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="sm:max-w-md">
+          <form onSubmit={handleCreate} className="space-y-6">
+            
+            <DialogHeader>
+              <DialogTitle className="text-lg font-semibold">
+                Tạo phụ cấp
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              {/* MaPC */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
+                <Input
+                  id="MaPC"
+                  placeholder="VD: PC001"
+                  className="h-10"
+                  value={formData.MaPC}
+                  onChange={(e) =>
+                    setFormData({ ...formData, MaPC: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* LoaiPC */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
+                <Input
+                  id="LoaiPC"
+                  placeholder="VD: Phụ cấp ăn trưa"
+                  className="h-10"
+                  value={formData.LoaiPC}
+                  onChange={(e) =>
+                    setFormData({ ...formData, LoaiPC: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* SoTien */}
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="SoTien">Số Tiền</Label>
+                <Input
+                  id="SoTien"
+                  type="number"
+                  placeholder="VD: 500000"
+                  className="h-10"
+                  value={formData.SoTien}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      SoTien: Number(e.target.value),
+                    })
+                  }
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <DialogClose asChild>
+                <Button
+                  variant="outline"
+                  type="button"
+                  className="w-full sm:w-auto"
+                >
+                  Huỷ
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>Tạo phụ cấp</DialogTitle>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
-                    <Input id="MaPC" name="MaPC" defaultValue="PCxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
-                    <Input id="LoaiPC" name="LoaiPC" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="SoTien">Số Tiền</Label>
-                    <Input id="SoTien" name="SoTien" type="number" />
-                  </Field>
-                </FieldGroup>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </DialogContent>
-            </form>
-          </Dialog>
+              </DialogClose>
+
+              <Button
+                type="submit"
+                className="w-full sm:w-auto"
+                disabled={
+                  !formData.MaPC ||
+                  !formData.LoaiPC ||
+                  formData.SoTien <= 0
+                }
+              >
+                Tạo mới
+              </Button>
+            </DialogFooter>
+
+          </form>
+        </DialogContent>
+        </Dialog>
         </div>
       </div>
 

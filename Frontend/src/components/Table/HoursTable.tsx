@@ -66,14 +66,14 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./Columns/hoursColumns";
-import type { HoursType } from "@/components/Table/Schema/hoursSchema";
+import type { Hours } from "@/types/payRollTypes/hoursTypes";
 import { Link } from "react-router-dom";
 
 export function HoursTable({
   data,
   loading,
 }: {
-  data: HoursType[];
+  data: Hours[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -88,7 +88,7 @@ export function HoursTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<HoursType>({
+  const table = useReactTable<Hours>({
     data,
     columns,
     state: {

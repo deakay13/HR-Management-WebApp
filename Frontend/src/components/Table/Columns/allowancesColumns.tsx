@@ -18,6 +18,13 @@ export const columns: ColumnDef<Allowance>[] = [
     ),
   },
   {
+    accessorKey:"SoTien",
+    header: () => <div className="w-20 text-center">Số Tiền</div>,
+    cell: ({ row }) => (
+      <div className="w-20 text-center h-8">{row.original.SoTien.toLocaleString()}</div>
+    ),
+  },
+  {
     id: "actions",
     cell: ({ row }) => <AllowanceActionCell allowance={row.original} />,
   },

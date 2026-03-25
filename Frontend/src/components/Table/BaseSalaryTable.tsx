@@ -66,14 +66,14 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./Columns/baseSalaryColumns";
-import type { BaseSalaryType } from "@/components/Table/Schema/baseSalarySchema";
+import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
 import { Link } from "react-router-dom";
 
 export function BaseSalaryTable({
   data,
   loading,
 }: {
-  data: BaseSalaryType  [];
+  data: BaseSalary[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -88,7 +88,7 @@ export function BaseSalaryTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<BaseSalaryType>({
+  const table = useReactTable<BaseSalary>({
     data,
     columns,
     state: {
