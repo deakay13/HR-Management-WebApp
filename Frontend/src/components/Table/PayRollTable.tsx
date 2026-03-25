@@ -66,14 +66,14 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./Columns/payRollColumns";
-import type { PayRollType } from "@/components/Table/Schema/payRollSchema";
+import type { PayRoll } from "@/types/payRollTypes/payRollTypes";
 import { Link } from "react-router-dom";
 
 export function PayRollTable({
   data,
   loading,
 }: {
-  data: PayRollType[];
+  data: PayRoll[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -88,7 +88,7 @@ export function PayRollTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<PayRollType>({
+  const table = useReactTable<PayRoll>({
     data,
     columns,
     state: {

@@ -66,14 +66,14 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./Columns/deductionColumns";
-import type { DeductionType } from "@/components/Table/Schema/deductionSchema";
+import type { Deduction } from "@/types/payRollTypes/deductionTypes";
 import { Link } from "react-router-dom";
 
 export function DeductionTable({
   data,
   loading,
 }: {
-  data: DeductionType[];
+  data: Deduction[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -88,7 +88,7 @@ export function DeductionTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<DeductionType>({
+  const table = useReactTable<Deduction>({
     data,
     columns,
     state: {

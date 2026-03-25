@@ -26,8 +26,10 @@ export const useAllowanceStore = create<AllowanceTypes>((set,get) => ({
     deleteAllowance: async (ID: string) => {
         try {
           await AllowanceServices.deleteAllowance(ID);
+          await get().getAllowances(); // Tải lại danh sách sau khi xoá
           set({
                 Allowances: get().Allowances.filter((d) => d.MaPC !== ID),
+
           });
           toast.success("Xoá Phụ cấp thành công");
         } catch (error) {
@@ -35,4 +37,37 @@ export const useAllowanceStore = create<AllowanceTypes>((set,get) => ({
           toast.error("Không thể xoá Phụ cấp");
         }
       },
+     // CREATE
+    createAllowance: async (data) => {
+        try {
+            const newItem = await AllowanceServices.createAllowance(data);
+            await get().getAllowances(); // Tải lại danh sách sau khi thêm
+            set({
+                Allowances: [...get().Allowances, newItem],
+            });
+
+            toast.success("Thêm phụ cấp thành công");
+        } catch (error) {
+            console.error("Lỗi khi thêm phụ cấp", error);
+            toast.error("Không thể thêm phụ cấp");
+        }
+    },
+
+    // UPDATE
+    updateAllowance: async (ID: string, data) => {
+        try {
+            const updated = await AllowanceServices.updateAllowance(ID, data);
+            await get().getAllowances(); // Tải lại danh sách sau khi cập nhật
+            set({
+                Allowances: get().Allowances.map((d) =>
+                    d.MaPC === ID ? updated : d
+                ),
+            });
+
+            toast.success("Cập nhật phụ cấp thành công");
+        } catch (error) {
+            console.error("Lỗi khi cập nhật phụ cấp", error);
+            toast.error("Không thể cập nhật phụ cấp");
+        }
+    },
 }));
