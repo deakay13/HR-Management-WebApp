@@ -3,6 +3,7 @@ import { z } from 'zod';
 import TaiKhoan from '../../models/auth/TaiKhoan.js';
 import NhanVien from '../../models/information/NhanVien.js';
 import { Pagination } from '../../utils/paginations.js';
+import { formatVNDateTime } from '../../utils/dateFormat.js';
 import VaiTro from '../../models/auth/VaiTro.js';
 
 const accountSchema = z.object({
@@ -78,7 +79,7 @@ export const createAccount = async (req, res) => {
         })
         
         //return status No Content can't show data
-        return res.sendStatus(204);
+        return res.sendStatus(201).json({message:"Tạo Tài Khoản thành công" });
 
     } catch (error) {
         
@@ -99,14 +100,23 @@ export const readAllAccount = async ( req, res) => {
 
         const { count, rows } = await TaiKhoan.findAndCountAll(options);
 
+        const formattedRows = rows.map((acc) => ({
+            MaTK: acc.MaTK,
+            MaNV: acc.MaNV,
+            MaVT: acc.MaVT,
+            TenTaiKhoan: acc.TenTaiKhoan,
+            MatKhau: acc.MatKhau,
+            createdAt: formatVNDateTime(acc.createdAt),
+            updatedAt: formatVNDateTime(acc.updatedAt),
+        }));
+
         return res.status(200).json({
             totalItems: count,
             totalPages: limit ? Math.ceil(count / finalSize) : 1,
             currentPage: page,
             pageSize: finalSize,
-            data: rows,
+            data: formattedRows,
         });
-
 
     } catch (error) {
         //Only show error for dev, Can't show detail error for client
@@ -175,7 +185,7 @@ export const updateAccountById = async (req, res) => {
         //HashedPassword again if update new password
         let updatedPassword = account.MatKhau;
         if (MatKhau) {
-        updatedPassword = await bcrypt.hash(MatKhau, 10);
+            updatedPassword = await bcrypt.hash(MatKhau, 10);
         }
 
         //update TaiKhoan

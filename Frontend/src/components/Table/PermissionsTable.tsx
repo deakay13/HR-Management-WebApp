@@ -65,15 +65,15 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/RolesTableColumns";
-import type { Role } from "@/types/permissionTypes/RolesTypes";
+import { columns } from "./Columns/PermissionsTableColumns";
+import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
 import { Link } from "react-router-dom";
 
-export function RolesTable({
+export function PermissionsTable({
   data,
   loading,
 }: {
-  data: Role[];
+  data: Permission[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -88,7 +88,7 @@ export function RolesTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<Role>({
+  const table = useReactTable<Permission>({
     data,
     columns,
     state: {
@@ -98,7 +98,7 @@ export function RolesTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaVT.toString(),
+    getRowId: (row) => row.MaQuyen.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -137,7 +137,7 @@ export function RolesTable({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Roles">Vai trò</Link>
+                <Link to="/PortalPage/Permissions">Quyen</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>

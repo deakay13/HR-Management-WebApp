@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -32,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -65,14 +67,18 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./Columns/AccountsTableColumns";
-import type { AccountsType } from "@/components/Table/Schema/AccountsTableSchema";
+import type { Account } from "@/types/authTypes/accountType";
+import type { Role } from "@/types/permissionTypes/RolesTypes";
+
+import { useAccountsStore } from "@/stores/authStores/accountStore";
+import { useRolesStore } from "@/stores/permissionStores/RolesStore";
 import { Link } from "react-router-dom";
 
 export function AccountsTable({
   data,
   loading,
 }: {
-  data: AccountsType[];
+  data: Account[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -86,7 +92,7 @@ export function AccountsTable({
     pageIndex: 0,
     pageSize: 10,
   });
-  const table = useReactTable<AccountsType>({
+  const table = useReactTable<Account>({
     data,
     columns,
     state: {
@@ -110,6 +116,25 @@ export function AccountsTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
+  const { Roles, getRoles } = useRolesStore();
+  const { createAccount } = useAccountsStore();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newAccount = {
+      MaTK: formData.get("MaTk") as string,
+      MaNV: formData.get("MaNV") as string,
+      MaVT: formData.get("MaVT") as string,
+      TenTaiKhoan: formData.get("TenTaiKhoan") as string,
+      MatKhau: formData.get("MatKhau") as string,
+    };
+    createAccount(newAccount);
+  };
+
+  useEffect(() => {
+    getRoles();
+  }, [getRoles]);
+
 
   if (loading) {
     return <p className="text-center py-4">Đang tải dữ liệu...</p>;
@@ -183,7 +208,7 @@ export function AccountsTable({
 
           {/* Button create */}
           <Dialog>
-            <form>
+            <form onSubmit={handleSubmit}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <IconPlus />
@@ -192,7 +217,7 @@ export function AccountsTable({
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
-                  <DialogTitle>Create Account</DialogTitle>
+                  <DialogTitle>Tạo Tài Khoản</DialogTitle>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
@@ -201,11 +226,37 @@ export function AccountsTable({
                   </Field>
                   <Field>
                     <Label htmlFor="MaNV">Mã Nhân Viên</Label>
-                    <Input id="MaNV" name="MaNV" defaultValue="NVxxx" />
+                    <Select>
+                      <SelectTrigger className="w-full max-w-48">
+                        <SelectValue placeholder="Chọn NVXXX" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="apple">Apple</SelectItem>
+                          <SelectItem value="banana">Banana</SelectItem>
+                          <SelectItem value="blueberry">Blueberry</SelectItem>
+                          <SelectItem value="grapes">Grapes</SelectItem>
+                          <SelectItem value="pineapple">Pineapple</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </Field>
                   <Field>
                     <Label htmlFor="MaVT">Mã Vai Trò</Label>
-                    <Input id="MaVT" name="MaVT" defaultValue="VTxxx" />
+                    <Select>
+                      <SelectTrigger className="w-full max-w-48">
+                        <SelectValue placeholder="Chọn VTXXX" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {Roles.map((vt: Role) => (
+                            <SelectItem key={vt.MaVT} value={vt.MaVT}>
+                              {vt.MaVT} - {vt.TenVaiTro}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </Field>
                   <Field>
                     <Label htmlFor="TenTaiKhoan">Tên Tài Khoản</Label>
@@ -218,9 +269,9 @@ export function AccountsTable({
                 </FieldGroup>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                    <Button variant="outline">Huỷ</Button>
                   </DialogClose>
-                  <Button type="submit">Save changes</Button>
+                  <Button type="submit">Tạo</Button>
                 </DialogFooter>
               </DialogContent>
             </form>
