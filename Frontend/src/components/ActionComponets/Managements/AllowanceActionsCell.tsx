@@ -19,11 +19,11 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
-import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
+import { useAllowanceStore } from "@/stores/payRollStores/allowanceStores";
+import type { Allowance } from "@/types/payRollTypes/allowanceTypes";
 
-export function PermissionActionCell({ permis }: { permis: Permission }) {
-    const { deletePermission } = usePermissionsStore();
+export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
+    const { deleteAllowance } = useAllowanceStore();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -44,12 +44,16 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                     <DialogHeader>
-                    <DialogTitle>Sửa Quyền</DialogTitle>
+                    <DialogTitle>Sửa Phụ Cấp</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="TenVaiTro">Tên Quyền</Label>
-                        <Input id="TenVaiTro" name="TenVaiTro" />
+                        <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
+                        <Input id="LoaiPC" name="LoaiPC" />
+                    </Field>
+                     <Field>
+                        <Label htmlFor="SoTien">Số tiền</Label>
+                        <Input id="SoTien" name="SoTien" />
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
@@ -74,18 +78,18 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                     <DialogHeader>
-                    <DialogTitle>Xoá Vai Trò</DialogTitle>
+                    <DialogTitle>Xoá Phụ Cấp</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="MaVT">Mã Vai trò</Label>
+                        <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="outline">Huỷ</Button>
                     </DialogClose>
-                    <Button onClick={() => deletePermission(permis.MaQuyen)}>
+                    <Button onClick={() => deleteAllowance(allowance.MaPC)}>
                         Xoá
                     </Button>
                     </DialogFooter>

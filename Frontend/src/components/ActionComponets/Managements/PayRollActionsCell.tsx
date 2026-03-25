@@ -19,11 +19,11 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
-import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
+import { usePayRollStore } from "@/stores/payRollStores/payRollStores";
+import type { PayRoll } from "@/types/payRollTypes/payRollTypes";
 
-export function PermissionActionCell({ permis }: { permis: Permission }) {
-    const { deletePermission } = usePermissionsStore();
+export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
+    const { deletePayRoll } = usePayRollStore();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -44,12 +44,32 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                     <DialogHeader>
-                    <DialogTitle>Sửa Quyền</DialogTitle>
+                    <DialogTitle>Sửa Bảng Lương</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="TenVaiTro">Tên Quyền</Label>
-                        <Input id="TenVaiTro" name="TenVaiTro" />
+                        <Label htmlFor="MaLCB">Mã Lương cơ bản</Label>
+                        <Input id="MaLCB" name="MaLCB" />
+                    </Field>
+                    <Field>
+                        <Label htmlFor="MaNV">Mã Nhân Viên</Label>
+                        <Input id="MaNV" name="MaNV" />
+                    </Field>
+                    <Field>
+                        <Label htmlFor="MaKT">Mã Khấu trừ</Label>
+                        <Input id="MaKT" name="MaKT" />
+                    </Field>
+                    <Field>
+                        <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
+                        <Input id="MaPC" name="MaPC" />
+                    </Field>
+                    <Field>
+                        <Label htmlFor="MaGL">Mã Giờ Làm</Label>
+                        <Input id="MaGL" name="MaGL" />
+                    </Field>
+                    <Field>
+                        <Label htmlFor="Thang">Tháng</Label>
+                        <Input id="Thang" name="Thang"/>
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
@@ -74,18 +94,18 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                     <DialogHeader>
-                    <DialogTitle>Xoá Vai Trò</DialogTitle>
+                    <DialogTitle>Xoá Bảng Lương</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="MaVT">Mã Vai trò</Label>
+                        <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="outline">Huỷ</Button>
                     </DialogClose>
-                    <Button onClick={() => deletePermission(permis.MaQuyen)}>
+                    <Button onClick={() => deletePayRoll(payRoll.MaLCB)}>
                         Xoá
                     </Button>
                     </DialogFooter>

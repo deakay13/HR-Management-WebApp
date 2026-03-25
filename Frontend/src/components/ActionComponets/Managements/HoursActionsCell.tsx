@@ -19,11 +19,11 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
-import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
+import { useHoursStore } from "@/stores/payRollStores/hoursStores";
+import type { Hours } from "@/types/payRollTypes/hoursTypes";
 
-export function PermissionActionCell({ permis }: { permis: Permission }) {
-    const { deletePermission } = usePermissionsStore();
+export function HoursActionCell({ hours }: { hours: Hours }) {
+    const { deleteHours } = useHoursStore();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -44,12 +44,12 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                     <DialogHeader>
-                    <DialogTitle>Sửa Quyền</DialogTitle>
+                    <DialogTitle>Sửa Phụ Cấp</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="TenVaiTro">Tên Quyền</Label>
-                        <Input id="TenVaiTro" name="TenVaiTro" />
+                        <Label htmlFor="SoGioLam">Giờ làm</Label>
+                        <Input id="SoGioLam" name="SoGioLam" />
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
@@ -74,18 +74,18 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                     <DialogHeader>
-                    <DialogTitle>Xoá Vai Trò</DialogTitle>
+                    <DialogTitle>Xoá Giờ Làm</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="MaVT">Mã Vai trò</Label>
+                        <Label htmlFor="MaGL">Mã Giờ Làm</Label>
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="outline">Huỷ</Button>
                     </DialogClose>
-                    <Button onClick={() => deletePermission(permis.MaQuyen)}>
+                    <Button onClick={() => deleteHours(hours.MaGL)}>
                         Xoá
                     </Button>
                     </DialogFooter>

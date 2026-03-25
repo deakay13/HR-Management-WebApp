@@ -19,11 +19,11 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
-import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
+import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStores";
+import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
 
-export function PermissionActionCell({ permis }: { permis: Permission }) {
-    const { deletePermission } = usePermissionsStore();
+export function BaseSalaryActionCell({ baseSalary }: { baseSalary: BaseSalary }) {
+    const { deleteBaseSalary } = useBaseSalaryStore();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -44,12 +44,12 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                     <DialogHeader>
-                    <DialogTitle>Sửa Quyền</DialogTitle>
+                    <DialogTitle>Sửa Lương Cơ Bản</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="TenVaiTro">Tên Quyền</Label>
-                        <Input id="TenVaiTro" name="TenVaiTro" />
+                        <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
+                        <Input id="LuongCB" name="LuongCB" />
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
@@ -74,18 +74,18 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                     <DialogHeader>
-                    <DialogTitle>Xoá Vai Trò</DialogTitle>
+                    <DialogTitle>Xoá Lương Cơ Bản</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="MaVT">Mã Vai trò</Label>
+                        <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="outline">Huỷ</Button>
                     </DialogClose>
-                    <Button onClick={() => deletePermission(permis.MaQuyen)}>
+                    <Button onClick={() => deleteBaseSalary(baseSalary.MaLCB)}>
                         Xoá
                     </Button>
                     </DialogFooter>
@@ -96,4 +96,3 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
         </DropdownMenu>
     );
 }
-

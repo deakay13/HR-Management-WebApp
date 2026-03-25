@@ -74,19 +74,22 @@ export const createHour = async (req, res) => {
 export const getHours = async (req, res) => {
      try {
         //set page and size rows in papge
-        const { offset, limit, page, finalSize} = Pagination(req.query);
+        const { offset, limit, page, finalSize } = Pagination(req.query);
 
+        const options = {};
+        if (limit !== null) {
+        options.limit = limit;
+        options.offset = offset;
+        }
 
-        //get data and rows with limit and offset
-        const { count, rows } = await GioLam.findAndCountAll({limit, offset});
+        const { count, rows } = await GioLam.findAndCountAll(options);
 
-        //respon status 200
         return res.status(200).json({
-            totalItems: count,
-            totalPages: Math.ceil(count / finalSize),
-            currentPage: page,
-            pageSize: finalSize,
-            data: rows
+        totalItems: count,
+        totalPages: limit ? Math.ceil(count / finalSize) : 1,
+        currentPage: page,
+        pageSize: finalSize,
+        data: rows,
         });
 
     } catch (error) {

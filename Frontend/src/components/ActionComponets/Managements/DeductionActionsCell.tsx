@@ -19,11 +19,11 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
-import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
+import { useDeductionStore } from "@/stores/payRollStores/deductionStores";
+import type { Deduction } from "@/types/payRollTypes/deductionTypes";
 
-export function PermissionActionCell({ permis }: { permis: Permission }) {
-    const { deletePermission } = usePermissionsStore();
+export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
+    const { deleteDeduction } = useDeductionStore();
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -44,12 +44,16 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                     <DialogHeader>
-                    <DialogTitle>Sửa Quyền</DialogTitle>
+                    <DialogTitle>Sửa Giảm Trừ</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="TenVaiTro">Tên Quyền</Label>
-                        <Input id="TenVaiTro" name="TenVaiTro" />
+                        <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
+                        <Input id="LoaiKT" name="LoaiKT" />
+                    </Field>
+                     <Field>
+                        <Label htmlFor="PhanTram">Phần trăm</Label>
+                        <Input id="PhanTram" name="PhanTram" />
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
@@ -74,18 +78,18 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                     <DialogHeader>
-                    <DialogTitle>Xoá Vai Trò</DialogTitle>
+                    <DialogTitle>Xoá Khấu Trừ</DialogTitle>
                     </DialogHeader>
                     <FieldGroup>
                     <Field>
-                        <Label htmlFor="MaVT">Mã Vai trò</Label>
+                        <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
                     </Field>
                     </FieldGroup>
                     <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="outline">Huỷ</Button>
                     </DialogClose>
-                    <Button onClick={() => deletePermission(permis.MaQuyen)}>
+                    <Button onClick={() => deleteDeduction(deduction.MaKT)}>
                         Xoá
                     </Button>
                     </DialogFooter>
@@ -96,4 +100,3 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
         </DropdownMenu>
     );
 }
-

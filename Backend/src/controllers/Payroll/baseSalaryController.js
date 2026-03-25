@@ -113,25 +113,29 @@ export const updateBaseSalary = async (req, res) => {
 };
 export const getBaseSalaries = async (req, res) => {
     try {
-            //set page and size rows in papge
-            const { offset, limit, page, finalSize} = Pagination(req.query);
-    
-            //get data and rows with limit and offset
-            const { count, rows } = await LuongCoBan.findAndCountAll({limit, offset});
-    
-            //respon status 200
-            return res.status(200).json({
-                totalItems: count,
-                totalPages: Math.ceil(count / finalSize),
-                currentPage: page,
-                pageSize: finalSize,
-                data: rows
-            });
-    
-        } catch (error) {
-            console.error("Lỗi không tìm thấy danh sách", error);
-            return res.status(500).json({ message: "Lỗi hệ thống" });
+        //set page and size rows in papge
+        const { offset, limit, page, finalSize } = Pagination(req.query);
+
+        const options = {};
+        if (limit !== null) {
+        options.limit = limit;
+        options.offset = offset;
         }
+
+        const { count, rows } = await LuongCoBan.findAndCountAll(options);
+
+        return res.status(200).json({
+        totalItems: count,
+        totalPages: limit ? Math.ceil(count / finalSize) : 1,
+        currentPage: page,
+        pageSize: finalSize,
+        data: rows,
+        });
+
+    } catch (error) {
+        console.error("Lỗi không tìm thấy danh sách", error);
+        return res.status(500).json({ message: "Lỗi hệ thống" });
+    }
 };
 export const getBaseSalaryById = async (req, res) => {
     try {
