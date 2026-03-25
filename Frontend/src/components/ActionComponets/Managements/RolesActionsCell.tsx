@@ -21,9 +21,27 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRolesStore } from "@/stores/permissionStores/RolesStore";
-export function RolesActionsCell({ rol }: { rol: Role }) {
+import React from "react";
 
-    const { deleteRole } = useRolesStore();
+export function RolesActionsCell({ rol }: { rol: Role }) {
+    const { deleteRole, updateRoles } = useRolesStore();
+    const [formData, setFormData] = React.useState({
+        TenVaiTro: rol.TenVaiTro,
+    });  
+    //  RESET DATA
+    const handleOpenEdit = () => {
+        setFormData({
+            TenVaiTro: rol.TenVaiTro,
+        });
+    };    
+    //  HANDLE UPDATE
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await updateRoles(rol.MaVT, {
+            MaVT: rol.MaVT,
+            ...formData,
+        });
+    };
     return (
     <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -36,30 +54,38 @@ export function RolesActionsCell({ rol }: { rol: Role }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-32">
         <Dialog>
-            <form>
             <DialogTrigger asChild>
-                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleOpenEdit(); }}>
                 Sửa
                 </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm">
+                <form onSubmit={handleUpdate} className="space-y-6">
                 <DialogHeader>
                 <DialogTitle>Sửa vai trò</DialogTitle>
                 </DialogHeader>
                 <FieldGroup>
                 <Field>
                     <Label htmlFor="TenVaiTro">Tên Vai trò</Label>
-                    <Input id="TenVaiTro" name="TenVaiTro" />
+                    <Input id="TenVaiTro" name="TenVaiTro"
+                    value={formData.TenVaiTro}
+                        onChange={(e) =>
+                            setFormData({
+                                ...formData,
+                                TenVaiTro: e.target.value,
+                            })
+                        }
+                    />
                 </Field>
                 </FieldGroup>
                 <DialogFooter>
                 <DialogClose asChild>
                     <Button variant="outline">Huỷ</Button>
                 </DialogClose>
-                <Button type="submit">Lưu thay đổi</Button>
-                </DialogFooter>
+                <Button type="submit" disabled={!formData.TenVaiTro}>Lưu thay đổi</Button>
+                        </DialogFooter>
+                </form>
             </DialogContent>
-            </form>
         </Dialog>
 
         <DropdownMenuSeparator />

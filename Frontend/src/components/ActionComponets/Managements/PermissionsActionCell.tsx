@@ -21,9 +21,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
 import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
+import React from "react";
 
 export function PermissionActionCell({ permis }: { permis: Permission }) {
-    const { deletePermission } = usePermissionsStore();
+    const { deletePermission, updatePermissions } = usePermissionsStore();
+    const [formData, setFormData] = React.useState({
+        TenQuyen: permis.TenQuyen,
+    });
+    
+    //  RESET DATA
+    const handleOpenEdit = () => {
+        setFormData({
+            TenQuyen: permis.TenQuyen,
+        });
+    };
+
+    //  HANDLE UPDATE
+    const handleUpdate = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await updatePermissions(permis.MaQuyen, {
+            MaQuyen: permis.MaQuyen,
+            ...formData,
+        });
+    };
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -36,30 +56,38 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-32">
             <Dialog>
-                <form>
                 <DialogTrigger asChild>
-                    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                    Sửa
+                    <DropdownMenuItem onSelect={(e) => { e.preventDefault(); handleOpenEdit(); }}>
+                        Sửa
                     </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
-                    <DialogHeader>
-                    <DialogTitle>Sửa Quyền</DialogTitle>
-                    </DialogHeader>
-                    <FieldGroup>
-                    <Field>
-                        <Label htmlFor="TenVaiTro">Tên Quyền</Label>
-                        <Input id="TenVaiTro" name="TenVaiTro" />
-                    </Field>
-                    </FieldGroup>
-                    <DialogFooter>
-                    <DialogClose asChild>
-                        <Button variant="outline">Huỷ</Button>
-                    </DialogClose>
-                    <Button type="submit">Lưu Thay đổi</Button>
-                    </DialogFooter>
+                    <form onSubmit={handleUpdate} className="space-y-6">
+                        <DialogHeader>
+                            <DialogTitle>Sửa Quyền</DialogTitle>
+                        </DialogHeader>
+                        <FieldGroup>
+                            <Field>
+                                <Label htmlFor="TenVaiTro">Tên Quyền</Label>
+                                    <Input id="TenVaiTro" name="TenVaiTro"
+                                        value={formData.TenQuyen}
+                                        onChange={(e) =>
+                                            setFormData({
+                                                ...formData,
+                                                TenQuyen: e.target.value,
+                                            })
+                                        }
+                                    />
+                            </Field>
+                        </FieldGroup>
+                        <DialogFooter>
+                            <DialogClose asChild>
+                                <Button variant="outline">Huỷ</Button>
+                            </DialogClose>
+                                <Button type="submit"disabled={!formData.TenQuyen}>Lưu Thay đổi</Button>
+                        </DialogFooter>
+                    </form>
                 </DialogContent>
-                </form>
             </Dialog>
 
             <DropdownMenuSeparator />

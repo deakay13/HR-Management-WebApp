@@ -131,15 +131,9 @@ export function BaseSalaryTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Phân quyền</BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/BaseSalaries">Lương cơ bản</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Lương cơ bản</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         {/*button */}

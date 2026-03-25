@@ -5,65 +5,65 @@ import { PayRollActionCell  } from "@/components/ActionComponets/Managements/Pay
 export const columns: ColumnDef<PayRoll>[] = [
   {
     accessorKey: "MaBL",
-    header: () => <div className="w-20 text-center">Mã Bảng Lương</div>,
+    header: () => <div className="w-30 text-center">Mã Bảng Lương</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaBL}</div>
+      <div className="w-30 text-center h-8">{row.original.MaBL}</div>
     ),
   },
   {
     accessorKey: "MaNV",
-    header: () => <div className="w-20 text-center">Mã Nhân Viên</div>,
+    header: () => <div className="w-30 text-center">Mã Nhân Viên</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaNV }</div>
+      <div className="w-30 text-center h-8">{row.original.MaNV}</div>
     ),
   },
   {
     accessorKey: "MaKT",
-    header: () => <div className="w-20 text-center">Mã Khấu Trừ</div>,
+    header: () => <div className="w-30 text-center">Mã Khấu Trừ</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaKT }</div>
+      <div className="w-30 text-center h-8">{row.original.MaKT}</div>
     ),
   },
-   {
+  {
     accessorKey: "MaPC",
-    header: () => <div className="w-20 text-center">Mã Phụ Cấp</div>,
+    header: () => <div className="w-30 text-center">Mã Phụ Cấp</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaPC }</div>
+      <div className="w-30 text-center h-8">{row.original.MaPC}</div>
     ),
   },
-   {
+  {
     accessorKey: "MaGL",
-    header: () => <div className="w-20 text-center">Mã Giờ Làm</div>,
+    header: () => <div className="w-30 text-center">Mã Giờ Làm</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaGL }</div>
+      <div className="w-30 text-center h-8">{row.original.MaGL}</div>
     ),
   },
-   {
+  {
     accessorKey: "MaLCB",
-    header: () => <div className="w-20 text-center">Mã Lương Cơ Bản</div>,
+    header: () => <div className="w-30 text-center">Mã Lương Cơ Bản</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaLCB }</div>
+      <div className="w-30 text-center h-8">{row.original.MaLCB}</div>
     ),
   },
-   {
+  {
     accessorKey: "Thang",
-    header: () => <div className="w-20 text-center">Tháng</div>,
+    header: () => <div className="w-30 text-center">Tháng</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.Thang }</div>
+      <div className="w-30 text-center h-8">{row.original.Thang}</div>
     ),
   },
-   {
+  {
     accessorKey: "NgayTinhLuong",
     header: () => <div className="w-20 text-center">Ngày Tính Lương</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.NgayTinhLuong }</div>
+      <div className="w-30 text-center h-8">{row.original.NgayTinhLuong}</div>
     ),
   },
-   {
+  {
     accessorKey: "TongLuong",
-    header: () => <div className="w-20 text-center">Tổng Lương</div>,
+    header: () => <div className="w-30 text-center">Tổng Lương</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.TongLuong }</div>
+      <div className="w-30 text-center h-8">{row.original.TongLuong}</div>
     ),
   },
   {

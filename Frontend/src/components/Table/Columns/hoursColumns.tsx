@@ -5,16 +5,16 @@ import { HoursActionCell  } from "@/components/ActionComponets/Managements/Hours
 export const columns: ColumnDef<Hours>[] = [
   {
     accessorKey: "MaGL",
-    header: () => <div className="w-20 text-center">Mã Giờ Làm </div>,
+    header: () => <div className="w-30 text-center">Mã Giờ Làm </div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaGL}</div>
+      <div className="w-30 text-center h-8">{row.original.MaGL}</div>
     ),
   },
   {
     accessorKey: "SoGioLam",
-    header: () => <div className="w-20 text-center">Số Giờ Làm</div>,
+    header: () => <div className="w-30 text-center">Số Giờ Làm</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.SoGioLam }</div>
+      <div className="w-30 text-center h-8">{row.original.SoGioLam}</div>
     ),
   },
   {

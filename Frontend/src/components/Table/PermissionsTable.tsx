@@ -68,6 +68,7 @@ import { Input } from "@/components/ui/input";
 import { columns } from "./Columns/PermissionsTableColumns";
 import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
 import { Link } from "react-router-dom";
+import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
 
 export function PermissionsTable({
   data,
@@ -83,6 +84,20 @@ export function PermissionsTable({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const { createPermissions } = usePermissionsStore();
+  const [formData, setFormData] = React.useState({
+    MaQuyen: "",
+    TenQuyen: "",
+  });
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createPermissions(formData);
+    setFormData({
+        MaQuyen: "",
+        TenQuyen: "",
+      });
+  };
+
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -131,15 +146,9 @@ export function PermissionsTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Phân quyền</BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Permissions">Quyen</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Quyền</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         {/*button */}
@@ -184,35 +193,64 @@ export function PermissionsTable({
 
           {/* Button create */}
           <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setFormData({
+                    MaQuyen: "",
+                    TenQuyen: "",
+                  })
+                }>
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-sm">
+              <form onSubmit={handleCreate} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle>Tạo vai trò</DialogTitle>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="MaVT">Mã Vai trò</Label>
-                    <Input id="MaVT" name="MaVT" defaultValue="VTxxx" />
+                    <Label htmlFor="MaQuyen">Mã Quyền</Label>
+                    <Input
+                      id="MaQuyen"
+                      name="MaQuyen"
+                      defaultValue="MQxxx"
+                      value={formData.MaQuyen}
+                      onChange={(e) =>
+                        setFormData({ ...formData, MaQuyen: e.target.value })
+                      }
+                    />
                   </Field>
                   <Field>
-                    <Label htmlFor="TenVaiTro">Tên Vai trò</Label>
-                    <Input id="TenVaiTro" name="TenVaiTro" />
+                    <Label htmlFor="TenQuyen">Tên Quyền</Label>
+                    <Input
+                      id="TenQuyen"
+                      name="TenQuyen"
+                      value={formData.TenQuyen}
+                      onChange={(e) =>
+                        setFormData({ ...formData, TenQuyen: e.target.value })
+                      }
+                    />
                   </Field>
                 </FieldGroup>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                    <Button variant="outline">Huỷ</Button>
                   </DialogClose>
-                  <Button type="submit">Save changes</Button>
+                  <Button
+                    type="submit"
+                    disabled={
+                      !formData.MaQuyen || !formData.TenQuyen
+                    }>
+                    Thêm
+                  </Button>
                 </DialogFooter>
-              </DialogContent>
-            </form>
+              </form>
+            </DialogContent>
           </Dialog>
         </div>
       </div>

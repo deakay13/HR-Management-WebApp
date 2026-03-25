@@ -68,6 +68,7 @@ import { Input } from "@/components/ui/input";
 import { columns } from "./Columns/RolesTableColumns";
 import type { Role } from "@/types/permissionTypes/RolesTypes";
 import { Link } from "react-router-dom";
+import { useRolesStore } from "@/stores/permissionStores/RolesStore";
 
 export function RolesTable({
   data,
@@ -83,6 +84,20 @@ export function RolesTable({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+const { createRoles } = useRolesStore();
+  const [formData, setFormData] = React.useState({
+    MaVT: "",
+    TenVaiTro: "",
+  });
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createRoles(formData);
+    setFormData({
+      MaVT: "",
+      TenVaiTro: "",
+    });
+  };
+
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -131,15 +146,10 @@ export function RolesTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Phân quyền</BreadcrumbLink>
+            <BreadcrumbItem>Phân quyền
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Roles">Vai trò</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Vai trò</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         {/*button */}
@@ -184,35 +194,62 @@ export function RolesTable({
 
           {/* Button create */}
           <Dialog>
-            <form>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFormData({
+                      MaVT: "",
+                      TenVaiTro: "",
+                    })
+                  }>
                   <IconPlus />
                   <span className="hidden lg:inline">Tạo mới</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
+                <form onSubmit={handleCreate} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle>Tạo vai trò</DialogTitle>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
                     <Label htmlFor="MaVT">Mã Vai trò</Label>
-                    <Input id="MaVT" name="MaVT" defaultValue="VTxxx" />
+                    <Input
+                      id="MaVT"
+                      name="MaVT"
+                      defaultValue="VTxxx"
+                      value={formData.MaVT}
+                      onChange={(e) =>
+                        setFormData({ ...formData, MaVT: e.target.value })
+                      }
+                    />
                   </Field>
                   <Field>
                     <Label htmlFor="TenVaiTro">Tên Vai trò</Label>
-                    <Input id="TenVaiTro" name="TenVaiTro" />
+                    <Input
+                      id="TenVaiTro"
+                      name="TenVaiTro"
+                      value={formData.TenVaiTro}
+                      onChange={(e) =>
+                        setFormData({ ...formData, TenVaiTro: e.target.value })
+                      }
+                    />
                   </Field>
                 </FieldGroup>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                    <Button variant="outline">Huỷ</Button>
                   </DialogClose>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
+                  <Button
+                    type="submit"
+                    disabled={!formData.MaVT|| !formData.TenVaiTro}>
+                    Thêm
+                  </Button>
+                  </DialogFooter>
+                </form>
               </DialogContent>
-            </form>
           </Dialog>
         </div>
       </div>

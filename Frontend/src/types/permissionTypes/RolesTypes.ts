@@ -13,6 +13,8 @@ export interface RolesTypes {
   Roles: Role[];
   initializing: boolean;
   clearState: () => void;
+  createRoles: (data: Role) => Promise<void>;
   getRoles: () => Promise<void>;
+  updateRoles: (ID: string, data: Role) => Promise<void>;
   deleteRole: (ID: string) => Promise<void>;
 }

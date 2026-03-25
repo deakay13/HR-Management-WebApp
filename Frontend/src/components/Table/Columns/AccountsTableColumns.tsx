@@ -5,30 +5,30 @@ import { AccountsActionCell } from "@/components/ActionComponets/Managements/Acc
 export const columns: ColumnDef<Account>[] = [
   {
     accessorKey: "MaTK",
-    header: () => <div className="w-20 text-center">Mã Tài Khoản</div>,
+    header: () => <div className="w-30 text-center">Mã Tài Khoản</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaTK}</div>
+      <div className="w-30 text-center h-8">{row.original.MaTK}</div>
     ),
   },
   {
     accessorKey: "MaNV",
-    header: () => <div className="w-20 text-center">Mã Nhân Viên</div>,
+    header: () => <div className="w-30 text-center">Mã Nhân Viên</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaNV}</div>
+      <div className="w-30 text-center h-8">{row.original.MaNV}</div>
     ),
   },
   {
     accessorKey: "MaVT",
-    header: () => <div className="w-20 text-center">Mã Vai Trò</div>,
+    header: () => <div className="w-30 text-center">Mã Vai Trò</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaVT}</div>
+      <div className="w-30 text-center h-8">{row.original.MaVT}</div>
     ),
   },
   {
     accessorKey: "TenTaiKhoan",
-    header: () => <div className="w-20 text-center">Tên Tài Khoản</div>,
+    header: () => <div className="w-30 text-center">Tên Tài Khoản</div>,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.TenTaiKhoan}</div>
+      <div className="w-30 text-center h-8">{row.original.TenTaiKhoan}</div>
     ),
   },
   {
