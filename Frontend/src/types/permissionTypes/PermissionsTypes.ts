@@ -11,6 +11,8 @@ export interface PermissionsTypes {
   Permissions: Permission[];
   initializing: boolean;
   clearState: () => void;
+  createPermissions: (data: Permission) => Promise<void>;
   getPermissions: () => Promise<void>;
+  updatePermissions: (ID: string, data: Permission) => Promise<void>;
   deletePermission: (ID: string) => Promise<void>;
 }

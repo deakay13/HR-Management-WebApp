@@ -15,7 +15,6 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
         try {
             const data = await PayRollServices.getPayRolls();
             set({ PayRolls: data });
-            toast.success("Lấy danh sách PayRolls thành công");
         } catch (error) {
             console.error("Lỗi khi lấy danh sách PayRolls", error);
             toast.error("Không thể lấy danh sách PayRolls");
@@ -23,16 +22,16 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
             set({ initializing: false });
         }
     },
-     deletePayRoll: async (ID: string) => {
-            try {
-              await PayRollServices.deletePayRoll(ID);
-              set({
-                    PayRolls: get().PayRolls.filter((d) => d.MaBL !== ID),
-              });
-              toast.success("Xoá Bảng lương thành công");
-            } catch (error) {
-              console.error("Lỗi khi xoá Bảng lương", error);
-              toast.error("Không thể xoá Bảng lương");
-            }
-          },
+    deletePayRoll: async (ID: string) => {
+        try {
+            await PayRollServices.deletePayRoll(ID);
+            set({
+                PayRolls: get().PayRolls.filter((d) => d.MaBL !== ID),
+            });
+            toast.success("Xoá Bảng lương thành công");
+        } catch (error) {
+            console.error("Lỗi khi xoá Bảng lương", error);
+            toast.error("Không thể xoá Bảng lương");
+        }
+    },
 }));

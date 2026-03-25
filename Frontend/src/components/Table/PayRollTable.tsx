@@ -131,15 +131,9 @@ export function PayRollTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Phân quyền</BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/PayRoll">Bảng lương</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Bảng lương</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         {/*button */}

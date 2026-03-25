@@ -14,7 +14,6 @@ export const useHoursStore = create<HoursTypes>((set,get) => ({
         try {
             const data = await HoursServices.getHours();
             set({ Hours: data });
-            toast.success("Lấy danh sách Hours thành công");
         } catch (error) {
             console.error("Lỗi khi lấy danh sách Hours", error);
             toast.error("Không thể lấy danh sách Hours");

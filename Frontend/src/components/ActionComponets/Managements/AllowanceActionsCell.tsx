@@ -70,16 +70,13 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                 Sửa
                 </DropdownMenuItem>
             </DialogTrigger>
-
             <DialogContent className="sm:max-w-md">
             <form onSubmit={handleUpdate} className="space-y-6">
-                
                 <DialogHeader>
                 <DialogTitle className="text-lg font-semibold">
                     Sửa Phụ Cấp
                 </DialogTitle>
                 </DialogHeader>
-
                 <div className="space-y-4">
                 {/* LoaiPC */}
                 <div className="flex flex-col gap-2">
@@ -96,7 +93,6 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     }
                     />
                 </div>
-
                 {/* SoTien */}
                 <div className="flex flex-col gap-2">
                     <Label htmlFor="SoTien">Số tiền</Label>
@@ -114,14 +110,12 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     />
                 </div>
                 </div>
-
                 <DialogFooter className="gap-2">
                 <DialogClose asChild>
                     <Button type="button" variant="outline" className="w-full sm:w-auto">
                     Huỷ
                     </Button>
                 </DialogClose>
-
                 <Button
                     type="submit"
                     className="w-full sm:w-auto"
@@ -130,7 +124,6 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     Lưu Thay đổi
                 </Button>
                 </DialogFooter>
-
             </form>
             </DialogContent>
             </Dialog>

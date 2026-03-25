@@ -28,7 +28,6 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
     try {
       const data = await accountsServices.getAccounts();
       set({ accounts: data });
-      toast.success("Lấy danh sách tài khoản thành công");
     } catch (error) {
       console.error("Lỗi khi lấy danh sách tài khoản", error);
       toast.error("Không thể lấy danh sách tài khoản");

@@ -15,7 +15,6 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set,get) => ({
         try {
             const data = await BaseSalaryServices.getBaseSalaries();
             set({ BaseSalaries: data });
-            toast.success("Lấy danh sách BaseSalaries thành công");
         } catch (error) {
             console.error("Lỗi khi lấy danh sách BaseSalaries", error);
             toast.error("Không thể lấy danh sách BaseSalaries");

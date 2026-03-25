@@ -62,7 +62,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "./Columns/allowancesColumns";
@@ -152,15 +151,9 @@ export function AllowanceTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Phân quyền</BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Allowances">Phụ cấp</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phụ cấp</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         {/*button */}
@@ -245,7 +238,6 @@ export function AllowanceTable({
                   }
                 />
               </div>
-
               {/* LoaiPC */}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
@@ -259,7 +251,6 @@ export function AllowanceTable({
                   }
                 />
               </div>
-
               {/* SoTien */}
               <div className="flex flex-col gap-2">
                 <Label htmlFor="SoTien">Số Tiền</Label>
