@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { toast } from "sonner";
 import { HoursServices } from "@/services/payRollServices/hoursServices";
 import type { HoursTypes } from "@/types/payRollTypes/hoursTypes";
-export const useHoursStore = create<HoursTypes>((set) => ({
+export const useHoursStore = create<HoursTypes>((set,get) => ({
     Hours: [],
     initializing: true,
     clearState: () => {
@@ -22,4 +22,16 @@ export const useHoursStore = create<HoursTypes>((set) => ({
             set({ initializing: false });
         }
     },
+     deleteHours: async (ID: string) => {
+            try {
+              await HoursServices.deleteHour(ID);
+              set({
+                    Hours: get().Hours.filter((d) => d.MaGL !== ID),
+              });
+              toast.success("Xoá Giờ làm thêm thành công");
+            } catch (error) {
+              console.error("Lỗi khi xoá Giờ làm thêm", error);
+              toast.error("Không thể xoá Giờ làm thêm");
+            }
+          },
 }));

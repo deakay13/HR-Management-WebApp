@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { toast } from "sonner";
 import { DeductionServices } from "@/services/payRollServices/deductionServices";
-import type { DeductionsTypes } from "@/types/payRollTypes/deductionTypes";
+import type { DeductionTypes } from "@/types/payRollTypes/deductionTypes";
 
-export const useDeductionStore = create<DeductionsTypes>((set) => ({
+export const useDeductionStore = create<DeductionTypes>((set,get) => ({
     Deductions: [],
     initializing: true,
     clearState: () => {
@@ -23,4 +23,16 @@ export const useDeductionStore = create<DeductionsTypes>((set) => ({
             set({ initializing: false });
         }
     },
+     deleteDeduction: async (ID: string) => {
+            try {
+              await DeductionServices.deleteDeduction(ID);
+              set({
+                    Deductions: get().Deductions.filter((d) => d.MaKT !== ID),
+              });
+              toast.success("Xoá Phụ cấp thành công");
+            } catch (error) {
+              console.error("Lỗi khi xoá Phụ cấp", error);
+              toast.error("Không thể xoá Phụ cấp");
+            }
+          },
 }));

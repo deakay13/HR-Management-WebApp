@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { AllowanceServices } from "@/services/payRollServices/allowanceServices";
 import type { AllowanceTypes } from "@/types/payRollTypes/allowanceTypes";
 
-export const useAllowanceStore = create<AllowanceTypes>((set) => ({
+export const useAllowanceStore = create<AllowanceTypes>((set,get) => ({
     Allowances: [],
     initializing: true,
     clearState: () => {
@@ -23,4 +23,16 @@ export const useAllowanceStore = create<AllowanceTypes>((set) => ({
             set({ initializing: false });
         }
     },
+    deleteAllowance: async (ID: string) => {
+        try {
+          await AllowanceServices.deleteAllowance(ID);
+          set({
+                Allowances: get().Allowances.filter((d) => d.MaPC !== ID),
+          });
+          toast.success("Xoá Phụ cấp thành công");
+        } catch (error) {
+          console.error("Lỗi khi xoá Phụ cấp", error);
+          toast.error("Không thể xoá Phụ cấp");
+        }
+      },
 }));

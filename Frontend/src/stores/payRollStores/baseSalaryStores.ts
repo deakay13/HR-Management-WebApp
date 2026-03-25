@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { BaseSalaryServices } from "@/services/payRollServices/baseSalaryServices";
 import type { BaseSalaryTypes } from "@/types/payRollTypes/baseSalaryTypes";
 
-export const useBaseSalaryStore = create<BaseSalaryTypes>((set) => ({
+export const useBaseSalaryStore = create<BaseSalaryTypes>((set,get) => ({
     BaseSalaries: [],
     initializing: true,
     clearState: () => {
@@ -23,4 +23,16 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set) => ({
             set({ initializing: false });
         }
     },
+     deleteBaseSalary: async (ID: string) => {
+            try {
+              await BaseSalaryServices.deleteBaseSalary(ID);
+              set({
+                    BaseSalaries: get().BaseSalaries.filter((d) => d.MaLCB !== ID),
+              });
+              toast.success("Xoá Lương cơ bản thành công");
+            } catch (error) {
+              console.error("Lỗi khi xoá Lương cơ bản", error);
+              toast.error("Không thể xoá Lương cơ bản");
+            }
+          },
 }));

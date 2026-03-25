@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { PayRollServices } from "@/services/payRollServices/payRollServices";
 import type { PayRollTypes } from "@/types/payRollTypes/payRollTypes";
 
-export const usePayRollStore = create<PayRollTypes>((set) => ({
+export const usePayRollStore = create<PayRollTypes>((set,get) => ({
     PayRolls: [],
     initializing: true,
     clearState: () => {
@@ -23,4 +23,16 @@ export const usePayRollStore = create<PayRollTypes>((set) => ({
             set({ initializing: false });
         }
     },
+     deletePayRoll: async (ID: string) => {
+            try {
+              await PayRollServices.deletePayRoll(ID);
+              set({
+                    PayRolls: get().PayRolls.filter((d) => d.MaBL !== ID),
+              });
+              toast.success("Xoá Bảng lương thành công");
+            } catch (error) {
+              console.error("Lỗi khi xoá Bảng lương", error);
+              toast.error("Không thể xoá Bảng lương");
+            }
+          },
 }));
