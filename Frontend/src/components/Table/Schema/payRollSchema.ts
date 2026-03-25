@@ -6,10 +6,10 @@ export const PayRollSchema = z.object({
     MaLCB: z.string(),
     MaGL: z.string(),
     MaKT: z.string(),
-    MaVT: z.string(),
-    Thang: z.number(),
+    MaPC: z.string(),
+    Thang: z.string(),
     NgayTinhLuong: z.string(),
-    TongLuong: z.number(),
+    TongLuong: z.string(),
     TrangThai: z.string(),
 });
 export type PayRollType = z.infer<typeof PayRollSchema>;

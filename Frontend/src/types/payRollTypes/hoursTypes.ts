@@ -1,5 +1,5 @@
 export interface Hours {
-    MaGl: string;
+    MaGL: string;
     SoGioLam: number;
 }
 export interface HoursTypes {

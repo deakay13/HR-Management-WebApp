@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 export const columns: ColumnDef<BaseSalaryType>[] = [
   {
     accessorKey: "MaLCB",
-    header: () => <div className="w-20 text-center">Mã Lương Cơ Bản</div>,
+    header: () => <div className="w-20 text-center">Mã LCB</div>,
     cell: ({ row }) => (
       <div className="w-20 text-center h-8">{row.original.MaLCB}</div>
     ),
@@ -59,20 +59,16 @@ export const columns: ColumnDef<BaseSalaryType>[] = [
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
                 <DialogHeader>
-                  <DialogTitle>Tạo phụ cấp</DialogTitle>
+                  <DialogTitle>Sửa Lương Cơ Bản</DialogTitle>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
-                    <Input id="MaPC" name="MaPC" defaultValue="PCxxx" />
+                    <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
+                    <Input id="MaLCB" name="MaLCB" defaultValue="LCBxxx" />
                   </Field>
                   <Field>
-                    <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
-                    <Input id="LoaiPC" name="LoaiPC" />
-                  </Field>
-                   <Field>
-                    <Label htmlFor="SoTien">Số Tiền</Label>
-                    <Input id="SoTien" name="SoTien" />
+                    <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
+                    <Input id="LuongCB" name="LuongCB" />
                   </Field>
                 </FieldGroup>
                 <DialogFooter>
@@ -97,11 +93,11 @@ export const columns: ColumnDef<BaseSalaryType>[] = [
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
-                  <DialogTitle>Xoá Phụ Cấp</DialogTitle>
+                  <DialogTitle>Xoá Lương Cơ Bản</DialogTitle>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
+                    <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
                   </Field>
                 </FieldGroup>
                 <DialogFooter>

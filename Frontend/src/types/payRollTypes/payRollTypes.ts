@@ -5,9 +5,9 @@ export interface PayRoll {
     MaPC: string;
     MaKT: string;
     MaGL: string;
-    Thang: Date;
+    Thang: string;
     NgayTinhLuong: string;
-    TongLuong: number;
+    TongLuong: string;
     TrangThai: string;
 }
 export interface PayRollTypes {
