@@ -10,7 +10,6 @@ const getAllEmployees = async (req, res) => {
         attributes: ['MaPB', 'TenPB']
       }] 
     });
-    console.log('Fetched Employees:', employees.length);
     res.status(200).json(employees);
   } catch (error) {
     console.error('Error fetching Employees:', error);
