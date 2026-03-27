@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { toast } from "sonner";
 import { EmployeeServices } from "@/services/informationServices/employeeServices";
 import type { Employee, EmployeeTypes } from "@/types/informationTypes/employeeTypes";
 
@@ -21,10 +20,8 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
         initializing: false,
       }));
 
-      toast.success("Tạo nhân viên thành công");
     } catch (error: any) {
       console.error("Lỗi khi tạo nhân viên:", error);
-      toast.error(error?.response?.data?.message || "Không thể tạo nhân viên");
       set({ initializing: false });
     }
   },
@@ -34,10 +31,8 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
     try {
       const data = await EmployeeServices.getEmployees();
       set({ employees: Array.isArray(data) ? data : [] }); 
-      toast.success("Lấy danh sách nhân viên thành công");
     } catch (error: any) {
       set({ employees: [] }); 
-      toast.error("Không thể lấy danh sách nhân viên");
     } finally {
       set({ initializing: false });
     }
@@ -55,10 +50,8 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
         initializing: false,
       }));
 
-      toast.success("Cập nhật nhân viên thành công");
     } catch (error: any) {
       console.error("Lỗi khi cập nhật nhân viên:", error);
-      toast.error("Không thể cập nhật nhân viên");
       set({ initializing: false });
     }
   },
@@ -73,10 +66,8 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
         initializing: false,
       }));
 
-      toast.success("Xoá nhân viên thành công");
     } catch (error: any) {
       console.error("Lỗi khi xoá nhân viên", error);
-      toast.error("Không thể xoá nhân viên");
       set({ initializing: false });
     }
   },
