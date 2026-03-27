@@ -62,7 +62,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "../Columns/workspace/allowancesColumns";
@@ -152,15 +151,9 @@ export function AllowanceTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Phân quyền</BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Allowances">Phụ cấp</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phụ cấp</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         {/*button */}
@@ -244,8 +237,12 @@ export function AllowanceTable({
                     setFormData({ ...formData, MaPC: e.target.value })
                   }
                 />
+<<<<<<< HEAD:Frontend/src/components/Table/workspaceTable/AllowanceTable.tsx
               </FieldGroup>
 
+=======
+              </div>
+>>>>>>> 1bf1f85764b14fb1bbe23ed10e3ac065d917933b:Frontend/src/components/Table/AllowanceTable.tsx
               {/* LoaiPC */}
               <FieldGroup className="flex flex-col gap-4">
                 <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
@@ -258,8 +255,12 @@ export function AllowanceTable({
                     setFormData({ ...formData, LoaiPC: e.target.value })
                   }
                 />
+<<<<<<< HEAD:Frontend/src/components/Table/workspaceTable/AllowanceTable.tsx
               </FieldGroup>
 
+=======
+              </div>
+>>>>>>> 1bf1f85764b14fb1bbe23ed10e3ac065d917933b:Frontend/src/components/Table/AllowanceTable.tsx
               {/* SoTien */}
               <FieldGroup className="flex flex-col gap-4">
                 <Label htmlFor="SoTien">Số Tiền</Label>

@@ -15,7 +15,6 @@ export const useDeductionStore = create<DeductionTypes>((set,get) => ({
         try {
             const data = await DeductionServices.getDeductions();
             set({ Deductions: data });
-            toast.success("Lấy danh sách Deductions thành công");
         } catch (error) {
             console.error("Lỗi khi lấy danh sách Deductions", error);
             toast.error("Không thể lấy danh sách Deductions");

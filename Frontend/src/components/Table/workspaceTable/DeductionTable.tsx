@@ -143,15 +143,9 @@ export function DeductionTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Phân quyền</BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Deductions">Khấu trừ</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Khấu trừ</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
         {/*button */}

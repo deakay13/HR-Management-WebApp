@@ -31,8 +31,14 @@ export interface AllowanceTypes {
   clearState: () => void;
   getAllowances: () => Promise<void>;
   deleteAllowance: (ID: string) => Promise<void>;
+<<<<<<< HEAD
 
 
   createAllowance: (data: AllowanceInput) => Promise<void>;
   updateAllowance: (ID: string, data: AllowanceInput) => Promise<void>;
 }
+=======
+  createAllowance: (data: Allowance) => Promise<void>;
+  updateAllowance: (ID: string, data: Allowance) => Promise<void>;
+}
+>>>>>>> 1bf1f85764b14fb1bbe23ed10e3ac065d917933b

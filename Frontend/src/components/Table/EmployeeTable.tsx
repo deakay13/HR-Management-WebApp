@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -21,7 +22,6 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -33,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -52,11 +53,12 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../../ui/breadcrumb";
+} from "@/components/ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -65,34 +67,23 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "../Columns/workspace/baseSalaryColumns";
-import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
-import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStores";
+import { employeeColumns } from "./Columns/EmployeesTableColumns";
+import type { Employee } from "@/types/informationTypes/employeeTypes";
+
+import { useEmployeeStore } from "@/stores/informationStores/employeesStores";
+import { useDepartmentStore } from "@/stores/informationStores/departmentStores";
 import { Link } from "react-router-dom";
 
-export function BaseSalaryTable({
-  data,
+export function EmployeeTable({
+  data = [],
   loading,
 }: {
-  data: BaseSalary[];
+  data: Employee[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-    const { createBaseSalary } = useBaseSalaryStore();
-        // STATE
-    const [formData, setFormData] = React.useState({
-      MaLCB: "",
-      LuongCB: 0,
-    });
-
-    // HANDLE CREATE
-    const handleCreate = async (e: React.FormEvent) => {
-      e.preventDefault();
-
-      await createBaseSalary(formData);
-    };
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
@@ -101,10 +92,13 @@ export function BaseSalaryTable({
     pageIndex: 0,
     pageSize: 10,
   });
+  const [openCreate, setOpenCreate] = React.useState(false);
+  const [selectedDept, setSelectedDept] = React.useState("");
+  const [selectedGender, setSelectedGender] = React.useState("");
 
-  const table = useReactTable<BaseSalary>({
-    data,
-    columns,
+  const table = useReactTable<Employee>({
+    data: data || [],
+    columns: employeeColumns,
     state: {
       sorting,
       columnVisibility,
@@ -112,7 +106,7 @@ export function BaseSalaryTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaLCB.toString(),
+    getRowId: (row) => row.MaNV.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -127,6 +121,34 @@ export function BaseSalaryTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
+  const { departments, getDepartments } = useDepartmentStore();
+  const { createEmployee } = useEmployeeStore();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const newEmployee = {
+      MaNV: formData.get("MaNV") as string,
+      MaPB: selectedDept, 
+      HoVaTen: formData.get("HoVaTen") as string,
+      GioiTinh: selectedGender as "Nam" | "Nữ" | "Khác", 
+      NgaySinh: formData.get("NgaySinh") as string,
+      SDT: formData.get("SDT") as string,
+      NgayVaoLam: formData.get("NgayVaoLam") as string,
+      DiaChi: formData.get("DiaChi") as string,
+      HinhAnh: formData.get("HinhAnh") as string || "",
+    };
+    
+    await createEmployee(newEmployee);
+    setOpenCreate(false);
+    setSelectedDept("");
+    setSelectedGender("");
+  };
+
+  useEffect(() => {
+    getDepartments();
+  }, [getDepartments]);
+
   if (loading) {
     return <p className="text-center py-4">Đang tải dữ liệu...</p>;
   }
@@ -136,7 +158,6 @@ export function BaseSalaryTable({
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
-        {/*breadcumm */}
         <Breadcrumb className="hidden @4xl/main:flex">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -145,12 +166,19 @@ export function BaseSalaryTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink>Thông tin</BreadcrumbLink>
+            </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>Lương cơ bản</BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/PortalPage/Employees">Nhân viên</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        {/*button */}
+
+        {/* ================== ACTIONS (FILTER) ================== */}
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -172,6 +200,7 @@ export function BaseSalaryTable({
                   const visibleColumns = table
                     .getAllColumns()
                     .filter((col) => col.getIsVisible());
+
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
@@ -179,10 +208,11 @@ export function BaseSalaryTable({
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => {
                         if (!value && visibleColumns.length <= 3) {
-                          return; // không làm gì
+                          return;
                         }
                         column.toggleVisibility(!!value);
-                      }}>
+                      }}
+                    >
                       {column.id}
                     </DropdownMenuCheckboxItem>
                   );
@@ -190,88 +220,99 @@ export function BaseSalaryTable({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Button create */}
-          <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setFormData({
-                  MaLCB: "",
-                  LuongCB: 0,
-                })
-              }
-            >
-              <IconPlus />
-              <span className="hidden lg:inline">Tạo mới</span>
-            </Button>
-          </DialogTrigger>
-
-          <DialogContent className="sm:max-w-md">
-            <form onSubmit={handleCreate} className="space-y-6">
-
+          {/* ================== CREATE NEW EMPLOYEE DIALOG ================== */}
+          <Dialog open={openCreate} onOpenChange={setOpenCreate}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
+              </Button>
+            </DialogTrigger>
+            
+            <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  Tạo lương cơ bản
-                </DialogTitle>
+                <DialogTitle>Tạo nhân viên mới</DialogTitle>
+                <DialogDescription className="sr-only">Nhập thông tin nhân viên</DialogDescription>
               </DialogHeader>
-
               
-              <FieldGroup className="space-y-4">
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
-                  <Input
-                    id="MaLCB"
-                    placeholder="VD: LCB001"
-                    className="h-10"
-                    value={formData.MaLCB}
-                    onChange={(e) =>
-                      setFormData({ ...formData, MaLCB: e.target.value })
-                    }
-                  />
-                </Field>
-
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
-                  <Input
-                    id="LuongCB"
-                    type="number"
-                    placeholder="VD: 5000000"
-                    className="h-10"
-                    value={formData.LuongCB}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        LuongCB: Number(e.target.value),
-                      })
-                    }
-                  />
-                </Field>
-              </FieldGroup>
-
-              <DialogFooter className="gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Huỷ
-                  </Button>
-                </DialogClose>
-
-                <Button
-                  type="submit"
-                  disabled={!formData.MaLCB || formData.LuongCB <= 0}
-                >
-                  Tạo mới
-                </Button>
-              </DialogFooter>
-
-            </form>
-          </DialogContent>
-        </Dialog>
+              <form onSubmit={handleSubmit}>
+                <FieldGroup>
+                  <Field>
+                    <Label htmlFor="MaNV">Mã nhân viên</Label>
+                    <Input id="MaNV" name="MaNV" placeholder="NVxxx" required />
+                  </Field>
+                  <Field>
+                    <Label>Phòng ban</Label>
+                    <Select value={selectedDept} onValueChange={setSelectedDept} required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn phòng ban" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {departments?.map((dept) => (
+                            <SelectItem key={dept.MaPB} value={dept.MaPB}>
+                              {dept.MaPB} - {dept.TenPB}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field>
+                    <Label htmlFor="HoVaTen">Họ và tên</Label>
+                    <Input id="HoVaTen" name="HoVaTen" required />
+                  </Field>
+                  <Field>
+                    <Label>Giới tính</Label>
+                    <Select value={selectedGender} onValueChange={setSelectedGender} required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn giới tính" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem value="Nam">Nam</SelectItem>
+                          <SelectItem value="Nữ">Nữ</SelectItem>
+                          <SelectItem value="Khác">Khác</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field>
+                    <Label htmlFor="NgaySinh">Ngày sinh</Label>
+                    <Input id="NgaySinh" name="NgaySinh" type="date" required />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="SDT">Số điện thoại</Label>
+                    <Input id="SDT" name="SDT" required />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="NgayVaoLam">Ngày vào làm</Label>
+                    <Input id="NgayVaoLam" name="NgayVaoLam" type="date" required />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="DiaChi">Địa chỉ</Label>
+                    <Input id="DiaChi" name="DiaChi" required />
+                  </Field>
+                  <Field>
+                    <Label htmlFor="HinhAnh">Hình ảnh (URL)</Label>
+                    <Input id="HinhAnh" name="HinhAnh" />
+                  </Field>
+                </FieldGroup>
+                
+                <DialogFooter className="mt-6">
+                  <DialogClose asChild>
+                    <Button variant="outline" type="button">Huỷ</Button>
+                  </DialogClose>
+                  <Button type="submit">Tạo nhân viên</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+          {/* ================== END CREATE NEW EMPLOYEE DIALOG ================== */}
         </div>
       </div>
 
-      {/* Table */}
+          {/* ================== TABLE CONTENT ================== */}
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
@@ -280,18 +321,16 @@ export function BaseSalaryTable({
             <TableHeader className="bg-muted sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </TableHead>
-                    );
-                  })}
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
             </TableHeader>
@@ -314,7 +353,7 @@ export function BaseSalaryTable({
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={columns.length}
+                    colSpan={employeeColumns.length}
                     className="h-24 text-center">
                     Không có dữ liệu.
                   </TableCell>
@@ -323,11 +362,12 @@ export function BaseSalaryTable({
             </TableBody>
           </Table>
         </div>
-        {/*panigations */}
+
+        {/* ================== PAGINATION & INFO ================== */}
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
             {table.getFilteredSelectedRowModel().rows.length} trong số{" "}
-            {table.getFilteredRowModel().rows.length} hàng được.
+            {table.getFilteredRowModel().rows.length} hàng.
           </div>
           <div className="flex w-full items-center gap-8 lg:w-fit">
             <div className="hidden items-center gap-2 lg:flex">
@@ -338,7 +378,8 @@ export function BaseSalaryTable({
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
                   table.setPageSize(Number(value));
-                }}>
+                }}
+              >
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
                   <SelectValue
                     placeholder={table.getState().pagination.pageSize}
@@ -362,7 +403,8 @@ export function BaseSalaryTable({
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
                 onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}>
+                disabled={!table.getCanPreviousPage()}
+              >
                 <IconChevronsLeft />
               </Button>
               <Button
@@ -370,7 +412,8 @@ export function BaseSalaryTable({
                 className="size-8"
                 size="icon"
                 onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}>
+                disabled={!table.getCanPreviousPage()}
+              >
                 <IconChevronLeft />
               </Button>
               <Button
@@ -378,7 +421,8 @@ export function BaseSalaryTable({
                 className="size-8"
                 size="icon"
                 onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}>
+                disabled={!table.getCanNextPage()}
+              >
                 <IconChevronRight />
               </Button>
               <Button
@@ -386,7 +430,8 @@ export function BaseSalaryTable({
                 className="hidden size-8 lg:flex"
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}>
+                disabled={!table.getCanNextPage()}
+              >
                 <IconChevronsRight />
               </Button>
             </div>
