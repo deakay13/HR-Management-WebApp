@@ -52,7 +52,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+} from "../../ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
@@ -65,20 +65,37 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/deductionColumns";
-import type { Deduction } from "@/types/payRollTypes/deductionTypes";
+import { columns } from "../Columns/workspace/payRollColumns";
+import type { PayRoll } from "@/types/payRollTypes/payRollTypes";
+import { usePayRollStore } from "@/stores/payRollStores/payRollStores";
+import type { PayRollInput } from "@/types/payRollTypes/payRollTypes";
 import { Link } from "react-router-dom";
 
-export function DeductionTable({
+export function PayRollTable({
   data,
   loading,
 }: {
-  data: Deduction[];
+  data: PayRoll[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+      const [formData, setFormData] = React.useState<PayRollInput>({
+      MaBL: "",
+      MaNV: "",
+      MaKT: "",
+      MaPC: "",
+      MaLCB: "",
+      MaGL: "",
+      Thang: "",
+    });
+    const { createPayRolls } = usePayRollStore();
+
+    const handleCreate = async (e: React.FormEvent) => {
+      e.preventDefault();
+      await createPayRolls(formData);
+    };
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
@@ -88,7 +105,7 @@ export function DeductionTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<Deduction>({
+  const table = useReactTable<PayRoll>({
     data,
     columns,
     state: {
@@ -98,7 +115,7 @@ export function DeductionTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaKT.toString(),
+    getRowId: (row) => row.MaBL.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -137,7 +154,7 @@ export function DeductionTable({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Deductions">Khấu trừ</Link>
+                <Link to="/PortalPage/PayRoll">Bảng lương</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -184,40 +201,156 @@ export function DeductionTable({
 
           {/* Button create */}
           <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>Tạo khấu trừ</DialogTitle>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
-                    <Input id="MaKT" name="MaKT" defaultValue="KTxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
-                    <Input id="LoaiKT" name="LoaiKT" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="PhanTram">Phần Trăm</Label>
-                    <Input id="PhanTram" name="PhanTram" type="number" />
-                  </Field>
-                </FieldGroup>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </DialogContent>
-            </form>
-          </Dialog>
+  <DialogTrigger asChild>
+    <Button
+      variant="outline"
+      size="sm"
+      onClick={() =>
+        setFormData({
+          MaBL: "",
+          MaNV: "",
+          MaKT: "",
+          MaPC: "",
+          MaLCB: "",
+          MaGL: "",
+          Thang: "",
+        })
+      }
+    >
+      <IconPlus />
+      <span className="hidden lg:inline">Tạo mới</span>
+    </Button>
+  </DialogTrigger>
+
+  <DialogContent className="sm:max-w-2xl">
+    <form onSubmit={handleCreate} className="space-y-6">
+      
+      <DialogHeader>
+        <DialogTitle className="text-lg font-semibold">
+          Tạo bảng lương
+        </DialogTitle>
+      </DialogHeader>
+
+      <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <Field className="flex flex-col gap-2">
+          <Label htmlFor="MaBL">Mã Bảng Lương</Label>
+          <Input
+            id="MaBL"
+            placeholder="BL001"
+            className="h-10"
+            value={formData.MaBL}
+            onChange={(e) =>
+              setFormData({ ...formData, MaBL: e.target.value })
+            }
+          />
+        </Field>
+
+        <Field className="flex flex-col gap-2">
+          <Label htmlFor="MaNV">Mã Nhân Viên</Label>
+          <Input
+            id="MaNV"
+            placeholder="NV001"
+            className="h-10"
+            value={formData.MaNV}
+            onChange={(e) =>
+              setFormData({ ...formData, MaNV: e.target.value })
+            }
+          />
+        </Field>
+
+        <Field className="flex flex-col gap-2">
+          <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
+          <Input
+            id="MaKT"
+            placeholder="KT001"
+            className="h-10"
+            value={formData.MaKT}
+            onChange={(e) =>
+              setFormData({ ...formData, MaKT: e.target.value })
+            }
+          />
+        </Field>
+
+        <Field className="flex flex-col gap-2">
+          <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
+          <Input
+            id="MaPC"
+            placeholder="PC001"
+            className="h-10"
+            value={formData.MaPC}
+            onChange={(e) =>
+              setFormData({ ...formData, MaPC: e.target.value })
+            }
+          />
+        </Field>
+
+        <Field className="flex flex-col gap-2">
+          <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
+          <Input
+            id="MaLCB"
+            placeholder="LCB001"
+            className="h-10"
+            value={formData.MaLCB}
+            onChange={(e) =>
+              setFormData({ ...formData, MaLCB: e.target.value })
+            }
+          />
+        </Field>
+
+        <Field className="flex flex-col gap-2">
+          <Label htmlFor="MaGL">Mã Giờ Làm</Label>
+          <Input
+            id="MaGL"
+            placeholder="GL001"
+            className="h-10"
+            value={formData.MaGL}
+            onChange={(e) =>
+              setFormData({ ...formData, MaGL: e.target.value })
+            }
+          />
+        </Field>
+        <Field className="flex flex-col gap-2 md:col-span-2">
+          <Label htmlFor="Thang">Tháng</Label>
+          <Input
+            id="Thang"
+            type="number"
+            className="h-10"
+            value={formData.Thang}
+            onChange={(e) =>
+              setFormData({ ...formData, Thang: e.target.value })
+            }
+          />
+        </Field>
+
+      </FieldGroup>
+
+      <DialogFooter className="gap-2">
+        <DialogClose asChild>
+          <Button type="button" variant="outline">
+            Huỷ
+          </Button>
+        </DialogClose>
+
+        <Button
+          type="submit"
+          disabled={
+            !formData.MaBL ||
+            !formData.MaNV ||
+            !formData.MaKT ||
+            !formData.MaPC ||
+            !formData.MaLCB ||
+            !formData.MaGL ||
+            !formData.Thang
+          }
+        >
+          Tạo mới
+        </Button>
+      </DialogFooter>
+
+    </form>
+  </DialogContent>
+</Dialog>
         </div>
       </div>
 

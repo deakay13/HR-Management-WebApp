@@ -52,7 +52,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+} from "../../ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
@@ -65,20 +65,34 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/payRollColumns";
-import type { PayRoll } from "@/types/payRollTypes/payRollTypes";
+import { columns } from "../Columns/workspace/baseSalaryColumns";
+import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
+import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStores";
 import { Link } from "react-router-dom";
 
-export function PayRollTable({
+export function BaseSalaryTable({
   data,
   loading,
 }: {
-  data: PayRoll[];
+  data: BaseSalary[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+    const { createBaseSalary } = useBaseSalaryStore();
+        // STATE
+    const [formData, setFormData] = React.useState({
+      MaLCB: "",
+      LuongCB: 0,
+    });
+
+    // HANDLE CREATE
+    const handleCreate = async (e: React.FormEvent) => {
+      e.preventDefault();
+
+      await createBaseSalary(formData);
+    };
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
@@ -88,7 +102,7 @@ export function PayRollTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<PayRoll>({
+  const table = useReactTable<BaseSalary>({
     data,
     columns,
     state: {
@@ -98,7 +112,7 @@ export function PayRollTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaBL.toString(),
+    getRowId: (row) => row.MaLCB.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -137,7 +151,7 @@ export function PayRollTable({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/PortalPage/PayRoll">Bảng lương</Link>
+                <Link to="/PortalPage/BaseSalaries">Lương cơ bản</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -184,56 +198,82 @@ export function PayRollTable({
 
           {/* Button create */}
           <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
+          <DialogTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                setFormData({
+                  MaLCB: "",
+                  LuongCB: 0,
+                })
+              }
+            >
+              <IconPlus />
+              <span className="hidden lg:inline">Tạo mới</span>
+            </Button>
+          </DialogTrigger>
+
+          <DialogContent className="sm:max-w-md">
+            <form onSubmit={handleCreate} className="space-y-6">
+
+              <DialogHeader>
+                <DialogTitle className="text-lg font-semibold">
+                  Tạo lương cơ bản
+                </DialogTitle>
+              </DialogHeader>
+
+              
+              <FieldGroup className="space-y-4">
+                <Field className="flex flex-col gap-2">
+                  <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
+                  <Input
+                    id="MaLCB"
+                    placeholder="VD: LCB001"
+                    className="h-10"
+                    value={formData.MaLCB}
+                    onChange={(e) =>
+                      setFormData({ ...formData, MaLCB: e.target.value })
+                    }
+                  />
+                </Field>
+
+                <Field className="flex flex-col gap-2">
+                  <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
+                  <Input
+                    id="LuongCB"
+                    type="number"
+                    placeholder="VD: 5000000"
+                    className="h-10"
+                    value={formData.LuongCB}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        LuongCB: Number(e.target.value),
+                      })
+                    }
+                  />
+                </Field>
+              </FieldGroup>
+
+              <DialogFooter className="gap-2">
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">
+                    Huỷ
+                  </Button>
+                </DialogClose>
+
+                <Button
+                  type="submit"
+                  disabled={!formData.MaLCB || formData.LuongCB <= 0}
+                >
+                  Tạo mới
                 </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>Tạo bảng lương</DialogTitle>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaBL">Mã Bảng Lương</Label>
-                    <Input id="MaBL" name="MaBL" defaultValue="BLxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaNV">Mã Nhân Viên</Label>
-                    <Input id="MaNV" name="MaNV" defaultValue="NVxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaKT">Mã Khấu trừ</Label>
-                    <Input id="MaKT" name="MaKT" defaultValue="KTxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaPC">Mã Phụ cấp</Label>
-                    <Input id="MaPC" name="MaPC" defaultValue="PCxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaLCB">Mã Lương cơ bản</Label>
-                    <Input id="MaLCB" name="MaLCB" defaultValue="LCBxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaGL">Mã Giờ làm</Label>
-                    <Input id="MaGL" name="MaGL" defaultValue="GLxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="Thang">Tháng</Label>
-                    <Input id="Thang" name="Thang" type="month" />
-                  </Field>
-                </FieldGroup>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button type="submit">Save changes</Button>
-                </DialogFooter>
-              </DialogContent>
+              </DialogFooter>
+
             </form>
-          </Dialog>
+          </DialogContent>
+        </Dialog>
         </div>
       </div>
 

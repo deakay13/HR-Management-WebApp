@@ -1,6 +1,6 @@
 import type { Deduction } from "@/types/payRollTypes/deductionTypes";
 import { type ColumnDef } from "@tanstack/react-table";
-import { DeductionActionCell  } from "@/components/ActionComponets/Managements/DeductionActionsCell";
+import { DeductionActionCell  } from "@/components/ActionComponets/workspace/DeductionActionsCell";
 
 export const columns: ColumnDef<Deduction>[] = [
   {

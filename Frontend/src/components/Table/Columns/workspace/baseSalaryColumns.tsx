@@ -1,6 +1,6 @@
 import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
 import { type ColumnDef } from "@tanstack/react-table";
-import { BaseSalaryActionCell  } from "@/components/ActionComponets/Managements/BaseSalaryActionsCell";
+import { BaseSalaryActionCell  } from "@/components/ActionComponets/workspace/BaseSalaryActionsCell";
 
 export const columns: ColumnDef<BaseSalary>[] = [
   {

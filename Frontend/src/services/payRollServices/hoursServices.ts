@@ -12,4 +12,16 @@ export const HoursServices = {
         await api.delete(`/api/payroll/hours/${ID}`, { withCredentials: true,});
         return true;
     },
+     updateHours: async (ID: string, hoursData: any) => {
+        const res = await api.put(`/api/payroll/hours/${ID}`, hoursData, {
+            withCredentials: true,
+        });
+        return res.data.data;
+        },
+    createHours: async (hoursData: any) => {
+        const res = await api.post(`/api/payroll/hours`, hoursData, {
+            withCredentials: true,
+        });
+        return res.data.data;
+        },
 };

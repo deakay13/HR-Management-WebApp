@@ -12,4 +12,16 @@ export const BaseSalaryServices = {
         await api.delete(`/api/payroll/basesalary/${ID}`, { withCredentials: true,});
         return true;
     },
+     updateBaseSalary: async (ID: string, baseSalaryData: any) => {
+        const res = await api.put(`/api/payroll/basesalary/${ID}`, baseSalaryData, {
+            withCredentials: true,
+        });
+        return res.data.data;
+        },
+    createBaseSalary: async (baseSalaryData: any) => {
+        const res = await api.post(`/api/payroll/basesalary`, baseSalaryData, {
+            withCredentials: true,
+        });
+        return res.data.data;
+        },
 };

@@ -52,7 +52,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+} from "../../ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
@@ -65,16 +65,16 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/allowancesColumns";
-import type { Allowance } from "@/types/payRollTypes/allowanceTypes";
-import { useAllowanceStore } from "@/stores/payRollStores/allowanceStores";
+import { columns } from "../Columns/workspace/deductionColumns";
+import type { Deduction } from "@/types/payRollTypes/deductionTypes";
+import { useDeductionStore } from "@/stores/payRollStores/deductionStores";
 import { Link } from "react-router-dom";
 
-export function AllowanceTable({
+export function DeductionTable({
   data,
   loading,
 }: {
-  data: Allowance[];
+  data: Deduction[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -84,32 +84,23 @@ export function AllowanceTable({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-
-
-  const { createAllowance } = useAllowanceStore();
   const [formData, setFormData] = React.useState({
-    MaPC: "",
-    LoaiPC: "",
-    SoTien: 0,
+  MaKT: "",
+  LoaiKT: "",
+  PhanTram: 0,
   });
+  const { createDeduction } = useDeductionStore();
+
   const handleCreate = async (e: React.FormEvent) => {
-  e.preventDefault();
-  await createAllowance(formData);
-
-  setFormData({
-    MaPC: "",
-    LoaiPC: "",
-    SoTien: 0,
-    });
+    e.preventDefault();
+    await createDeduction(formData);
   };
-
-  
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const table = useReactTable<Allowance>({
+  const table = useReactTable<Deduction>({
     data,
     columns,
     state: {
@@ -119,7 +110,7 @@ export function AllowanceTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaPC.toString(),
+    getRowId: (row) => row.MaKT.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -158,7 +149,7 @@ export function AllowanceTable({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Allowances">Phụ cấp</Link>
+                <Link to="/PortalPage/Deductions">Khấu trừ</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -202,110 +193,109 @@ export function AllowanceTable({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-                
+
           {/* Button create */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setFormData({
-                  MaPC: "",
-                  LoaiPC: "",
-                  SoTien: 0,
-                })
-              }
-            >
-              <IconPlus />
-              <span className="hidden lg:inline">Tạo mới</span>
-            </Button>
-          </DialogTrigger>
-
-          <DialogContent className="sm:max-w-md">
-          <form onSubmit={handleCreate} className="space-y-6">
-            
-            <DialogHeader>
-              <DialogTitle className="text-lg font-semibold">
-                Tạo phụ cấp
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              {/* MaPC */}
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
-                <Input
-                  id="MaPC"
-                  placeholder="VD: PC001"
-                  className="h-10"
-                  value={formData.MaPC}
-                  onChange={(e) =>
-                    setFormData({ ...formData, MaPC: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* LoaiPC */}
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
-                <Input
-                  id="LoaiPC"
-                  placeholder="VD: Phụ cấp ăn trưa"
-                  className="h-10"
-                  value={formData.LoaiPC}
-                  onChange={(e) =>
-                    setFormData({ ...formData, LoaiPC: e.target.value })
-                  }
-                />
-              </div>
-
-              {/* SoTien */}
-              <div className="flex flex-col gap-2">
-                <Label htmlFor="SoTien">Số Tiền</Label>
-                <Input
-                  id="SoTien"
-                  type="number"
-                  placeholder="VD: 500000"
-                  className="h-10"
-                  value={formData.SoTien}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      SoTien: Number(e.target.value),
-                    })
-                  }
-                />
-              </div>
-            </div>
-
-            <DialogFooter className="gap-2">
-              <DialogClose asChild>
-                <Button
-                  variant="outline"
-                  type="button"
-                  className="w-full sm:w-auto"
-                >
-                  Huỷ
-                </Button>
-              </DialogClose>
-
+          <Dialog>
+            <DialogTrigger asChild>
               <Button
-                type="submit"
-                className="w-full sm:w-auto"
-                disabled={
-                  !formData.MaPC ||
-                  !formData.LoaiPC ||
-                  formData.SoTien <= 0
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setFormData({
+                    MaKT: "",
+                    LoaiKT: "",
+                    PhanTram: 0,
+                  })
                 }
               >
-                Tạo mới
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
               </Button>
-            </DialogFooter>
+            </DialogTrigger>
 
-          </form>
-        </DialogContent>
-        </Dialog>
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleCreate} className="space-y-6">
+                
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">
+                    Tạo khấu trừ
+                  </DialogTitle>
+                </DialogHeader>
+                <FieldGroup className="space-y-4">
+                  
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
+                    <Input
+                      id="MaKT"
+                      placeholder="VD: KT001"
+                      className="h-10"
+                      value={formData.MaKT}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          MaKT: e.target.value,
+                        })
+                      }
+                    />
+                  </Field>
+
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
+                    <Input
+                      id="LoaiKT"
+                      placeholder="VD: Thuế TNCN"
+                      className="h-10"
+                      value={formData.LoaiKT}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          LoaiKT: e.target.value,
+                        })
+                      }
+                    />
+                  </Field>
+
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="PhanTram">Phần Trăm (%)</Label>
+                    <Input
+                      id="PhanTram"
+                      type="number"
+                      placeholder="VD: 10"
+                      className="h-10"
+                      value={formData.PhanTram}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          PhanTram: Number(e.target.value),
+                        })
+                      }
+                    />
+                  </Field>
+
+                </FieldGroup>
+
+                <DialogFooter className="gap-2">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">
+                      Huỷ
+                    </Button>
+                  </DialogClose>
+
+                  <Button
+                    type="submit"
+                    disabled={
+                      !formData.MaKT ||
+                      !formData.LoaiKT ||
+                      formData.PhanTram <= 0
+                    }
+                  >
+                    Tạo mới
+                  </Button>
+                </DialogFooter>
+
+              </form>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 

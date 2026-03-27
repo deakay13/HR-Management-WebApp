@@ -12,4 +12,16 @@ export const PayRollServices = {
         await api.delete(`/api/payroll/payrolls/${ID}`, { withCredentials: true,});
         return true;
     },
+     updatePayRoll: async (ID: string, payRollData: any) => {
+        const res = await api.put(`/api/payroll/payrolls/${ID}`, payRollData, {
+            withCredentials: true,
+        });
+        return res.data.data;
+        },
+    createPayRoll: async (payRollData: any) => {
+        const res = await api.post(`/api/payroll/payrolls`, payRollData, {
+            withCredentials: true,
+        });
+        return res.data.data;
+        },
 };

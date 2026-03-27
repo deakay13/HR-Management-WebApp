@@ -52,7 +52,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+} from "../../ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
@@ -65,30 +65,41 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/baseSalaryColumns";
-import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
+import { columns } from "../Columns/workspace/hoursColumns";
+import type { Hours } from "@/types/payRollTypes/hoursTypes";
+import { useHoursStore } from "@/stores/payRollStores/hoursStores";
 import { Link } from "react-router-dom";
 
-export function BaseSalaryTable({
+export function HoursTable({
   data,
   loading,
 }: {
-  data: BaseSalary[];
+  data: Hours[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] =React.useState<VisibilityState>({});
+      const [formData, setFormData] = React.useState({
+      MaGL: "",
+      SoGioLam: 0,
+  });
+  const { createHours } = useHoursStore();
+
+const handleCreate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  await createHours (formData);
+};
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
 
-  const table = useReactTable<BaseSalary>({
+  const table = useReactTable<Hours>({
     data,
     columns,
     state: {
@@ -98,7 +109,7 @@ export function BaseSalaryTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaLCB.toString(),
+    getRowId: (row) => row.MaGL.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -137,7 +148,7 @@ export function BaseSalaryTable({
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
-                <Link to="/PortalPage/BaseSalaries">Lương cơ bản</Link>
+                <Link to="/PortalPage/Hours">Giờ làm việc</Link>
               </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -184,35 +195,84 @@ export function BaseSalaryTable({
 
           {/* Button create */}
           <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setFormData({
+                    MaGL: "",
+                    SoGioLam: 0,
+                  })
+                }
+              >
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleCreate} className="space-y-6">
+                
                 <DialogHeader>
-                  <DialogTitle>Tạo lương cơ bản</DialogTitle>
+                  <DialogTitle className="text-lg font-semibold">
+                    Tạo giờ làm
+                  </DialogTitle>
                 </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
-                    <Input id="MaLCB" name="MaLCB" defaultValue="LCBxxx" />
+                <FieldGroup className="space-y-4">
+
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="MaGL">Mã Giờ Làm</Label>
+                    <Input
+                      id="MaGL"
+                      placeholder="VD: GL001"
+                      className="h-10"
+                      value={formData.MaGL}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          MaGL: e.target.value,
+                        })
+                      }
+                    />
                   </Field>
-                  <Field>
-                    <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
-                    <Input id="LuongCB" name="LuongCB" type="number" />
+
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="SoGioLam">Số Giờ Làm</Label>
+                    <Input
+                      id="SoGioLam"
+                      type="number"
+                      placeholder="VD: 8"
+                      className="h-10"
+                      value={formData.SoGioLam}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          SoGioLam: Number(e.target.value),
+                        })
+                      }
+                    />
                   </Field>
+
                 </FieldGroup>
-                <DialogFooter>
+
+                <DialogFooter className="gap-2">
                   <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                    <Button type="button" variant="outline">
+                      Huỷ
+                    </Button>
                   </DialogClose>
-                  <Button type="submit">Save changes</Button>
+
+                  <Button
+                    type="submit"
+                    disabled={!formData.MaGL || formData.SoGioLam <= 0}
+                  >
+                    Tạo mới
+                  </Button>
                 </DialogFooter>
-              </DialogContent>
-            </form>
+
+              </form>
+            </DialogContent>
           </Dialog>
         </div>
       </div>

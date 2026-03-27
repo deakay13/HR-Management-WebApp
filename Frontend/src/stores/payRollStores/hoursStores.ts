@@ -25,6 +25,7 @@ export const useHoursStore = create<HoursTypes>((set,get) => ({
      deleteHours: async (ID: string) => {
             try {
               await HoursServices.deleteHour(ID);
+              await get().getHours(); 
               set({
                     Hours: get().Hours.filter((d) => d.MaGL !== ID),
               });
@@ -34,4 +35,37 @@ export const useHoursStore = create<HoursTypes>((set,get) => ({
               toast.error("Không thể xoá Giờ làm thêm");
             }
           },
+             // CREATE
+                createHours: async (data) => {
+                    try {
+                        const newItem = await HoursServices.createHours(data);
+                        await get().getHours(); // Tải lại danh sách sau khi thêm
+                        set({
+                            Hours: [...get().Hours, newItem],
+                        });
+            
+                        toast.success("Thêm Giờ làm thành công");
+                    } catch (error) {
+                        console.error("Lỗi khi thêm Giờ làm", error);
+                        toast.error("Không thể thêm Giờ làm");
+                    }
+                },
+            
+                // UPDATE
+                updateHours: async (ID: string, data) => {
+                    try {
+                        const updated = await HoursServices.updateHours(ID, data);
+                        await get().getHours(); // Tải lại danh sách sau khi cập nhật
+                        set({
+                            Hours: get().Hours.map((d) =>
+                                d.MaGL === ID ? updated : d
+                            ),
+                        });
+            
+                        toast.success("Cập nhật Giờ làm thành công");
+                    } catch (error) {
+                        console.error("Lỗi khi cập nhật Giờ làm", error);
+                        toast.error("Không thể cập nhật Giờ làm");
+                    }
+        },
 }));

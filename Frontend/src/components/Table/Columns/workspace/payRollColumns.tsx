@@ -1,6 +1,6 @@
 import type { PayRoll } from "@/types/payRollTypes/payRollTypes";
 import { type ColumnDef } from "@tanstack/react-table";
-import { PayRollActionCell  } from "@/components/ActionComponets/Managements/PayRollActionsCell";
+import { PayRollActionCell  } from "@/components/ActionComponets/workspace/PayRollActionsCell";
 
 export const columns: ColumnDef<PayRoll>[] = [
   {

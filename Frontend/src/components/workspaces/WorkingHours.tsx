@@ -1,7 +1,7 @@
 import { useHoursStore } from "@/stores/payRollStores/hoursStores";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { HoursTable } from "../Table/HoursTable";
+import { HoursTable } from "../Table/workspaceTable/HoursTable";
 
 const HoursComponents    = () => {
   const { Hours, initializing, getHours } = useHoursStore();
