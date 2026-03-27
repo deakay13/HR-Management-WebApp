@@ -40,7 +40,6 @@ export const employeeColumns: ColumnDef<Employee>[] = [
   },
   {
     id: "actions",
-    header: "Thao tác",
     cell: ({ row }) => <EmployeesActionCell emp={row.original} />,
   },
 ];
