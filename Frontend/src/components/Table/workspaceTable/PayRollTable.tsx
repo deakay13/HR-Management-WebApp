@@ -231,7 +231,7 @@ export function PayRollTable({
           <Label htmlFor="MaBL">Mã Bảng Lương</Label>
           <Input
             id="MaBL"
-            placeholder="BL001"
+            placeholder="BLxxx"
             className="h-10"
             value={formData.MaBL}
             onChange={(e) =>
@@ -244,7 +244,7 @@ export function PayRollTable({
           <Label htmlFor="MaNV">Mã Nhân Viên</Label>
           <Input
             id="MaNV"
-            placeholder="NV001"
+            placeholder="NVxxx"
             className="h-10"
             value={formData.MaNV}
             onChange={(e) =>
@@ -257,7 +257,7 @@ export function PayRollTable({
           <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
           <Input
             id="MaKT"
-            placeholder="KT001"
+            placeholder="KTxxx"
             className="h-10"
             value={formData.MaKT}
             onChange={(e) =>
@@ -270,7 +270,7 @@ export function PayRollTable({
           <Label htmlFor="MaPC">Mã Phụ Cấp</Label>
           <Input
             id="MaPC"
-            placeholder="PC001"
+            placeholder="PCxxx"
             className="h-10"
             value={formData.MaPC}
             onChange={(e) =>
@@ -283,7 +283,7 @@ export function PayRollTable({
           <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
           <Input
             id="MaLCB"
-            placeholder="LCB001"
+            placeholder="LCBxxx"
             className="h-10"
             value={formData.MaLCB}
             onChange={(e) =>
@@ -296,7 +296,7 @@ export function PayRollTable({
           <Label htmlFor="MaGL">Mã Giờ Làm</Label>
           <Input
             id="MaGL"
-            placeholder="GL001"
+            placeholder="GLxxx"
             className="h-10"
             value={formData.MaGL}
             onChange={(e) =>
@@ -309,6 +309,7 @@ export function PayRollTable({
           <Input
             id="Thang"
             type="number"
+            placeholder="1 - 12"
             className="h-10"
             value={formData.Thang}
             onChange={(e) =>
