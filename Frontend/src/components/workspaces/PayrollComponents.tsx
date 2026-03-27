@@ -1,7 +1,7 @@
 import { usePayRollStore } from "@/stores/payRollStores/payRollStores";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { PayRollTable } from "../Table/workspaceTable/PayRollTable";
+import { PayRollTable } from "@/components/Table/workspaceTable/PayRollTable";
 
 const PayRollComponents    = () => {
   const { PayRolls, initializing, getPayRolls } = usePayRollStore();

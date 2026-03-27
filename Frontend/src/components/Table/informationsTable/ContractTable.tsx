@@ -1,64 +1,65 @@
 import * as React from "react";
 import {
-  IconChevronDown, 
-  IconChevronLeft, 
-  IconChevronRight, 
-  IconChevronsLeft, 
-  IconChevronsRight, 
-  IconLayoutColumns, 
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconChevronsLeft,
+  IconChevronsRight,
+  IconLayoutColumns,
   IconPlus,
 } from "@tabler/icons-react";
 import {
-  flexRender, 
-  getCoreRowModel, 
-  getFacetedRowModel, 
-  getFacetedUniqueValues, 
-  getFilteredRowModel, 
-  getPaginationRowModel, 
-  getSortedRowModel, 
-  useReactTable, 
-  type ColumnFiltersState, 
-  type SortingState, 
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type ColumnFiltersState,
+  type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, 
-  DropdownMenuCheckboxItem, 
-  DropdownMenuContent, 
-  DropdownMenuTrigger 
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { 
-  Breadcrumb, 
-  BreadcrumbItem, 
-  BreadcrumbLink, 
-  BreadcrumbList, 
-  BreadcrumbSeparator 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { 
-  Dialog, 
-  DialogClose, 
-  DialogContent, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger 
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -67,25 +68,43 @@ import { z } from "zod";
 import { getContractValidationSchema } from "@/types/informationTypes/contractTypes";
 import { useEmployeeStore } from "@/stores/informationStores/employeesStores";
 
-import { contractColumns } from "./Columns/ContractTableColumns"; 
+import { contractColumns } from "@/components/Table/Columns/informations/ContractTableColumns";
 import type { Contract } from "@/types/informationTypes/contractTypes";
 import { useContractStore } from "@/stores/informationStores/contractStore";
 
-export function ContractTable({ data = [], loading }: { data: Contract[]; loading?: boolean; }) {
+export function ContractTable({
+  data = [],
+  loading,
+}: {
+  data: Contract[];
+  loading?: boolean;
+}) {
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  
+
   const [openCreate, setOpenCreate] = React.useState(false);
-  const [errors, setErrors] = React.useState<Record<string, string>>({}); 
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { employees, getEmployees } = useEmployeeStore();
 
   const table = useReactTable<Contract>({
     data: data || [],
     columns: contractColumns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaHopDong,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -103,15 +122,15 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
 
   const { createContract } = useContractStore();
   React.useEffect(() => {
-    getEmployees(); 
+    getEmployees();
   }, [getEmployees]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const employeeCodes = employees.map(emp => emp.MaNV.toUpperCase());
-    const existingCodes = data.map(item => item.MaHopDong);
-    
+    const employeeCodes = employees.map((emp) => emp.MaNV.toUpperCase());
+    const existingCodes = data.map((item) => item.MaHopDong);
+
     // Convert FormData to a plain object for Zod validation
     const formValues = {
       MaHopDong: formData.get("MaHopDong") as string,
@@ -124,8 +143,11 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
 
     try {
       // Validate data with Zod
-      const validatedData = getContractValidationSchema(existingCodes, employeeCodes).parse(formValues);
-      
+      const validatedData = getContractValidationSchema(
+        existingCodes,
+        employeeCodes,
+      ).parse(formValues);
+
       formData.set("MaHopDong", validatedData.MaHopDong);
       formData.set("MaNV", validatedData.MaNV);
 
@@ -149,12 +171,16 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
   if (loading) return <p className="text-center py-4">Đang tải dữ liệu...</p>;
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <Breadcrumb className="hidden @4xl/main:flex">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild><Link to="/PortalPage/DashBoard">Dash Board</Link></BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link to="/PortalPage/DashBoard">Dash Board</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
@@ -162,7 +188,9 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink asChild><Link to="/PortalPage/Contracts">Hợp đồng</Link></BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link to="/PortalPage/Contracts">Hợp đồng</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -178,24 +206,36 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              {table.getAllColumns().filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide()).map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id} className="capitalize" checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                );
-              })}
+              {table
+                .getAllColumns()
+                .filter(
+                  (column) =>
+                    typeof column.accessorFn !== "undefined" &&
+                    column.getCanHide(),
+                )
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }>
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
             </DropdownMenuContent>
           </DropdownMenu>
 
           {/* Create new contract button */}
-          <Dialog open={openCreate} onOpenChange={(open) => {
-             setOpenCreate(open);
-             if(!open) setErrors({}); 
-          }}>
+          <Dialog
+            open={openCreate}
+            onOpenChange={(open) => {
+              setOpenCreate(open);
+              if (!open) setErrors({});
+            }}>
             <DialogTrigger asChild>
               <Button variant="outline" size="sm">
                 <IconPlus />
@@ -203,42 +243,82 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-              <DialogHeader><DialogTitle>Tạo hợp đồng mới</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Tạo hợp đồng mới</DialogTitle>
+              </DialogHeader>
               <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <FieldGroup>
                   <Field>
                     <Label htmlFor="MaHopDong">Mã hợp đồng</Label>
-                    <Input id="MaHopDong" name="MaHopDong" placeholder="HD001" className="uppercase" />
-                    {errors.MaHopDong && <span className="text-xs text-red-500">{errors.MaHopDong}</span>}
+                    <Input
+                      id="MaHopDong"
+                      name="MaHopDong"
+                      placeholder="HD001"
+                      className="uppercase"
+                    />
+                    {errors.MaHopDong && (
+                      <span className="text-xs text-red-500">
+                        {errors.MaHopDong}
+                      </span>
+                    )}
                   </Field>
                   <Field>
                     <Label htmlFor="MaNV">Mã nhân viên</Label>
                     <Input id="MaNV" name="MaNV" className="uppercase" />
-                    {errors.MaNV && <span className="text-xs text-red-500">{errors.MaNV}</span>}
+                    {errors.MaNV && (
+                      <span className="text-xs text-red-500">
+                        {errors.MaNV}
+                      </span>
+                    )}
                   </Field>
                   <Field>
                     <Label htmlFor="LoaiHD">Loại hợp đồng</Label>
                     <Input id="LoaiHD" name="LoaiHD" />
-                    {errors.LoaiHD && <span className="text-xs text-red-500">{errors.LoaiHD}</span>}
+                    {errors.LoaiHD && (
+                      <span className="text-xs text-red-500">
+                        {errors.LoaiHD}
+                      </span>
+                    )}
                   </Field>
                   <Field>
                     <Label htmlFor="NgayBatDau">Ngày bắt đầu</Label>
                     <Input id="NgayBatDau" name="NgayBatDau" type="date" />
-                    {errors.NgayBatDau && <span className="text-xs text-red-500">{errors.NgayBatDau}</span>}
+                    {errors.NgayBatDau && (
+                      <span className="text-xs text-red-500">
+                        {errors.NgayBatDau}
+                      </span>
+                    )}
                   </Field>
                   <Field>
                     <Label htmlFor="NgayKetThuc">Ngày kết thúc</Label>
                     <Input id="NgayKetThuc" name="NgayKetThuc" type="date" />
-                    {errors.NgayKetThuc && <span className="text-xs text-red-500">{errors.NgayKetThuc}</span>}
+                    {errors.NgayKetThuc && (
+                      <span className="text-xs text-red-500">
+                        {errors.NgayKetThuc}
+                      </span>
+                    )}
                   </Field>
                   <Field>
                     <Label htmlFor="HinhAnhHopDong">Hình ảnh (File)</Label>
-                    <Input id="HinhAnhHopDong" name="HinhAnhHopDong" type="file" accept=".pdf" />
-                    {errors.HinhAnhHopDong && <span className="text-xs text-red-500">{errors.HinhAnhHopDong}</span>}
+                    <Input
+                      id="HinhAnhHopDong"
+                      name="HinhAnhHopDong"
+                      type="file"
+                      accept=".pdf"
+                    />
+                    {errors.HinhAnhHopDong && (
+                      <span className="text-xs text-red-500">
+                        {errors.HinhAnhHopDong}
+                      </span>
+                    )}
                   </Field>
                 </FieldGroup>
                 <DialogFooter className="mt-4">
-                  <DialogClose asChild><Button variant="outline" type="button">Huỷ</Button></DialogClose>
+                  <DialogClose asChild>
+                    <Button variant="outline" type="button">
+                      Huỷ
+                    </Button>
+                  </DialogClose>
                   <Button type="submit">Tạo hợp đồng</Button>
                 </DialogFooter>
               </form>
@@ -247,7 +327,9 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
         </div>
       </div>
 
-      <TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+      <TabsContent
+        value="outline"
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
@@ -255,7 +337,12 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -264,19 +351,32 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
-                <TableRow><TableCell colSpan={contractColumns.length} className="h-24 text-center">Không có dữ liệu.</TableCell></TableRow>
+                <TableRow>
+                  <TableCell
+                    colSpan={contractColumns.length}
+                    className="h-24 text-center">
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
         </div>
-        
+
         {/* === Pagination === */}
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
@@ -292,10 +392,11 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
                   table.setPageSize(Number(value));
-                }}
-              >
+                }}>
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue placeholder={table.getState().pagination.pageSize} />
+                  <SelectValue
+                    placeholder={table.getState().pagination.pageSize}
+                  />
                 </SelectTrigger>
                 <SelectContent side="top">
                   {[10, 20, 30, 40, 50].map((pageSize) => (
@@ -315,8 +416,7 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
                 onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
+                disabled={!table.getCanPreviousPage()}>
                 <IconChevronsLeft />
               </Button>
               <Button
@@ -324,8 +424,7 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
                 className="size-8"
                 size="icon"
                 onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
+                disabled={!table.getCanPreviousPage()}>
                 <IconChevronLeft />
               </Button>
               <Button
@@ -333,8 +432,7 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
                 className="size-8"
                 size="icon"
                 onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
+                disabled={!table.getCanNextPage()}>
                 <IconChevronRight />
               </Button>
               <Button
@@ -342,8 +440,7 @@ export function ContractTable({ data = [], loading }: { data: Contract[]; loadin
                 className="hidden size-8 lg:flex"
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
+                disabled={!table.getCanNextPage()}>
                 <IconChevronsRight />
               </Button>
             </div>

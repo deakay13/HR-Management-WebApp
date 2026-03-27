@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useDepartmentStore } from "@/stores/informationStores/departmentStores"; 
-import { DepartmentTable } from "../Table/DepartmentTable"; 
+import { DepartmentTable } from "@/components/Table/informationsTable/DepartmentTable"; 
 
 export default function DepartmentComponents() {
   const { departments, initializing, getDepartments } = useDepartmentStore();

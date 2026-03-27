@@ -64,7 +64,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { departmentColumns } from "./Columns/DepartmentsTableColumns"; 
+import { departmentColumns } from "@/components/Table/Columns/informations/DepartmentsTableColumns";
 import type { Department } from "@/types/informationTypes/departmentTypes";
 import { useDepartmentStore } from "@/stores/informationStores/departmentStores";
 import { Link } from "react-router-dom";
@@ -79,8 +79,11 @@ export function DepartmentTable({
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [openCreate, setOpenCreate] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -147,20 +150,27 @@ export function DepartmentTable({
   if (loading) return <p className="text-center py-4">Đang tải dữ liệu...</p>;
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
         <Breadcrumb className="hidden @4xl/main:flex">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink asChild><Link to="/PortalPage/DashBoard">Dash Board</Link></BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link to="/PortalPage/DashBoard">Dash Board</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem><BreadcrumbLink>Thông tin</BreadcrumbLink></BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink asChild><Link to="/PortalPage/Departments">Phòng ban</Link></BreadcrumbLink>
+              <BreadcrumbLink>Thông tin</BreadcrumbLink>
             </BreadcrumbItem>
-
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/PortalPage/Departments">Phòng ban</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
@@ -168,44 +178,67 @@ export function DepartmentTable({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
-                <IconLayoutColumns /><span className="hidden lg:inline">Lọc</span><IconChevronDown />
+                <IconLayoutColumns />
+                <span className="hidden lg:inline">Lọc</span>
+                <IconChevronDown />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
-              {table.getAllColumns().filter(col => col.getCanHide()).map((column) => (
-                <DropdownMenuCheckboxItem
-                  key={column.id}
-                  className="capitalize"
-                  checked={column.getIsVisible()}
-                  onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                >
-                  {column.id}
-                </DropdownMenuCheckboxItem>
-              ))}
+              {table
+                .getAllColumns()
+                .filter((col) => col.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }>
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
           <Dialog open={openCreate} onOpenChange={setOpenCreate}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm"><IconPlus /><span className="hidden lg:inline">Tạo mới</span></Button>
+              <Button variant="outline" size="sm">
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
+              </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
-              <DialogHeader><DialogTitle>Tạo phòng ban mới</DialogTitle></DialogHeader>
+              <DialogHeader>
+                <DialogTitle>Tạo phòng ban mới</DialogTitle>
+              </DialogHeader>
               <form onSubmit={handleSubmit}>
                 <FieldGroup>
                   <Field>
                     <Label htmlFor="MaPB">Mã phòng ban</Label>
                     <Input id="MaPB" name="MaPB" placeholder="PB001" />
-                    {errors.MaPB && <span className="text-xs text-red-500">{errors.MaPB}</span>}
+                    {errors.MaPB && (
+                      <span className="text-xs text-red-500">
+                        {errors.MaPB}
+                      </span>
+                    )}
                   </Field>
                   <Field>
                     <Label htmlFor="TenPB">Tên phòng ban</Label>
                     <Input id="TenPB" name="TenPB" />
-                    {errors.TenPB && <span className="text-xs text-red-500">{errors.TenPB}</span>}
+                    {errors.TenPB && (
+                      <span className="text-xs text-red-500">
+                        {errors.TenPB}
+                      </span>
+                    )}
                   </Field>
                 </FieldGroup>
                 <DialogFooter className="mt-4">
-                  <DialogClose asChild><Button variant="outline" type="button">Huỷ</Button></DialogClose>
+                  <DialogClose asChild>
+                    <Button variant="outline" type="button">
+                      Huỷ
+                    </Button>
+                  </DialogClose>
                   <Button type="submit">Tạo phòng ban</Button>
                 </DialogFooter>
               </form>
@@ -214,7 +247,9 @@ export function DepartmentTable({
         </div>
       </div>
 
-      <TabsContent value="outline" className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+      <TabsContent
+        value="outline"
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="bg-muted sticky top-0 z-10">
@@ -222,7 +257,12 @@ export function DepartmentTable({
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
                     <TableHead key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -231,12 +271,25 @@ export function DepartmentTable({
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>{row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                  ))}</TableRow>
+                  <TableRow key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))
               ) : (
-                <TableRow><TableCell colSpan={departmentColumns.length} className="h-24 text-center">Không có dữ liệu.</TableCell></TableRow>
+                <TableRow>
+                  <TableCell
+                    colSpan={departmentColumns.length}
+                    className="h-24 text-center">
+                    Không có dữ liệu.
+                  </TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>
@@ -256,8 +309,7 @@ export function DepartmentTable({
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
                   table.setPageSize(Number(value));
-                }}
-              >
+                }}>
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
                   <SelectValue
                     placeholder={table.getState().pagination.pageSize}
@@ -281,8 +333,7 @@ export function DepartmentTable({
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
                 onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
+                disabled={!table.getCanPreviousPage()}>
                 <IconChevronsLeft />
               </Button>
               <Button
@@ -290,8 +341,7 @@ export function DepartmentTable({
                 className="size-8"
                 size="icon"
                 onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
+                disabled={!table.getCanPreviousPage()}>
                 <IconChevronLeft />
               </Button>
               <Button
@@ -299,8 +349,7 @@ export function DepartmentTable({
                 className="size-8"
                 size="icon"
                 onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
+                disabled={!table.getCanNextPage()}>
                 <IconChevronRight />
               </Button>
               <Button
@@ -308,8 +357,7 @@ export function DepartmentTable({
                 className="hidden size-8 lg:flex"
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
+                disabled={!table.getCanNextPage()}>
                 <IconChevronsRight />
               </Button>
             </div>

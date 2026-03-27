@@ -3,7 +3,7 @@ import { Toaster } from "sonner";
 //import auth
 import SignInPage from "./pages/SignInPage";
 
-//import mainpages
+//import manages
 import PortalPage from "./pages/PortalPage";
 
 //import workspaces

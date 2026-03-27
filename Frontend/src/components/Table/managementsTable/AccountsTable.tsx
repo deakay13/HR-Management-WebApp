@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -33,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -65,20 +66,19 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { employeeColumns } from "./Columns/EmployeesTableColumns";
-import type { Employee } from "@/types/informationTypes/employeeTypes";
+import { columns } from "../Columns/managements/AccountsTableColumns";
+import type { Account } from "@/types/authTypes/accountType";
+import type { Role } from "@/types/permissionTypes/RolesTypes";
 
-import { useEmployeeStore } from "@/stores/informationStores/employeesStores";
-import { useDepartmentStore } from "@/stores/informationStores/departmentStores";
+import { useAccountsStore } from "@/stores/authStores/accountStore";
+import { useRolesStore } from "@/stores/permissionStores/RolesStore";
 import { Link } from "react-router-dom";
-import { z } from "zod";
-import { getEmployeeValidationSchema } from "@/types/informationTypes/employeeTypes";
 
-export function EmployeeTable({
-  data = [],
+export function AccountsTable({
+  data,
   loading,
 }: {
-  data: Employee[];
+  data: Account[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -92,14 +92,9 @@ export function EmployeeTable({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [openCreate, setOpenCreate] = React.useState(false);
-  const [selectedDept, setSelectedDept] = React.useState("");
-  const [selectedGender, setSelectedGender] = React.useState("");
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const table = useReactTable<Employee>({
-    data: data || [],
-    columns: employeeColumns,
+  const table = useReactTable<Account>({
+    data,
+    columns,
     state: {
       sorting,
       columnVisibility,
@@ -107,7 +102,7 @@ export function EmployeeTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaNV.toString(),
+    getRowId: (row) => row.MaTK.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -121,48 +116,24 @@ export function EmployeeTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-
-  const { departments, getDepartments } = useDepartmentStore();
-  const { createEmployee } = useEmployeeStore();
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const { Roles, getRoles } = useRolesStore();
+  const { createAccount } = useAccountsStore();
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const existingCodes = data.map((emp) => emp.MaNV);
-    const formValues = {
+    const newAccount = {
+      MaTK: formData.get("MaTk") as string,
       MaNV: formData.get("MaNV") as string,
-      MaPB: selectedDept,
-      HoVaTen: formData.get("HoVaTen") as string,
-      GioiTinh: selectedGender,
-      NgaySinh: formData.get("NgaySinh") as string,
-      SDT: formData.get("SDT") as string,
-      NgayVaoLam: formData.get("NgayVaoLam") as string,
-      DiaChi: formData.get("DiaChi") as string,
-      HinhAnh: (formData.get("HinhAnh") as string) || "",
+      MaVT: formData.get("MaVT") as string,
+      TenTaiKhoan: formData.get("TenTaiKhoan") as string,
+      MatKhau: formData.get("MatKhau") as string,
     };
-    
-    try {
-      const validatedData = getEmployeeValidationSchema(existingCodes).parse(formValues);
-      setErrors({});
-      await createEmployee(validatedData as Employee);
-      setOpenCreate(false);
-      setSelectedDept("");
-      setSelectedGender("");
-      (e.target as HTMLFormElement).reset();
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.issues.forEach((issue) => {
-          if (issue.path[0]) newErrors[issue.path[0].toString()] = issue.message;
-        });
-        setErrors(newErrors);
-      }
-    }
+    createAccount(newAccount);
   };
 
   useEffect(() => {
-    getDepartments();
-  }, [getDepartments]);
+    getRoles();
+  }, [getRoles]);
 
   if (loading) {
     return <p className="text-center py-4">Đang tải dữ liệu...</p>;
@@ -173,6 +144,7 @@ export function EmployeeTable({
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
+        {/*breadcumm */}
         <Breadcrumb className="hidden @4xl/main:flex">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -181,19 +153,12 @@ export function EmployeeTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink>Thông tin</BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân Quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/Employees">Nhân viên</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+            <BreadcrumbItem>Tài Khoản</BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-
-        {/* ================== ACTIONS (FILTER) ================== */}
+        {/*button */}
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -223,11 +188,10 @@ export function EmployeeTable({
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => {
                         if (!value && visibleColumns.length <= 3) {
-                          return;
+                          return; // không làm gì
                         }
                         column.toggleVisibility(!!value);
-                      }}
-                    >
+                      }}>
                       {column.id}
                     </DropdownMenuCheckboxItem>
                   );
@@ -235,84 +199,80 @@ export function EmployeeTable({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* ================== CREATE NEW EMPLOYEE DIALOG ================== */}
-          <Dialog open={openCreate} onOpenChange={(val) => { setOpenCreate(val); if(!val) setErrors({}); }}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm"><IconPlus /><span className="hidden lg:inline">Tạo mới</span></Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Tạo nhân viên mới</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
+          {/* Button create */}
+          <Dialog>
+            <form onSubmit={handleSubmit}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-sm">
+                <DialogHeader>
+                  <DialogTitle>Tạo Tài Khoản</DialogTitle>
+                </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="MaNV">Mã nhân viên</Label>
-                    <Input id="MaNV" name="MaNV" placeholder="NVxxx" className="uppercase"/>
-                    {errors.MaNV && <span className="text-xs text-red-500">{errors.MaNV}</span>}
+                    <Label htmlFor="MaTk">Mã Tài Khoản</Label>
+                    <Input id="MaTk" name="MaTk" defaultValue="TKxxx" />
                   </Field>
                   <Field>
-                    <Label>Phòng ban</Label>
-                    <Select value={selectedDept} onValueChange={setSelectedDept}>
-                      <SelectTrigger><SelectValue placeholder="Chọn phòng ban" /></SelectTrigger>
+                    <Label htmlFor="MaNV">Mã Nhân Viên</Label>
+                    <Select>
+                      <SelectTrigger className="w-full max-w-48">
+                        <SelectValue placeholder="Chọn NVXXX" />
+                      </SelectTrigger>
                       <SelectContent>
-                        {departments?.map((dept) => (
-                          <SelectItem key={dept.MaPB} value={dept.MaPB}>{dept.MaPB} - {dept.TenPB}</SelectItem>
-                        ))}
+                        <SelectGroup>
+                          <SelectItem value="apple">Apple</SelectItem>
+                          <SelectItem value="banana">Banana</SelectItem>
+                          <SelectItem value="blueberry">Blueberry</SelectItem>
+                          <SelectItem value="grapes">Grapes</SelectItem>
+                          <SelectItem value="pineapple">Pineapple</SelectItem>
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
-                    {errors.MaPB && <span className="text-xs text-red-500">{errors.MaPB}</span>}
                   </Field>
                   <Field>
-                    <Label htmlFor="HoVaTen">Họ và tên</Label>
-                    <Input id="HoVaTen" name="HoVaTen" />
-                    {errors.HoVaTen && <span className="text-xs text-red-500">{errors.HoVaTen}</span>}
-                  </Field>
-                  <Field>
-                    <Label>Giới tính</Label>
-                    <Select value={selectedGender} onValueChange={setSelectedGender}>
-                      <SelectTrigger><SelectValue placeholder="Chọn giới tính" /></SelectTrigger>
+                    <Label htmlFor="MaVT">Mã Vai Trò</Label>
+                    <Select>
+                      <SelectTrigger className="w-full max-w-48">
+                        <SelectValue placeholder="Chọn VTXXX" />
+                      </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Nam">Nam</SelectItem>
-                        <SelectItem value="Nữ">Nữ</SelectItem>
-                        <SelectItem value="Khác">Khác</SelectItem>
+                        <SelectGroup>
+                          {Roles.map((vt: Role) => (
+                            <SelectItem key={vt.MaVT} value={vt.MaVT}>
+                              {vt.MaVT} - {vt.TenVaiTro}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
-                    {errors.GioiTinh && <span className="text-xs text-red-500">{errors.GioiTinh}</span>}
                   </Field>
                   <Field>
-                    <Label htmlFor="NgaySinh">Ngày sinh</Label>
-                    <Input id="NgaySinh" name="NgaySinh" type="date" />
-                    {errors.NgaySinh && <span className="text-xs text-red-500">{errors.NgaySinh}</span>}
+                    <Label htmlFor="TenTaiKhoan">Tên Tài Khoản</Label>
+                    <Input id="TenTaiKhoan" name="TenTaiKhoan" />
                   </Field>
                   <Field>
-                    <Label htmlFor="SDT">Số điện thoại</Label>
-                    <Input id="SDT" name="SDT" />
-                    {errors.SDT && <span className="text-xs text-red-500">{errors.SDT}</span>}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="NgayVaoLam">Ngày vào làm</Label>
-                    <Input id="NgayVaoLam" name="NgayVaoLam" type="date" />
-                    {errors.NgayVaoLam && <span className="text-xs text-red-500">{errors.NgayVaoLam}</span>}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="DiaChi">Địa chỉ</Label>
-                    <Input id="DiaChi" name="DiaChi" />
-                    {errors.DiaChi && <span className="text-xs text-red-500">{errors.DiaChi}</span>}
+                    <Label htmlFor="MatKhau">Mật Khẩu</Label>
+                    <Input id="MatKhau" name="MatKhau" />
                   </Field>
                 </FieldGroup>
-                <DialogFooter className="mt-6">
-                  <DialogClose asChild><Button variant="outline" type="button">Huỷ</Button></DialogClose>
-                  <Button type="submit">Tạo nhân viên</Button>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Huỷ</Button>
+                  </DialogClose>
+                  <Button type="submit">Tạo</Button>
                 </DialogFooter>
-              </form>
-            </DialogContent>
+              </DialogContent>
+            </form>
           </Dialog>
-          {/* ================== END CREATE NEW EMPLOYEE DIALOG ================== */}
         </div>
       </div>
 
-          {/* ================== TABLE CONTENT ================== */}
+      {/* Table */}
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
@@ -321,16 +281,18 @@ export function EmployeeTable({
             <TableHeader className="bg-muted sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                    </TableHead>
-                  ))}
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
               ))}
             </TableHeader>
@@ -353,7 +315,7 @@ export function EmployeeTable({
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={employeeColumns.length}
+                    colSpan={columns.length}
                     className="h-24 text-center">
                     Không có dữ liệu.
                   </TableCell>
@@ -362,8 +324,7 @@ export function EmployeeTable({
             </TableBody>
           </Table>
         </div>
-
-        {/* ================== PAGINATION & INFO ================== */}
+        {/*panigations */}
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
             {table.getFilteredSelectedRowModel().rows.length} trong số{" "}
@@ -378,8 +339,7 @@ export function EmployeeTable({
                 value={`${table.getState().pagination.pageSize}`}
                 onValueChange={(value) => {
                   table.setPageSize(Number(value));
-                }}
-              >
+                }}>
                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
                   <SelectValue
                     placeholder={table.getState().pagination.pageSize}
@@ -403,8 +363,7 @@ export function EmployeeTable({
                 variant="outline"
                 className="hidden h-8 w-8 p-0 lg:flex"
                 onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
+                disabled={!table.getCanPreviousPage()}>
                 <IconChevronsLeft />
               </Button>
               <Button
@@ -412,8 +371,7 @@ export function EmployeeTable({
                 className="size-8"
                 size="icon"
                 onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
+                disabled={!table.getCanPreviousPage()}>
                 <IconChevronLeft />
               </Button>
               <Button
@@ -421,8 +379,7 @@ export function EmployeeTable({
                 className="size-8"
                 size="icon"
                 onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
+                disabled={!table.getCanNextPage()}>
                 <IconChevronRight />
               </Button>
               <Button
@@ -430,8 +387,7 @@ export function EmployeeTable({
                 className="hidden size-8 lg:flex"
                 size="icon"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
+                disabled={!table.getCanNextPage()}>
                 <IconChevronsRight />
               </Button>
             </div>

@@ -52,7 +52,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+} from "../../ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
@@ -65,7 +65,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/RolesTableColumns";
+import { columns } from "../Columns/managements/RolesTableColumns";
 import type { Role } from "@/types/permissionTypes/RolesTypes";
 import { Link } from "react-router-dom";
 import { useRolesStore } from "@/stores/permissionStores/RolesStore";
@@ -84,7 +84,7 @@ export function RolesTable({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-const { createRoles } = useRolesStore();
+  const { createRoles } = useRolesStore();
   const [formData, setFormData] = React.useState({
     MaVT: "",
     TenVaiTro: "",
@@ -146,8 +146,7 @@ const { createRoles } = useRolesStore();
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>Phân quyền
-            </BreadcrumbItem>
+            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>Vai trò</BreadcrumbItem>
           </BreadcrumbList>
@@ -194,22 +193,22 @@ const { createRoles } = useRolesStore();
 
           {/* Button create */}
           <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    setFormData({
-                      MaVT: "",
-                      TenVaiTro: "",
-                    })
-                  }>
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleCreate} className="space-y-6">
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setFormData({
+                    MaVT: "",
+                    TenVaiTro: "",
+                  })
+                }>
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-sm">
+              <form onSubmit={handleCreate} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle>Tạo vai trò</DialogTitle>
                 </DialogHeader>
@@ -244,12 +243,12 @@ const { createRoles } = useRolesStore();
                   </DialogClose>
                   <Button
                     type="submit"
-                    disabled={!formData.MaVT|| !formData.TenVaiTro}>
+                    disabled={!formData.MaVT || !formData.TenVaiTro}>
                     Thêm
                   </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
+                </DialogFooter>
+              </form>
+            </DialogContent>
           </Dialog>
         </div>
       </div>

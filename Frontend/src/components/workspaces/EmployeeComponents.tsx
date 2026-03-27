@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEmployeeStore } from "@/stores/informationStores/employeesStores";
-import { EmployeeTable } from "../Table/EmployeeTable";
+import { EmployeeTable } from "@/components/Table/informationsTable/EmployeeTable";
 
 export default function EmployeeComponents() {
   const { employees, initializing, getEmployees } = useEmployeeStore();

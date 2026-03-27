@@ -1,7 +1,7 @@
 import { useRolesStore } from "@/stores/permissionStores/RolesStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { RolesTable } from "../Table/RolesTable";
+import { RolesTable } from "../Table/managementsTable/RolesTable";
 
 const AccountsComponents = () => {
   const { Roles, initializing, getRoles } = useRolesStore();

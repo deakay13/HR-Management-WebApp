@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   IconChevronDown,
   IconChevronLeft,
@@ -33,7 +33,6 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -66,19 +65,20 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/AccountsTableColumns";
-import type { Account } from "@/types/authTypes/accountType";
-import type { Role } from "@/types/permissionTypes/RolesTypes";
+import { employeeColumns } from "@/components/Table/Columns/informations/EmployeesTableColumns";
+import type { Employee } from "@/types/informationTypes/employeeTypes";
 
-import { useAccountsStore } from "@/stores/authStores/accountStore";
-import { useRolesStore } from "@/stores/permissionStores/RolesStore";
+import { useEmployeeStore } from "@/stores/informationStores/employeesStores";
+import { useDepartmentStore } from "@/stores/informationStores/departmentStores";
 import { Link } from "react-router-dom";
+import { z } from "zod";
+import { getEmployeeValidationSchema } from "@/types/informationTypes/employeeTypes";
 
-export function AccountsTable({
-  data,
+export function EmployeeTable({
+  data = [],
   loading,
 }: {
-  data: Account[];
+  data: Employee[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -92,9 +92,14 @@ export function AccountsTable({
     pageIndex: 0,
     pageSize: 10,
   });
-  const table = useReactTable<Account>({
-    data,
-    columns,
+  const [openCreate, setOpenCreate] = React.useState(false);
+  const [selectedDept, setSelectedDept] = React.useState("");
+  const [selectedGender, setSelectedGender] = React.useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const table = useReactTable<Employee>({
+    data: data || [],
+    columns: employeeColumns,
     state: {
       sorting,
       columnVisibility,
@@ -102,7 +107,7 @@ export function AccountsTable({
       columnFilters,
       pagination,
     },
-    getRowId: (row) => row.MaTK.toString(),
+    getRowId: (row) => row.MaNV.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -116,25 +121,50 @@ export function AccountsTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-  const { Roles, getRoles } = useRolesStore();
-  const { createAccount } = useAccountsStore();
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+
+  const { departments, getDepartments } = useDepartmentStore();
+  const { createEmployee } = useEmployeeStore();
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    const newAccount = {
-      MaTK: formData.get("MaTk") as string,
+    const existingCodes = data.map((emp) => emp.MaNV);
+    const formValues = {
       MaNV: formData.get("MaNV") as string,
-      MaVT: formData.get("MaVT") as string,
-      TenTaiKhoan: formData.get("TenTaiKhoan") as string,
-      MatKhau: formData.get("MatKhau") as string,
+      MaPB: selectedDept,
+      HoVaTen: formData.get("HoVaTen") as string,
+      GioiTinh: selectedGender,
+      NgaySinh: formData.get("NgaySinh") as string,
+      SDT: formData.get("SDT") as string,
+      NgayVaoLam: formData.get("NgayVaoLam") as string,
+      DiaChi: formData.get("DiaChi") as string,
+      HinhAnh: (formData.get("HinhAnh") as string) || "",
     };
-    createAccount(newAccount);
+
+    try {
+      const validatedData =
+        getEmployeeValidationSchema(existingCodes).parse(formValues);
+      setErrors({});
+      await createEmployee(validatedData as Employee);
+      setOpenCreate(false);
+      setSelectedDept("");
+      setSelectedGender("");
+      (e.target as HTMLFormElement).reset();
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {};
+        error.issues.forEach((issue) => {
+          if (issue.path[0])
+            newErrors[issue.path[0].toString()] = issue.message;
+        });
+        setErrors(newErrors);
+      }
+    }
   };
 
   useEffect(() => {
-    getRoles();
-  }, [getRoles]);
-
+    getDepartments();
+  }, [getDepartments]);
 
   if (loading) {
     return <p className="text-center py-4">Đang tải dữ liệu...</p>;
@@ -145,7 +175,6 @@ export function AccountsTable({
       defaultValue="outline"
       className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
-        {/*breadcumm */}
         <Breadcrumb className="hidden @4xl/main:flex">
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -154,12 +183,19 @@ export function AccountsTable({
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>Phân Quyền</BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink>Thông tin</BreadcrumbLink>
+            </BreadcrumbItem>
             <BreadcrumbSeparator />
-            <BreadcrumbItem>Tài Khoản</BreadcrumbItem>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link to="/PortalPage/Employees">Nhân viên</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        {/*button */}
+
+        {/* ================== ACTIONS (FILTER) ================== */}
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -189,7 +225,7 @@ export function AccountsTable({
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => {
                         if (!value && visibleColumns.length <= 3) {
-                          return; // không làm gì
+                          return;
                         }
                         column.toggleVisibility(!!value);
                       }}>
@@ -200,80 +236,141 @@ export function AccountsTable({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Button create */}
-          <Dialog>
-            <form onSubmit={handleSubmit}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>Tạo Tài Khoản</DialogTitle>
-                </DialogHeader>
+          {/* ================== CREATE NEW EMPLOYEE DIALOG ================== */}
+          <Dialog
+            open={openCreate}
+            onOpenChange={(val) => {
+              setOpenCreate(val);
+              if (!val) setErrors({});
+            }}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Tạo nhân viên mới</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={handleSubmit}>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="MaTk">Mã Tài Khoản</Label>
-                    <Input id="MaTk" name="MaTk" defaultValue="TKxxx" />
+                    <Label htmlFor="MaNV">Mã nhân viên</Label>
+                    <Input
+                      id="MaNV"
+                      name="MaNV"
+                      placeholder="NVxxx"
+                      className="uppercase"
+                    />
+                    {errors.MaNV && (
+                      <span className="text-xs text-red-500">
+                        {errors.MaNV}
+                      </span>
+                    )}
                   </Field>
                   <Field>
-                    <Label htmlFor="MaNV">Mã Nhân Viên</Label>
-                    <Select>
-                      <SelectTrigger className="w-full max-w-48">
-                        <SelectValue placeholder="Chọn NVXXX" />
+                    <Label>Phòng ban</Label>
+                    <Select
+                      value={selectedDept}
+                      onValueChange={setSelectedDept}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn phòng ban" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="apple">Apple</SelectItem>
-                          <SelectItem value="banana">Banana</SelectItem>
-                          <SelectItem value="blueberry">Blueberry</SelectItem>
-                          <SelectItem value="grapes">Grapes</SelectItem>
-                          <SelectItem value="pineapple">Pineapple</SelectItem>
-                        </SelectGroup>
+                        {departments?.map((dept) => (
+                          <SelectItem key={dept.MaPB} value={dept.MaPB}>
+                            {dept.MaPB} - {dept.TenPB}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
+                    {errors.MaPB && (
+                      <span className="text-xs text-red-500">
+                        {errors.MaPB}
+                      </span>
+                    )}
                   </Field>
                   <Field>
-                    <Label htmlFor="MaVT">Mã Vai Trò</Label>
-                    <Select>
-                      <SelectTrigger className="w-full max-w-48">
-                        <SelectValue placeholder="Chọn VTXXX" />
+                    <Label htmlFor="HoVaTen">Họ và tên</Label>
+                    <Input id="HoVaTen" name="HoVaTen" />
+                    {errors.HoVaTen && (
+                      <span className="text-xs text-red-500">
+                        {errors.HoVaTen}
+                      </span>
+                    )}
+                  </Field>
+                  <Field>
+                    <Label>Giới tính</Label>
+                    <Select
+                      value={selectedGender}
+                      onValueChange={setSelectedGender}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn giới tính" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectGroup>
-                          {Roles.map((vt: Role) => (
-                            <SelectItem key={vt.MaVT} value={vt.MaVT}>
-                              {vt.MaVT} - {vt.TenVaiTro}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
+                        <SelectItem value="Nam">Nam</SelectItem>
+                        <SelectItem value="Nữ">Nữ</SelectItem>
+                        <SelectItem value="Khác">Khác</SelectItem>
                       </SelectContent>
                     </Select>
+                    {errors.GioiTinh && (
+                      <span className="text-xs text-red-500">
+                        {errors.GioiTinh}
+                      </span>
+                    )}
                   </Field>
                   <Field>
-                    <Label htmlFor="TenTaiKhoan">Tên Tài Khoản</Label>
-                    <Input id="TenTaiKhoan" name="TenTaiKhoan" />
+                    <Label htmlFor="NgaySinh">Ngày sinh</Label>
+                    <Input id="NgaySinh" name="NgaySinh" type="date" />
+                    {errors.NgaySinh && (
+                      <span className="text-xs text-red-500">
+                        {errors.NgaySinh}
+                      </span>
+                    )}
                   </Field>
                   <Field>
-                    <Label htmlFor="MatKhau">Mật Khẩu</Label>
-                    <Input id="MatKhau" name="MatKhau" />
+                    <Label htmlFor="SDT">Số điện thoại</Label>
+                    <Input id="SDT" name="SDT" />
+                    {errors.SDT && (
+                      <span className="text-xs text-red-500">{errors.SDT}</span>
+                    )}
+                  </Field>
+                  <Field>
+                    <Label htmlFor="NgayVaoLam">Ngày vào làm</Label>
+                    <Input id="NgayVaoLam" name="NgayVaoLam" type="date" />
+                    {errors.NgayVaoLam && (
+                      <span className="text-xs text-red-500">
+                        {errors.NgayVaoLam}
+                      </span>
+                    )}
+                  </Field>
+                  <Field>
+                    <Label htmlFor="DiaChi">Địa chỉ</Label>
+                    <Input id="DiaChi" name="DiaChi" />
+                    {errors.DiaChi && (
+                      <span className="text-xs text-red-500">
+                        {errors.DiaChi}
+                      </span>
+                    )}
                   </Field>
                 </FieldGroup>
-                <DialogFooter>
+                <DialogFooter className="mt-6">
                   <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
+                    <Button variant="outline" type="button">
+                      Huỷ
+                    </Button>
                   </DialogClose>
-                  <Button type="submit">Tạo</Button>
+                  <Button type="submit">Tạo nhân viên</Button>
                 </DialogFooter>
-              </DialogContent>
-            </form>
+              </form>
+            </DialogContent>
           </Dialog>
+          {/* ================== END CREATE NEW EMPLOYEE DIALOG ================== */}
         </div>
       </div>
 
-      {/* Table */}
+      {/* ================== TABLE CONTENT ================== */}
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
@@ -282,18 +379,16 @@ export function AccountsTable({
             <TableHeader className="bg-muted sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </TableHead>
-                    );
-                  })}
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
             </TableHeader>
@@ -316,7 +411,7 @@ export function AccountsTable({
               ) : (
                 <TableRow>
                   <TableCell
-                    colSpan={columns.length}
+                    colSpan={employeeColumns.length}
                     className="h-24 text-center">
                     Không có dữ liệu.
                   </TableCell>
@@ -325,7 +420,8 @@ export function AccountsTable({
             </TableBody>
           </Table>
         </div>
-        {/*panigations */}
+
+        {/* ================== PAGINATION & INFO ================== */}
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
             {table.getFilteredSelectedRowModel().rows.length} trong số{" "}
