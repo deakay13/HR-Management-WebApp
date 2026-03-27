@@ -1,6 +1,6 @@
 import type { Allowance } from "@/types/payRollTypes/allowanceTypes";
 import { type ColumnDef } from "@tanstack/react-table";
-import { AllowanceActionCell } from "@/components/ActionComponets/Managements/AllowanceActionsCell";
+import { AllowanceActionCell } from "@/components/ActionComponets/workspace/AllowanceActionsCell";
 
 export const columns: ColumnDef<Allowance>[] = [
   {

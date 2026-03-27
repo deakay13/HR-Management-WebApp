@@ -52,7 +52,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+} from "../../ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
@@ -65,8 +65,9 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/deductionColumns";
+import { columns } from "../Columns/workspace/deductionColumns";
 import type { Deduction } from "@/types/payRollTypes/deductionTypes";
+import { useDeductionStore } from "@/stores/payRollStores/deductionStores";
 import { Link } from "react-router-dom";
 
 export function DeductionTable({
@@ -83,6 +84,17 @@ export function DeductionTable({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [formData, setFormData] = React.useState({
+  MaKT: "",
+  LoaiKT: "",
+  PhanTram: 0,
+  });
+  const { createDeduction } = useDeductionStore();
+
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createDeduction(formData);
+  };
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -178,39 +190,105 @@ export function DeductionTable({
 
           {/* Button create */}
           <Dialog>
-            <form>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() =>
+                  setFormData({
+                    MaKT: "",
+                    LoaiKT: "",
+                    PhanTram: 0,
+                  })
+                }
+              >
+                <IconPlus />
+                <span className="hidden lg:inline">Tạo mới</span>
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleCreate} className="space-y-6">
+                
                 <DialogHeader>
-                  <DialogTitle>Tạo khấu trừ</DialogTitle>
+                  <DialogTitle className="text-lg font-semibold">
+                    Tạo khấu trừ
+                  </DialogTitle>
                 </DialogHeader>
-                <FieldGroup>
-                  <Field>
+                <FieldGroup className="space-y-4">
+                  
+                  <Field className="flex flex-col gap-2">
                     <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
-                    <Input id="MaKT" name="MaKT" defaultValue="KTxxx" />
+                    <Input
+                      id="MaKT"
+                      placeholder="VD: KT001"
+                      className="h-10"
+                      value={formData.MaKT}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          MaKT: e.target.value,
+                        })
+                      }
+                    />
                   </Field>
-                  <Field>
+
+                  <Field className="flex flex-col gap-2">
                     <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
-                    <Input id="LoaiKT" name="LoaiKT" />
+                    <Input
+                      id="LoaiKT"
+                      placeholder="VD: Thuế TNCN"
+                      className="h-10"
+                      value={formData.LoaiKT}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          LoaiKT: e.target.value,
+                        })
+                      }
+                    />
                   </Field>
-                  <Field>
-                    <Label htmlFor="PhanTram">Phần Trăm</Label>
-                    <Input id="PhanTram" name="PhanTram" type="number" />
+
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="PhanTram">Phần Trăm (%)</Label>
+                    <Input
+                      id="PhanTram"
+                      type="number"
+                      placeholder="VD: 10"
+                      className="h-10"
+                      value={formData.PhanTram}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          PhanTram: Number(e.target.value),
+                        })
+                      }
+                    />
                   </Field>
+
                 </FieldGroup>
-                <DialogFooter>
+
+                <DialogFooter className="gap-2">
                   <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
+                    <Button type="button" variant="outline">
+                      Huỷ
+                    </Button>
                   </DialogClose>
-                  <Button type="submit">Save changes</Button>
+
+                  <Button
+                    type="submit"
+                    disabled={
+                      !formData.MaKT ||
+                      !formData.LoaiKT ||
+                      formData.PhanTram <= 0
+                    }
+                  >
+                    Tạo mới
+                  </Button>
                 </DialogFooter>
-              </DialogContent>
-            </form>
+
+              </form>
+            </DialogContent>
           </Dialog>
         </div>
       </div>

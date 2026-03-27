@@ -1,7 +1,7 @@
 import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStores";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { BaseSalaryTable } from "../Table/BaseSalaryTable";
+import { BaseSalaryTable } from "../Table/workspaceTable/BaseSalaryTable";
 
 const BaseSalaryComponents = () => {
   const { BaseSalaries, initializing, getBaseSalaries } = useBaseSalaryStore();

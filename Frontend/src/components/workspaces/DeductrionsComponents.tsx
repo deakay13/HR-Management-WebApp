@@ -1,7 +1,7 @@
 import { useDeductionStore } from "@/stores/payRollStores/deductionStores";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { DeductionTable } from "../Table/DeductionTable";
+import { DeductionTable } from "../Table/workspaceTable/DeductionTable";
 
 const DeductionComponents = () => {
   const { Deductions, initializing, getDeductions } = useDeductionStore();

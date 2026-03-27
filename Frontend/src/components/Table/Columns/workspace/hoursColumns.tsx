@@ -1,6 +1,6 @@
 import type { Hours } from "@/types/payRollTypes/hoursTypes";
 import { type ColumnDef } from "@tanstack/react-table";
-import { HoursActionCell  } from "@/components/ActionComponets/Managements/HoursActionsCell";
+import { HoursActionCell  } from "@/components/ActionComponets/workspace/HoursActionsCell";
 
 export const columns: ColumnDef<Hours>[] = [
   {

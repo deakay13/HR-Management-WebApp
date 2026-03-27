@@ -34,4 +34,37 @@ export const useDeductionStore = create<DeductionTypes>((set,get) => ({
               toast.error("Không thể xoá Phụ cấp");
             }
           },
+     // CREATE
+            createDeduction: async (data) => {
+                try {
+                    const newItem = await DeductionServices.createDeduction(data);
+                    await get().getDeductions(); // Tải lại danh sách sau khi thêm
+                    set({
+                        Deductions: [...get().Deductions, newItem],
+                    });
+        
+                    toast.success("Thêm Khấu trừ thành công");
+                } catch (error) {
+                    console.error("Lỗi khi thêm Khấu trừ", error);
+                    toast.error("Không thể thêm Khấu trừ");
+                }
+            },
+        
+            // UPDATE
+            updateDeduction: async (ID: string, data) => {
+                try {
+                    const updated = await DeductionServices.updateDeduction(ID, data);
+                    await get().getDeductions(); // Tải lại danh sách sau khi cập nhật
+                    set({
+                        Deductions: get().Deductions.map((d) =>
+                            d.MaKT === ID ? updated : d
+                        ),
+                    });
+        
+                    toast.success("Cập nhật Khấu trừ thành công");
+                } catch (error) {
+                    console.error("Lỗi khi cập nhật Khấu trừ", error);
+                    toast.error("Không thể cập nhật Khấu trừ");
+                }
+            },
 }));
