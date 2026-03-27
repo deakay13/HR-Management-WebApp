@@ -67,5 +67,4 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
                 toast.error("Không thể cập nhật Bảng lương");
                     }
         },
-
 }));

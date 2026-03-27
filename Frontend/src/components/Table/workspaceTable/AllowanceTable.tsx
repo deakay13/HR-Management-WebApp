@@ -68,6 +68,7 @@ import { columns } from "../Columns/workspace/allowancesColumns";
 import type { Allowance } from "@/types/payRollTypes/allowanceTypes";
 import { useAllowanceStore } from "@/stores/payRollStores/allowanceStores";
 import { Link } from "react-router-dom";
+import { Field,FieldGroup } from "@/components/ui/field";
 
 export function AllowanceTable({
   data,
@@ -237,12 +238,9 @@ export function AllowanceTable({
                     setFormData({ ...formData, MaPC: e.target.value })
                   }
                 />
-<<<<<<< HEAD:Frontend/src/components/Table/workspaceTable/AllowanceTable.tsx
               </FieldGroup>
 
-=======
-              </div>
->>>>>>> 1bf1f85764b14fb1bbe23ed10e3ac065d917933b:Frontend/src/components/Table/AllowanceTable.tsx
+
               {/* LoaiPC */}
               <FieldGroup className="flex flex-col gap-4">
                 <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
@@ -254,13 +252,9 @@ export function AllowanceTable({
                   onChange={(e) =>
                     setFormData({ ...formData, LoaiPC: e.target.value })
                   }
-                />
-<<<<<<< HEAD:Frontend/src/components/Table/workspaceTable/AllowanceTable.tsx
+                />  
               </FieldGroup>
 
-=======
-              </div>
->>>>>>> 1bf1f85764b14fb1bbe23ed10e3ac065d917933b:Frontend/src/components/Table/AllowanceTable.tsx
               {/* SoTien */}
               <FieldGroup className="flex flex-col gap-4">
                 <Label htmlFor="SoTien">Số Tiền</Label>
