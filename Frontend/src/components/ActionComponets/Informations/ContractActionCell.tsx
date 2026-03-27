@@ -23,33 +23,70 @@ import { Input } from "@/components/ui/input";
 import { useContractStore } from "@/stores/informationStores/contractStore"; 
 import { useEffect, useState } from "react";
 import type { Contract } from "@/types/informationTypes/contractTypes";
+import { getContractValidationSchema } from "@/types/informationTypes/contractTypes";
+import { useEmployeeStore } from "@/stores/informationStores/employeesStores";
+
+import { z } from "zod";
 
 export function ContractActionCell({ contract }: { contract: Contract }) {
   const { deleteContract, updateContract } = useContractStore();
   const [editOpen, setEditOpen] = useState(false);
-  
+  const { employees } = useEmployeeStore();
   const [formDataState, setFormDataState] = useState<Contract>(contract);
   const [file, setFile] = useState<File | null>(null);
+  
+  // State save errors from Zod validation
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (editOpen) {
       setFormDataState(contract);
       setFile(null);
+      setErrors({}); // Reset errors 
     }
   }, [editOpen, contract]);
 
   const handleUpdate = async () => {
-    const formData = new FormData();
-    formData.append("MaNV", formDataState.MaNV);
-    formData.append("LoaiHD", formDataState.LoaiHD);
-    formData.append("NgayBatDau", formDataState.NgayBatDau);
-    formData.append("NgayKetThuc", formDataState.NgayKetThuc);
-    if (file) {
-      formData.append("HinhAnhHopDong", file);
-    }
+    const employeeCodes = employees.map(emp => emp.MaNV.toUpperCase());
+    
+    try {
+      const validatedData = getContractValidationSchema([], employeeCodes, true).parse({
+        MaHopDong: formDataState.MaHopDong,
+        MaNV: formDataState.MaNV,
+        LoaiHD: formDataState.LoaiHD,
+        NgayBatDau: formDataState.NgayBatDau,
+        NgayKetThuc: formDataState.NgayKetThuc,
+        HinhAnhHopDong: file, 
+      });
 
-    await updateContract(contract.MaHopDong, formData);
-    setEditOpen(false);
+      setErrors({});
+      
+      const formData = new FormData();
+      
+      formData.append("MaNV", validatedData.MaNV); 
+      formData.append("LoaiHD", validatedData.LoaiHD);
+      formData.append("NgayBatDau", validatedData.NgayBatDau);
+      formData.append("NgayKetThuc", validatedData.NgayKetThuc);
+      formData.append("MaHopDong", validatedData.MaHopDong); 
+      
+      if (file) {
+        formData.append("HinhAnhHopDong", file);
+      }
+
+      await updateContract(contract.MaHopDong, formData);
+      setEditOpen(false);
+
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const newErrors: Record<string, string> = {};
+        error.issues.forEach((issue) => {
+          if (issue.path[0]) {
+            newErrors[issue.path[0].toString()] = issue.message;
+          }
+        });
+        setErrors(newErrors);
+      }
+    }
   };
 
   return (
@@ -65,7 +102,6 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        {/* ================= EDIT ================= */}
         <Dialog open={editOpen} onOpenChange={setEditOpen}>
           <DialogTrigger asChild>
             <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setEditOpen(true); }}>
@@ -88,9 +124,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                 <Label htmlFor="MaNV">Mã nhân viên</Label>
                 <Input
                   id="MaNV"
+                  className="uppercase"
                   value={formDataState.MaNV}
                   onChange={(e) => setFormDataState((prev) => ({ ...prev, MaNV: e.target.value }))}
                 />
+                {errors.MaNV && <span className="text-xs text-red-500">{errors.MaNV}</span>}
               </Field>
 
               <Field>
@@ -100,6 +138,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                   value={formDataState.LoaiHD}
                   onChange={(e) => setFormDataState((prev) => ({ ...prev, LoaiHD: e.target.value }))}
                 />
+                {errors.LoaiHD && <span className="text-xs text-red-500">{errors.LoaiHD}</span>}
               </Field>
 
               <Field>
@@ -110,6 +149,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                   value={formDataState.NgayBatDau}
                   onChange={(e) => setFormDataState((prev) => ({ ...prev, NgayBatDau: e.target.value }))}
                 />
+                {errors.NgayBatDau && <span className="text-xs text-red-500">{errors.NgayBatDau}</span>}
               </Field>
 
               <Field>
@@ -120,19 +160,22 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                   value={formDataState.NgayKetThuc}
                   onChange={(e) => setFormDataState((prev) => ({ ...prev, NgayKetThuc: e.target.value }))}
                 />
+                {errors.NgayKetThuc && <span className="text-xs text-red-500">{errors.NgayKetThuc}</span>}
               </Field>
 
               <Field>
-                <Label htmlFor="HinhAnhHopDong">Hình ảnh hợp đồng (để trống nếu không đổi)</Label>
+                <Label htmlFor="HinhAnhHopDong">Hình ảnh hợp đồng (chỉ PDF, để trống nếu không đổi)</Label>
                 <Input
                   id="HinhAnhHopDong"
                   type="file"
+                  accept=".pdf" 
                   onChange={(e) => {
                     if (e.target.files && e.target.files.length > 0) {
                       setFile(e.target.files[0]);
                     }
                   }}
                 />
+                {errors.HinhAnhHopDong && <span className="text-xs text-red-500">{errors.HinhAnhHopDong}</span>}
               </Field>
             </FieldGroup>
 
@@ -147,7 +190,6 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
 
         <DropdownMenuSeparator />
 
-        {/* ================= DELETE ================= */}
         <Dialog>
           <DialogTrigger asChild>
             <DropdownMenuItem variant="destructive" onSelect={(e) => e.preventDefault()}>

@@ -38,7 +38,6 @@ export const contractColumns: ColumnDef<Contract>[] = [
   },
   {
     id: "actions",
-    header: "Thao tác",
     cell: ({ row }) => <ContractActionCell contract={row.original} />,
   },
 ];
