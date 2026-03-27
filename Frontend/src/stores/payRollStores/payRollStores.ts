@@ -22,7 +22,6 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
             set({ initializing: false });
         }
     },
-<<<<<<< HEAD
      deletePayRoll: async (ID: string) => {
             try {
               await PayRollServices.deletePayRoll(ID);
@@ -68,18 +67,5 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
                 toast.error("Không thể cập nhật Bảng lương");
                     }
         },
-=======
-    deletePayRoll: async (ID: string) => {
-        try {
-            await PayRollServices.deletePayRoll(ID);
-            set({
-                PayRolls: get().PayRolls.filter((d) => d.MaBL !== ID),
-            });
-            toast.success("Xoá Bảng lương thành công");
-        } catch (error) {
-            console.error("Lỗi khi xoá Bảng lương", error);
-            toast.error("Không thể xoá Bảng lương");
-        }
-    },
->>>>>>> 1bf1f85764b14fb1bbe23ed10e3ac065d917933b
+
 }));
