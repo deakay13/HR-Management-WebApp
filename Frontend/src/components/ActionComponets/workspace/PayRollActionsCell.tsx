@@ -207,7 +207,36 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
             <DialogHeader>
               <DialogTitle>Xoá Bảng Lương</DialogTitle>
             </DialogHeader>
+                <div className="text-sm space-y-1 text-muted-foreground">
+                <p>Bạn có chắc muốn xoá không?</p>
 
+                <ul>
+                  <li>
+                    <b>Mã bảng lương:</b> {payRoll.MaBL}
+                  </li>
+                  <li>
+                    <b>Mã nhân viên:</b> {payRoll.MaNV}
+                  </li>
+                  <li>
+                    <b>Mã lương CB:</b> {payRoll.MaLCB}
+                  </li>
+                  <li>
+                    <b>Mã phụ cấp:</b> {payRoll.MaPC}
+                  </li>
+                  <li>
+                    <b>Mã khấu trừ:</b> {payRoll.MaKT}
+                  </li>
+                  <li>
+                    <b>Mã giờ làm:</b> {payRoll.MaGL}
+                  </li>
+                  <li>
+                    <b>Tháng:</b>{" "}
+                    <span className="font-semibold text-red-500">
+                      {payRoll.Thang}
+                    </span>
+                  </li>
+                </ul>
+              </div>
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Huỷ</Button>

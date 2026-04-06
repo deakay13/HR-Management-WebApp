@@ -24,4 +24,11 @@ export const PayRollServices = {
         });
         return res.data.data;
         },
+    searchPayRolls: async (params: any) => {
+    const res = await api.get("/api/payroll/payrolls/search", {
+        params,
+        withCredentials: true,
+    });
+    return res.data;
+},
 };

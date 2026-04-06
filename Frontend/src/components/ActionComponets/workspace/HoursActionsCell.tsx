@@ -148,11 +148,21 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
             <DialogHeader>
               <DialogTitle>Xoá Giờ Làm</DialogTitle>
             </DialogHeader>
+            <div className="text-sm space-y-1 text-muted-foreground">
+              <p>Bạn có chắc muốn xoá không?</p>
 
-            <p className="text-sm text-muted-foreground">
-              Bạn có chắc muốn xoá <b>{hours.MaGL}</b> không?
-            </p>
-
+              <ul>
+                <li>
+                  <b>Mã giờ làm:</b> {hours.MaGL}
+                </li>
+                <li>
+                  <b>Số giờ:</b>{" "}
+                  <span className="text-red-500 font-semibold">
+                    {Number(hours.SoGioLam)} giờ
+                  </span>
+                </li>
+              </ul>
+            </div>
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Huỷ</Button>

@@ -154,9 +154,18 @@ export function BaseSalaryActionCell({
               <DialogTitle>Xoá Lương Cơ Bản</DialogTitle>
             </DialogHeader>
 
-            <p className="text-sm text-muted-foreground">
-              Bạn có chắc muốn xoá <b>{baseSalary.MaLCB}</b> không?
-            </p>
+            <div className="text-sm space-y-1 text-muted-foreground">
+              <p>Bạn có chắc muốn xoá không?</p>
+              <ul>
+                <li>
+                  <b>Mã:</b> {baseSalary.MaLCB}
+                </li>
+                <li>
+                  <b>Lương:</b>{" "}
+                  {Number(baseSalary.LuongCB).toLocaleString()} VNĐ
+                </li>
+              </ul>
+            </div>
 
             <DialogFooter>
               <DialogClose asChild>

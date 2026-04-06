@@ -90,7 +90,24 @@ export function PayRollTable({
       MaGL: "",
       Thang: "",
     });
-    const { createPayRolls } = usePayRollStore();
+    
+    const [keyword, setKeyword] = React.useState("")
+    const { createPayRolls, searchPayRolls } = usePayRollStore();
+    React.useEffect(() => {
+      const delay = setTimeout(() => {
+        if (keyword.trim() === "") {
+          usePayRollStore.getState().getPayRolls();
+        } else {
+          searchPayRolls({
+            keyword,
+            page: 1,
+            size: 10,
+          });
+        }
+      }, 500);
+
+  return () => clearTimeout(delay);
+}, [keyword]);
 
     const handleCreate = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -155,6 +172,13 @@ export function PayRollTable({
         </Breadcrumb>
         {/*button */}
         <div className="flex items-center gap-2">
+          {/*  Input Search */}
+          <Input
+            placeholder="Tìm mã NV, mã bảng lương..."
+            className="h-8 w-[220px]"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">

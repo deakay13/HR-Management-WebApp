@@ -5,7 +5,7 @@ import {
   IconLogout2,
 } from "@tabler/icons-react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,18 +24,11 @@ import {
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useNavigate } from "react-router";
 
-export function NavUserMini({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUserMini() {
   const { isMobile } = useSidebar();
-  const { signOut } = useAuthStore();
+  const { signOut, account } = useAuthStore();
   const navigate = useNavigate();
+  if (!account) return null;
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -44,6 +37,20 @@ export function NavUserMini({
       console.error(error);
     }
   };
+  const getRoleName = (maVT: string) => {
+  switch (maVT) {
+    case "VT001":
+      return "Admin";
+    case "VT002":
+      return "Nhân sự";
+    case "VT003":
+      return "Nhân viên";
+    default:
+      return "Unknown";
+  }
+};
+
+const role = getRoleName(account.MaVT);
 
   return (
     <SidebarMenu>
@@ -54,13 +61,14 @@ export function NavUserMini({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
               <Avatar className="h-8 w-8 rounded-lg grayscale">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {account.TenTaiKhoan?.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                <span className="truncate font-medium">{account.TenTaiKhoan}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+                  {role}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
@@ -73,14 +81,15 @@ export function NavUserMini({
             sideOffset={4}>
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <Avatar className="h-8 w-8 rounded-lg grayscale">
+                  <AvatarFallback className="rounded-lg">
+                    {account.TenTaiKhoan?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  <span className="truncate font-medium">{account.TenTaiKhoan}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {user.email}
+                    {role}
                   </span>
                 </div>
               </div>

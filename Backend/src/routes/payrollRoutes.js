@@ -4,7 +4,7 @@ import {createBaseSalary, getBaseSalaries, getBaseSalaryById, updateBaseSalary, 
 import {createDeduction, getDeductions, getDeductionById, updateDeduction, deleteDeduction } from "../controllers/Payroll/deductionController.js";
 import { createAllowance, getAllowances, getAllowanceById, updateAllowance, deleteAllowance } from "../controllers/Payroll/allowanceController.js";
 import { createHour, getHours, getHourById, updateHour, deleteHour } from "../controllers/Payroll/hoursController.js";
-import { calculatePayroll, getPayrolls, getPayrollById,getPayrollByMonth,getPayrollByEmployee, deletePayroll } from "../controllers/Payroll/payRollController.js";
+import { calculatePayroll, getPayrolls, getPayrollById,getPayrollByMonth,getPayrollByEmployee, deletePayroll, updatePayroll, exportPayrollToExcel, searchPayroll } from "../controllers/Payroll/payRollController.js";
 const router = express.Router();
 // Base Salary routes
 router.post("/basesalary", createBaseSalary);
@@ -33,9 +33,12 @@ router.delete("/hours/:ID", deleteHour);
 // Payroll calculation routes
 router.post("/payrolls", calculatePayroll);
 router.get("/payrolls", getPayrolls);
+router.get("/payrolls/search", searchPayroll);
 router.get("/payrolls/:ID", getPayrollById);
 router.delete("/payrolls/:ID", deletePayroll);
 router.get("/payrolls/month/:month", getPayrollByMonth);
 router.get("/payrolls/employee/:ID", getPayrollByEmployee);
+router.put("/payrolls/:ID", updatePayroll)
+router.get("/payrolls/export/excel", exportPayrollToExcel)
 
 export default router;

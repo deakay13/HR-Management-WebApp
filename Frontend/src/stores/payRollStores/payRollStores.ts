@@ -6,6 +6,12 @@ import type { PayRollTypes } from "@/types/payRollTypes/payRollTypes";
 export const usePayRollStore = create<PayRollTypes>((set,get) => ({
     PayRolls: [],
     initializing: true,
+
+    totalItems: 0,
+    totalPages: 0,
+    currentPage: 1,
+    searchParams: {},
+    
     clearState: () => {
         set({ PayRolls: [] });
     },
@@ -66,5 +72,26 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
                 console.error("Lỗi khi cập nhật Bảng lương", error);
                 toast.error("Không thể cập nhật Bảng lương");
                     }
+        },
+        searchPayRolls: async (params) => {
+            set({ initializing: true });
+
+            try {
+                const res = await PayRollServices.searchPayRolls(params);
+
+                set({
+                    PayRolls: res.data,
+                    totalItems: res.totalItems,
+                    totalPages: res.totalPages,
+                    currentPage: res.currentPage,
+                    searchParams: params
+                });
+
+            } catch (error) {
+                console.error("Lỗi search payroll", error);
+                toast.error("Không thể tìm kiếm bảng lương");
+            } finally {
+                set({ initializing: false });
+            }
         },
 }));

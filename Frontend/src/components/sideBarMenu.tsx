@@ -31,11 +31,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+ 
   navWorkspaces: [
     {
       name: "Trang tổng quát",
@@ -137,7 +133,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSystems} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUserMini user={data.user} />
+        <NavUserMini />
       </SidebarFooter>
     </Sidebar>
   );
