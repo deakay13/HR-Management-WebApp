@@ -278,22 +278,31 @@ export const searchPayroll = async (req, res) => {
       req.query,
       pagination,
       {
-        searchFields: ["MaNV", "MaBL"],
-        likeFields: ["Thang"],
-        exactFields: ["TrangThai"],
-        rangeFields: ["TongLuong"],
+        // 1. Tìm kiếm nhanh theo mã
+        searchFields: ["MaNV", "MaBL"], 
+        
+        // 2. Lọc chính xác (Dropdown)
+        exactFields: ["TrangThai", "MaNV"], 
+        
+        // 3. Lọc theo tháng (VD: "2024-03")
+        likeFields: ["Thang"], 
+        
+        // 4. Lọc khoảng lương (Rất quan trọng cho Payroll)
+        rangeFields: ["TongLuong"], 
+        
+        // 5. Lọc khoảng ngày tính lương
+        // Bạn có thể thêm xử lý Date Range vào buildWhereClause
+        
         order: [["NgayTinhLuong", "DESC"]]
       }
     );
 
     return res.status(200).json(result);
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
-
 export const exportPayrollToExcel = async (req, res) => {
   try {
     const payrolls = await BangLuong.findAll()

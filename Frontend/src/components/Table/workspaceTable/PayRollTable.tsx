@@ -62,6 +62,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  IconSearch, 
+  IconX 
+} from "@tabler/icons-react";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
@@ -90,25 +94,37 @@ export function PayRollTable({
       MaGL: "",
       Thang: "",
     });
-    
-    const [keyword, setKeyword] = React.useState("")
+    const [filters, setFilters] = React.useState({
+    keyword: "",
+    Thang: "",
+    TrangThai: "",
+  });
+    const resetFilters = () => {
+      setFilters({
+        keyword: "",
+        Thang: "",
+        TrangThai: "",
+      });
+    };
     const { createPayRolls, searchPayRolls } = usePayRollStore();
+    const isFirstRender = React.useRef(true);
+    const handleFilterChange = (key: string, value: string) => {
+      setFilters((prev) => ({ ...prev, [key]: value }));
+    };
     React.useEffect(() => {
-      const delay = setTimeout(() => {
-        if (keyword.trim() === "") {
-          usePayRollStore.getState().getPayRolls();
-        } else {
-          searchPayRolls({
-            keyword,
-            page: 1,
-            size: 10,
-          });
-        }
+      // Chỉ chặn duy nhất lần đầu tiên vào trang
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+
+      const delayDebounceFn = setTimeout(() => {
+        // Dù filter trống cũng gọi search để lấy lại danh sách gốc
+        searchPayRolls(filters); 
       }, 500);
 
-  return () => clearTimeout(delay);
-}, [keyword]);
-
+      return () => clearTimeout(delayDebounceFn);
+    }, [filters, searchPayRolls]); // Thêm searchPayRolls vào dependency cho đúng chuẩn
     const handleCreate = async (e: React.FormEvent) => {
       e.preventDefault();
       await createPayRolls(formData);
@@ -130,7 +146,7 @@ export function PayRollTable({
       columnVisibility,
       rowSelection,
       columnFilters,
-      pagination,
+      pagination
     },
     getRowId: (row) => row.MaBL.toString(),
     enableRowSelection: true,
@@ -172,13 +188,26 @@ export function PayRollTable({
         </Breadcrumb>
         {/*button */}
         <div className="flex items-center gap-2">
-          {/*  Input Search */}
-          <Input
-            placeholder="Tìm mã NV, mã bảng lương..."
-            className="h-8 w-[220px]"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-          />
+          <div className="flex flex-wrap items-center gap-3 px-4 lg:px-6">
+            {/* 1. Tìm kiếm văn bản (Keyword) */}
+            <div className="relative">
+              <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Mã NV, Mã BL..."
+                className="h-9 w-[200px] pl-9"
+                value={filters.keyword}
+                onChange={(e) => handleFilterChange("keyword", e.target.value)}
+              />
+            </div>
+
+            {/* 2. Chọn Tháng */}
+            <Input
+              type="month"
+              className="h-9 w-[160px]"
+              value={filters.Thang}
+              onChange={(e) => handleFilterChange("Thang", e.target.value)}
+            />
+          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">

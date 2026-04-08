@@ -16,18 +16,27 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
         set({ PayRolls: [] });
     },
 
-    getPayRolls: async () => {
-        set({ initializing: true });
-        try {
-            const data = await PayRollServices.getPayRolls();
-            set({ PayRolls: data });
-        } catch (error) {
-            console.error("Lỗi khi lấy danh sách PayRolls", error);
-            toast.error("Không thể lấy danh sách PayRolls");
-        } finally {
-            set({ initializing: false });
-        }
-    },
+        getPayRolls: async () => {
+            // Chỉ set initializing nếu thực sự cần hiện loading toàn trang
+            set({ initializing: true }); 
+            try {
+                const response = await PayRollServices.getPayRolls();
+                
+                // Backend của bạn trả về: { data: rows, totalItems, ... }
+                // Phải lấy đúng response.data
+                const actualData = response?.data || [];
+                
+                set({ 
+                    PayRolls: actualData,
+                    totalItems: response?.totalItems || 0,
+                    totalPages: response?.totalPages || 0
+                });
+            } catch (error) {
+                console.error("Lỗi:", error);
+            } finally {
+                set({ initializing: false });
+            }
+        },
      deletePayRoll: async (ID: string) => {
             try {
               await PayRollServices.deletePayRoll(ID);
@@ -74,8 +83,6 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
                     }
         },
         searchPayRolls: async (params) => {
-            set({ initializing: true });
-
             try {
                 const res = await PayRollServices.searchPayRolls(params);
 
@@ -91,7 +98,7 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
                 console.error("Lỗi search payroll", error);
                 toast.error("Không thể tìm kiếm bảng lương");
             } finally {
-                set({ initializing: false });
+                
             }
         },
 }));
