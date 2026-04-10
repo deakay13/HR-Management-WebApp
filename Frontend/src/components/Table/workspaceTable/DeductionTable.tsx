@@ -69,6 +69,8 @@ import { columns } from "../Columns/workspace/deductionColumns";
 import type { Deduction } from "@/types/payRollTypes/deductionTypes";
 import { useDeductionStore } from "@/stores/payRollStores/deductionStores";
 import { Link } from "react-router-dom";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canCreate } from "@/utils/authorizeUtiles";
 
 export function DeductionTable({
   data,
@@ -85,11 +87,12 @@ export function DeductionTable({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [formData, setFormData] = React.useState({
-  MaKT: "",
-  LoaiKT: "",
-  PhanTram: 0,
+    MaKT: "",
+    LoaiKT: "",
+    PhanTram: 0,
   });
   const { createDeduction } = useDeductionStore();
+  const { permissions } = useAuthorizeStore();
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -189,107 +192,103 @@ export function DeductionTable({
           </DropdownMenu>
 
           {/* Button create */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setFormData({
-                    MaKT: "",
-                    LoaiKT: "",
-                    PhanTram: 0,
-                  })
-                }
-              >
-                <IconPlus />
-                <span className="hidden lg:inline">Tạo mới</span>
-              </Button>
-            </DialogTrigger>
+          {canCreate(permissions) && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFormData({
+                      MaKT: "",
+                      LoaiKT: "",
+                      PhanTram: 0,
+                    })
+                  }>
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
+                </Button>
+              </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md">
-              <form onSubmit={handleCreate} className="space-y-6">
-                
-                <DialogHeader>
-                  <DialogTitle className="text-lg font-semibold">
-                    Tạo khấu trừ
-                  </DialogTitle>
-                </DialogHeader>
-                <FieldGroup className="space-y-4">
-                  
-                  <Field className="flex flex-col gap-2">
-                    <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
-                    <Input
-                      id="MaKT"
-                      placeholder="VD: KT001"
-                      className="h-10"
-                      value={formData.MaKT}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          MaKT: e.target.value,
-                        })
-                      }
-                    />
-                  </Field>
+              <DialogContent className="sm:max-w-md">
+                <form onSubmit={handleCreate} className="space-y-6">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg font-semibold">
+                      Tạo khấu trừ
+                    </DialogTitle>
+                  </DialogHeader>
+                  <FieldGroup className="space-y-4">
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="MaKT">Mã Khấu Trừ</Label>
+                      <Input
+                        id="MaKT"
+                        placeholder="VD: KT001"
+                        className="h-10"
+                        value={formData.MaKT}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            MaKT: e.target.value,
+                          })
+                        }
+                      />
+                    </Field>
 
-                  <Field className="flex flex-col gap-2">
-                    <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
-                    <Input
-                      id="LoaiKT"
-                      placeholder="VD: Thuế TNCN"
-                      className="h-10"
-                      value={formData.LoaiKT}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          LoaiKT: e.target.value,
-                        })
-                      }
-                    />
-                  </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
+                      <Input
+                        id="LoaiKT"
+                        placeholder="VD: Thuế TNCN"
+                        className="h-10"
+                        value={formData.LoaiKT}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            LoaiKT: e.target.value,
+                          })
+                        }
+                      />
+                    </Field>
 
-                  <Field className="flex flex-col gap-2">
-                    <Label htmlFor="PhanTram">Phần Trăm (%)</Label>
-                    <Input
-                      id="PhanTram"
-                      type="number"
-                      placeholder="VD: 10"
-                      className="h-10"
-                      value={formData.PhanTram}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          PhanTram: Number(e.target.value),
-                        })
-                      }
-                    />
-                  </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="PhanTram">Phần Trăm (%)</Label>
+                      <Input
+                        id="PhanTram"
+                        type="number"
+                        placeholder="VD: 10"
+                        className="h-10"
+                        value={formData.PhanTram}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            PhanTram: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </Field>
+                  </FieldGroup>
 
-                </FieldGroup>
+                  <DialogFooter className="gap-2">
+                    <DialogClose asChild>
+                      <Button type="button" variant="outline">
+                        Huỷ
+                      </Button>
+                    </DialogClose>
 
-                <DialogFooter className="gap-2">
-                  <DialogClose asChild>
-                    <Button type="button" variant="outline">
-                      Huỷ
+                    <Button
+                      type="submit"
+                      disabled={
+                        !formData.MaKT ||
+                        !formData.LoaiKT ||
+                        formData.PhanTram <= 0
+                      }>
+                      Tạo mới
                     </Button>
-                  </DialogClose>
-
-                  <Button
-                    type="submit"
-                    disabled={
-                      !formData.MaKT ||
-                      !formData.LoaiKT ||
-                      formData.PhanTram <= 0
-                    }
-                  >
-                    Tạo mới
-                  </Button>
-                </DialogFooter>
-
-              </form>
-            </DialogContent>
-          </Dialog>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 

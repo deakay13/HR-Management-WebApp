@@ -1,4 +1,5 @@
 import VaiTro from '../../models/auth/VaiTro.js';
+import VaiTro_Quyen from '../../models/auth/VaiTro_Quyen.js';
 import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
 
@@ -142,7 +143,10 @@ export const deleteRole = async (req,res) => {
             return res.status(404).json({ message: "Vai Trò không tồn tại" });
         }
 
-        //Delete account
+        // Xoá tất cả quyền liên quan trước khi xoá vai trò
+        await VaiTro_Quyen.destroy({ where: { MaVT: ID } });
+
+        //Delete role
         await role.destroy();
 
         //respon status 200

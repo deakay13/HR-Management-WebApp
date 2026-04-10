@@ -71,6 +71,8 @@ import { useEmployeeStore } from "@/stores/informationStores/employeesStores";
 import { contractColumns } from "@/components/Table/Columns/informations/ContractTableColumns";
 import type { Contract } from "@/types/informationTypes/contractTypes";
 import { useContractStore } from "@/stores/informationStores/contractStore";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canCreate } from "@/utils/authorizeUtiles";
 
 export function ContractTable({
   data = [],
@@ -94,6 +96,7 @@ export function ContractTable({
     pageSize: 10,
   });
   const { employees, getEmployees } = useEmployeeStore();
+  const { permissions } = useAuthorizeStore();
 
   const table = useReactTable<Contract>({
     data: data || [],
@@ -230,100 +233,102 @@ export function ContractTable({
           </DropdownMenu>
 
           {/* Create new contract button */}
-          <Dialog
-            open={openCreate}
-            onOpenChange={(open) => {
-              setOpenCreate(open);
-              if (!open) setErrors({});
-            }}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconPlus />
-                <span className="hidden lg:inline">Tạo mới</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Tạo hợp đồng mới</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} encType="multipart/form-data">
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaHopDong">Mã hợp đồng</Label>
-                    <Input
-                      id="MaHopDong"
-                      name="MaHopDong"
-                      placeholder="HD001"
-                      className="uppercase"
-                    />
-                    {errors.MaHopDong && (
-                      <span className="text-xs text-red-500">
-                        {errors.MaHopDong}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaNV">Mã nhân viên</Label>
-                    <Input id="MaNV" name="MaNV" className="uppercase" />
-                    {errors.MaNV && (
-                      <span className="text-xs text-red-500">
-                        {errors.MaNV}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="LoaiHD">Loại hợp đồng</Label>
-                    <Input id="LoaiHD" name="LoaiHD" />
-                    {errors.LoaiHD && (
-                      <span className="text-xs text-red-500">
-                        {errors.LoaiHD}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="NgayBatDau">Ngày bắt đầu</Label>
-                    <Input id="NgayBatDau" name="NgayBatDau" type="date" />
-                    {errors.NgayBatDau && (
-                      <span className="text-xs text-red-500">
-                        {errors.NgayBatDau}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="NgayKetThuc">Ngày kết thúc</Label>
-                    <Input id="NgayKetThuc" name="NgayKetThuc" type="date" />
-                    {errors.NgayKetThuc && (
-                      <span className="text-xs text-red-500">
-                        {errors.NgayKetThuc}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="HinhAnhHopDong">Hình ảnh (File)</Label>
-                    <Input
-                      id="HinhAnhHopDong"
-                      name="HinhAnhHopDong"
-                      type="file"
-                      accept=".pdf"
-                    />
-                    {errors.HinhAnhHopDong && (
-                      <span className="text-xs text-red-500">
-                        {errors.HinhAnhHopDong}
-                      </span>
-                    )}
-                  </Field>
-                </FieldGroup>
-                <DialogFooter className="mt-4">
-                  <DialogClose asChild>
-                    <Button variant="outline" type="button">
-                      Huỷ
-                    </Button>
-                  </DialogClose>
-                  <Button type="submit">Tạo hợp đồng</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          {canCreate(permissions) && (
+            <Dialog
+              open={openCreate}
+              onOpenChange={(open) => {
+                setOpenCreate(open);
+                if (!open) setErrors({});
+              }}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Tạo hợp đồng mới</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="MaHopDong">Mã hợp đồng</Label>
+                      <Input
+                        id="MaHopDong"
+                        name="MaHopDong"
+                        placeholder="HD001"
+                        className="uppercase"
+                      />
+                      {errors.MaHopDong && (
+                        <span className="text-xs text-red-500">
+                          {errors.MaHopDong}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="MaNV">Mã nhân viên</Label>
+                      <Input id="MaNV" name="MaNV" className="uppercase" />
+                      {errors.MaNV && (
+                        <span className="text-xs text-red-500">
+                          {errors.MaNV}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="LoaiHD">Loại hợp đồng</Label>
+                      <Input id="LoaiHD" name="LoaiHD" />
+                      {errors.LoaiHD && (
+                        <span className="text-xs text-red-500">
+                          {errors.LoaiHD}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="NgayBatDau">Ngày bắt đầu</Label>
+                      <Input id="NgayBatDau" name="NgayBatDau" type="date" />
+                      {errors.NgayBatDau && (
+                        <span className="text-xs text-red-500">
+                          {errors.NgayBatDau}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="NgayKetThuc">Ngày kết thúc</Label>
+                      <Input id="NgayKetThuc" name="NgayKetThuc" type="date" />
+                      {errors.NgayKetThuc && (
+                        <span className="text-xs text-red-500">
+                          {errors.NgayKetThuc}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="HinhAnhHopDong">Hình ảnh (File)</Label>
+                      <Input
+                        id="HinhAnhHopDong"
+                        name="HinhAnhHopDong"
+                        type="file"
+                        accept=".pdf"
+                      />
+                      {errors.HinhAnhHopDong && (
+                        <span className="text-xs text-red-500">
+                          {errors.HinhAnhHopDong}
+                        </span>
+                      )}
+                    </Field>
+                  </FieldGroup>
+                  <DialogFooter className="mt-4">
+                    <DialogClose asChild>
+                      <Button variant="outline" type="button">
+                        Huỷ
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit">Tạo hợp đồng</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 

@@ -1,7 +1,10 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 import TaiKhoan from '../models/auth/TaiKhoan.js';
+import VaiTro_Quyen from '../models/auth/VaiTro_Quyen.js';
+import Quyen from '../models/auth/Quyen.js';
 
 export const jsonParser = express.json();
 export const cookieParserMiddleware = cookieParser();
@@ -32,8 +35,27 @@ export const protectedRoute = async (req, res, next) => {
                 if (!account) {
                     return res.status(404).json({ message: "người dùng không tồn tại" });
                 }
+                
+                const rolePermissions = await VaiTro_Quyen.findAll({
+                    where: { MaVT: account.MaVT },
+                    attributes: ['MaQuyen']
+                });
+
+                const permissionIds = rolePermissions.map((item) => item.MaQuyen);
+
+                const permissions = permissionIds.length > 0
+                    ? await Quyen.findAll({
+                        where: { MaQuyen: { [Op.in]: permissionIds } },
+                        attributes: ['TenQuyen']
+                    })
+                    : [];
+
+                //convert to plain object so .permissions is accessible directly
+                const accountData = account.toJSON();
+                accountData.permissions = permissions.map((p) => p.TenQuyen);
+
                 //respon account
-                req.account = account
+                req.account = accountData
 
                 next();
             }

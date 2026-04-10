@@ -1,4 +1,3 @@
-
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,9 +30,14 @@ import {
   HoursInputSchema,
   type HoursInput,
 } from "@/types/payRollTypes/hoursTypes";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtiles";
 
 export function HoursActionCell({ hours }: { hours: Hours }) {
   const { deleteHours, updateHours } = useHoursStore();
+  const { permissions } = useAuthorizeStore();
+
+  if (!canWrite(permissions)) return null;
 
   // 🔥 form chuẩn
   const {
@@ -67,116 +71,118 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon"
-        >
+          size="icon">
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
         {/* ===== UPDATE ===== */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                handleOpenEdit();
-              }}
-            >
-              Sửa
-            </DropdownMenuItem>
-          </DialogTrigger>
+        {canUpdate(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  handleOpenEdit();
+                }}>
+                Sửa
+              </DropdownMenuItem>
+            </DialogTrigger>
 
-          <DialogContent className="sm:max-w-md">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  Sửa Giờ Làm
-                </DialogTitle>
-              </DialogHeader>
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">
+                    Sửa Giờ Làm
+                  </DialogTitle>
+                </DialogHeader>
 
-              <FieldGroup className="space-y-4">
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="SoGioLam">Số giờ làm</Label>
+                <FieldGroup className="space-y-4">
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="SoGioLam">Số giờ làm</Label>
 
-                  <Input
-                    id="SoGioLam"
-                    type="number"
-                    className="h-10"
-                    placeholder="VD: 8"
-                    {...register("SoGioLam")}
-                  />
+                    <Input
+                      id="SoGioLam"
+                      type="number"
+                      className="h-10"
+                      placeholder="VD: 8"
+                      {...register("SoGioLam")}
+                    />
 
-                  {/* 🔥 ERROR */}
-                  {errors.SoGioLam && (
-                    <p className="text-red-500 text-sm">
-                      {errors.SoGioLam.message}
-                    </p>
-                  )}
-                </Field>
-              </FieldGroup>
+                    {/* 🔥 ERROR */}
+                    {errors.SoGioLam && (
+                      <p className="text-red-500 text-sm">
+                        {errors.SoGioLam.message}
+                      </p>
+                    )}
+                  </Field>
+                </FieldGroup>
 
-              <DialogFooter className="gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Huỷ
+                <DialogFooter className="gap-2">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">
+                      Huỷ
+                    </Button>
+                  </DialogClose>
+
+                  <Button type="submit" disabled={isSubmitting}>
+                    Lưu thay đổi
                   </Button>
-                </DialogClose>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
 
-                <Button type="submit" disabled={isSubmitting}>
-                  Lưu thay đổi
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        <DropdownMenuSeparator />
+        {canUpdate(permissions) && canDelete(permissions) && (
+          <DropdownMenuSeparator />
+        )}
 
         {/* ===== DELETE ===== */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={(e) => e.preventDefault()}
-            >
-              Xoá
-            </DropdownMenuItem>
-          </DialogTrigger>
-
-          <DialogContent className="sm:max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Xoá Giờ Làm</DialogTitle>
-            </DialogHeader>
-            <div className="text-sm space-y-1 text-muted-foreground">
-              <p>Bạn có chắc muốn xoá không?</p>
-
-              <ul>
-                <li>
-                  <b>Mã giờ làm:</b> {hours.MaGL}
-                </li>
-                <li>
-                  <b>Số giờ:</b>{" "}
-                  <span className="text-red-500 font-semibold">
-                    {Number(hours.SoGioLam)} giờ
-                  </span>
-                </li>
-              </ul>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Huỷ</Button>
-              </DialogClose>
-
-              <Button
+        {canDelete(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
                 variant="destructive"
-                onClick={() => deleteHours(hours.MaGL)}
-              >
+                onSelect={(e) => e.preventDefault()}>
                 Xoá
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              </DropdownMenuItem>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Xoá Giờ Làm</DialogTitle>
+              </DialogHeader>
+              <div className="text-sm space-y-1 text-muted-foreground">
+                <p>Bạn có chắc muốn xoá không?</p>
+
+                <ul>
+                  <li>
+                    <b>Mã giờ làm:</b> {hours.MaGL}
+                  </li>
+                  <li>
+                    <b>Số giờ:</b>{" "}
+                    <span className="text-red-500 font-semibold">
+                      {Number(hours.SoGioLam)} giờ
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Huỷ</Button>
+                </DialogClose>
+
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteHours(hours.MaGL)}>
+                  Xoá
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

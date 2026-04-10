@@ -13,9 +13,10 @@ export function NavMain({
   items,
 }: {
   items: {
-    name: string
-    url: string
-    icon: Icon
+    name: string;
+    url: string;
+    icon: Icon;
+    disabled?: boolean;
   }[];
 }) {
   return (

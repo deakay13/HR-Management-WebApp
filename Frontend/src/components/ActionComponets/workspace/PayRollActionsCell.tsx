@@ -1,4 +1,3 @@
-
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -30,9 +29,14 @@ import {
   PayRollInputSchema,
   type PayRollInput,
 } from "@/types/payRollTypes/payRollTypes";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtiles";
 
 export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
   const { deletePayRoll, updatePayRoll } = usePayRollStore();
+  const { permissions } = useAuthorizeStore();
+
+  if (!canWrite(permissions)) return null;
 
   //  react-hook-form + zod
   const {
@@ -77,137 +81,137 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon"
-        >
+          size="icon">
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
         {/* ===== UPDATE ===== */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                handleOpenEdit();
-              }}
-            >
-              Sửa
-            </DropdownMenuItem>
-          </DialogTrigger>
+        {canUpdate(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  handleOpenEdit();
+                }}>
+                Sửa
+              </DropdownMenuItem>
+            </DialogTrigger>
 
-          <DialogContent className="sm:max-w-md">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  Sửa Bảng Lương
-                </DialogTitle>
-              </DialogHeader>
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">
+                    Sửa Bảng Lương
+                  </DialogTitle>
+                </DialogHeader>
 
-              <FieldGroup className="space-y-4">
+                <FieldGroup className="space-y-4">
+                  {/* MaLCB */}
+                  <Field className="flex flex-col gap-2">
+                    <Label>Mã Lương cơ bản</Label>
+                    <Input {...register("MaLCB")} />
+                    {errors.MaLCB && (
+                      <p className="text-red-500 text-sm">
+                        {errors.MaLCB.message}
+                      </p>
+                    )}
+                  </Field>
 
-                {/* MaLCB */}
-                <Field className="flex flex-col gap-2">
-                  <Label>Mã Lương cơ bản</Label>
-                  <Input {...register("MaLCB")} />
-                  {errors.MaLCB && (
-                    <p className="text-red-500 text-sm">
-                      {errors.MaLCB.message}
-                    </p>
-                  )}
-                </Field>
+                  {/* MaNV */}
+                  <Field className="flex flex-col gap-2">
+                    <Label>Mã Nhân Viên</Label>
+                    <Input {...register("MaNV")} />
+                    {errors.MaNV && (
+                      <p className="text-red-500 text-sm">
+                        {errors.MaNV.message}
+                      </p>
+                    )}
+                  </Field>
 
-                {/* MaNV */}
-                <Field className="flex flex-col gap-2">
-                  <Label>Mã Nhân Viên</Label>
-                  <Input {...register("MaNV")} />
-                  {errors.MaNV && (
-                    <p className="text-red-500 text-sm">
-                      {errors.MaNV.message}
-                    </p>
-                  )}
-                </Field>
+                  {/* MaKT */}
+                  <Field className="flex flex-col gap-2">
+                    <Label>Mã Khấu Trừ</Label>
+                    <Input {...register("MaKT")} />
+                    {errors.MaKT && (
+                      <p className="text-red-500 text-sm">
+                        {errors.MaKT.message}
+                      </p>
+                    )}
+                  </Field>
 
-                {/* MaKT */}
-                <Field className="flex flex-col gap-2">
-                  <Label>Mã Khấu Trừ</Label>
-                  <Input {...register("MaKT")} />
-                  {errors.MaKT && (
-                    <p className="text-red-500 text-sm">
-                      {errors.MaKT.message}
-                    </p>
-                  )}
-                </Field>
+                  {/* MaPC */}
+                  <Field className="flex flex-col gap-2">
+                    <Label>Mã Phụ Cấp</Label>
+                    <Input {...register("MaPC")} />
+                    {errors.MaPC && (
+                      <p className="text-red-500 text-sm">
+                        {errors.MaPC.message}
+                      </p>
+                    )}
+                  </Field>
 
-                {/* MaPC */}
-                <Field className="flex flex-col gap-2">
-                  <Label>Mã Phụ Cấp</Label>
-                  <Input {...register("MaPC")} />
-                  {errors.MaPC && (
-                    <p className="text-red-500 text-sm">
-                      {errors.MaPC.message}
-                    </p>
-                  )}
-                </Field>
+                  {/* MaGL */}
+                  <Field className="flex flex-col gap-2">
+                    <Label>Mã Giờ Làm</Label>
+                    <Input {...register("MaGL")} />
+                    {errors.MaGL && (
+                      <p className="text-red-500 text-sm">
+                        {errors.MaGL.message}
+                      </p>
+                    )}
+                  </Field>
 
-                {/* MaGL */}
-                <Field className="flex flex-col gap-2">
-                  <Label>Mã Giờ Làm</Label>
-                  <Input {...register("MaGL")} />
-                  {errors.MaGL && (
-                    <p className="text-red-500 text-sm">
-                      {errors.MaGL.message}
-                    </p>
-                  )}
-                </Field>
+                  {/* Thang */}
+                  <Field className="flex flex-col gap-2">
+                    <Label>Tháng</Label>
+                    <Input type="month" {...register("Thang")} />
+                    {errors.Thang && (
+                      <p className="text-red-500 text-sm">
+                        {errors.Thang.message}
+                      </p>
+                    )}
+                  </Field>
+                </FieldGroup>
 
-                {/* Thang */}
-                <Field className="flex flex-col gap-2">
-                  <Label>Tháng</Label>
-                  <Input type="month" {...register("Thang")} />
-                  {errors.Thang && (
-                    <p className="text-red-500 text-sm">
-                      {errors.Thang.message}
-                    </p>
-                  )}
-                </Field>
+                <DialogFooter className="gap-2">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">
+                      Huỷ
+                    </Button>
+                  </DialogClose>
 
-              </FieldGroup>
-
-              <DialogFooter className="gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Huỷ
+                  <Button type="submit" disabled={isSubmitting}>
+                    Tính lại lương
                   </Button>
-                </DialogClose>
-
-                <Button type="submit" disabled={isSubmitting}>
-                  Tính lại lương
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
 
         {/* ===== DELETE ===== */}
-        <DropdownMenuSeparator />
+        {canUpdate(permissions) && canDelete(permissions) && (
+          <DropdownMenuSeparator />
+        )}
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={(e) => e.preventDefault()}
-            >
-              Xoá
-            </DropdownMenuItem>
-          </DialogTrigger>
+        {canDelete(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={(e) => e.preventDefault()}>
+                Xoá
+              </DropdownMenuItem>
+            </DialogTrigger>
 
-          <DialogContent className="sm:max-w-sm" showCloseButton={false}>
-            <DialogHeader>
-              <DialogTitle>Xoá Bảng Lương</DialogTitle>
-            </DialogHeader>
-                <div className="text-sm space-y-1 text-muted-foreground">
+            <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+              <DialogHeader>
+                <DialogTitle>Xoá Bảng Lương</DialogTitle>
+              </DialogHeader>
+              <div className="text-sm space-y-1 text-muted-foreground">
                 <p>Bạn có chắc muốn xoá không?</p>
 
                 <ul>
@@ -237,20 +241,20 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                   </li>
                 </ul>
               </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Huỷ</Button>
-              </DialogClose>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Huỷ</Button>
+                </DialogClose>
 
-              <Button
-                variant="destructive"
-                onClick={() => deletePayRoll(payRoll.MaBL)}
-              >
-                Xoá
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                <Button
+                  variant="destructive"
+                  onClick={() => deletePayRoll(payRoll.MaBL)}>
+                  Xoá
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -25,9 +25,12 @@ import { useEffect, useState } from "react";
 import type { Department } from "@/types/informationTypes/departmentTypes";
 import { z } from "zod";
 import { getDepartmentValidationSchema } from "@/types/informationTypes/departmentTypes";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtiles";
 
 export function DepartmentActionCell({ dept }: { dept: Department }) {
   const { deleteDepartment, updateDepartment } = useDepartmentStore();
+  const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = useState(false);
   const [formData, setFormData] = useState<Department>(dept);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -38,6 +41,8 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
       setErrors({});
     }
   }, [editOpen, dept]);
+
+  if (!canWrite(permissions)) return null;
 
   const handleUpdate = async () => {
     try {
@@ -68,57 +73,99 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex size-8" size="icon"><IconDotsVertical /></Button>
+        <Button variant="ghost" className="flex size-8" size="icon">
+          <IconDotsVertical />
+        </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        <Dialog open={editOpen} onOpenChange={setEditOpen}>
-          <DialogTrigger asChild>
-            <DropdownMenuItem onSelect={(e) => { e.preventDefault(); setEditOpen(true); }}>Sửa</DropdownMenuItem>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader><DialogTitle>Sửa thông tin phòng ban</DialogTitle></DialogHeader>
-            <FieldGroup>
-              <Field>
-                <Label htmlFor="MaPB">Mã phòng ban</Label>
-                <Input id="MaPB" value={formData.MaPB} disabled />
-              </Field>
-              <Field>
-                <Label htmlFor="TenPB">Tên phòng ban</Label>
-                <Input
-                  id="TenPB"
-                  value={formData.TenPB}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, TenPB: e.target.value }))}
-                />
-                {errors.TenPB && <span className="text-xs text-red-500">{errors.TenPB}</span>}
-              </Field>
-            </FieldGroup>
-            <DialogFooter>
-              <DialogClose asChild><Button type="button" variant="outline">Hủy</Button></DialogClose>
-              <Button onClick={handleUpdate}>Lưu thay đổi</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {canUpdate(permissions) && (
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  setEditOpen(true);
+                }}>
+                Sửa
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Sửa thông tin phòng ban</DialogTitle>
+              </DialogHeader>
+              <FieldGroup>
+                <Field>
+                  <Label htmlFor="MaPB">Mã phòng ban</Label>
+                  <Input id="MaPB" value={formData.MaPB} disabled />
+                </Field>
+                <Field>
+                  <Label htmlFor="TenPB">Tên phòng ban</Label>
+                  <Input
+                    id="TenPB"
+                    value={formData.TenPB}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        TenPB: e.target.value,
+                      }))
+                    }
+                  />
+                  {errors.TenPB && (
+                    <span className="text-xs text-red-500">{errors.TenPB}</span>
+                  )}
+                </Field>
+              </FieldGroup>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">
+                    Hủy
+                  </Button>
+                </DialogClose>
+                <Button onClick={handleUpdate}>Lưu thay đổi</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
 
-        <DropdownMenuSeparator />
+        {canUpdate(permissions) && canDelete(permissions) && (
+          <DropdownMenuSeparator />
+        )}
 
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem variant="destructive" onSelect={(e) => e.preventDefault()}>Xoá</DropdownMenuItem>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-sm" showCloseButton={false}>
-            <DialogHeader><DialogTitle>Xoá phòng ban</DialogTitle></DialogHeader>
-            <FieldGroup>
-              <Field>
-                <Label>Bạn có chắc chắn muốn xoá phòng ban <strong>{dept.TenPB}</strong> ({dept.MaPB}) không?</Label>
-              </Field>
-            </FieldGroup>
-            <DialogFooter>
-              <DialogClose asChild><Button variant="outline">Huỷ</Button></DialogClose>
-              <Button variant="destructive" onClick={() => deleteDepartment(dept.MaPB)}>Xoá</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {canDelete(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                variant="destructive"
+                onSelect={(e) => e.preventDefault()}>
+                Xoá
+              </DropdownMenuItem>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+              <DialogHeader>
+                <DialogTitle>Xoá phòng ban</DialogTitle>
+              </DialogHeader>
+              <FieldGroup>
+                <Field>
+                  <Label>
+                    Bạn có chắc chắn muốn xoá phòng ban{" "}
+                    <strong>{dept.TenPB}</strong> ({dept.MaPB}) không?
+                  </Label>
+                </Field>
+              </FieldGroup>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Huỷ</Button>
+                </DialogClose>
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteDepartment(dept.MaPB)}>
+                  Xoá
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -1,4 +1,3 @@
-
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,9 +30,14 @@ import {
   DeductionInputSchema,
   type DeductionInput,
 } from "@/types/payRollTypes/deductionTypes";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtiles";
 
 export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
   const { deleteDeduction, updateDeduction } = useDeductionStore();
+  const { permissions } = useAuthorizeStore();
+
+  if (!canWrite(permissions)) return null;
 
   //  react-hook-form
   const {
@@ -69,133 +73,135 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon"
-        >
+          size="icon">
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
         {/* ===== UPDATE ===== */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                handleOpenEdit();
-              }}
-            >
-              Sửa
-            </DropdownMenuItem>
-          </DialogTrigger>
+        {canUpdate(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  handleOpenEdit();
+                }}>
+                Sửa
+              </DropdownMenuItem>
+            </DialogTrigger>
 
-          <DialogContent className="sm:max-w-md">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  Sửa Khấu Trừ
-                </DialogTitle>
-              </DialogHeader>
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">
+                    Sửa Khấu Trừ
+                  </DialogTitle>
+                </DialogHeader>
 
-              <FieldGroup className="space-y-4">
-                {/* LoaiKT */}
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
-                  <Input
-                    id="LoaiKT"
-                    placeholder="VD: Thuế TNCN"
-                    className="h-10"
-                    {...register("LoaiKT")}
-                  />
-                  {errors.LoaiKT && (
-                    <p className="text-red-500 text-sm">
-                      {errors.LoaiKT.message}
-                    </p>
-                  )}
-                </Field>
+                <FieldGroup className="space-y-4">
+                  {/* LoaiKT */}
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
+                    <Input
+                      id="LoaiKT"
+                      placeholder="VD: Thuế TNCN"
+                      className="h-10"
+                      {...register("LoaiKT")}
+                    />
+                    {errors.LoaiKT && (
+                      <p className="text-red-500 text-sm">
+                        {errors.LoaiKT.message}
+                      </p>
+                    )}
+                  </Field>
 
-                {/* PhanTram */}
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="PhanTram">Phần trăm (%)</Label>
-                  <Input
-                    id="PhanTram"
-                    type="number"
-                    placeholder="VD: 10"
-                    className="h-10"
-                    {...register("PhanTram")}
-                  />
-                  {errors.PhanTram && (
-                    <p className="text-red-500 text-sm">
-                      {errors.PhanTram.message}
-                    </p>
-                  )}
-                </Field>
-              </FieldGroup>
+                  {/* PhanTram */}
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="PhanTram">Phần trăm (%)</Label>
+                    <Input
+                      id="PhanTram"
+                      type="number"
+                      placeholder="VD: 10"
+                      className="h-10"
+                      {...register("PhanTram")}
+                    />
+                    {errors.PhanTram && (
+                      <p className="text-red-500 text-sm">
+                        {errors.PhanTram.message}
+                      </p>
+                    )}
+                  </Field>
+                </FieldGroup>
 
-              <DialogFooter className="gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Huỷ
+                <DialogFooter className="gap-2">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">
+                      Huỷ
+                    </Button>
+                  </DialogClose>
+
+                  <Button type="submit" disabled={isSubmitting}>
+                    Lưu thay đổi
                   </Button>
-                </DialogClose>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
 
-                <Button type="submit" disabled={isSubmitting}>
-                  Lưu thay đổi
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        <DropdownMenuSeparator />
+        {canUpdate(permissions) && canDelete(permissions) && (
+          <DropdownMenuSeparator />
+        )}
 
         {/* ===== DELETE ===== */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={(e) => e.preventDefault()}
-            >
-              Xoá
-            </DropdownMenuItem>
-          </DialogTrigger>
-
-          <DialogContent className="sm:max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Xoá Khấu Trừ</DialogTitle>
-            </DialogHeader>
-
-            <div className="text-sm space-y-1 text-muted-foreground">
-              <p>Bạn có chắc muốn xoá không?</p>
-              <ul>
-                <li>
-                  <b>Mã khấu trừ:</b> {deduction.MaKT}
-                </li>
-                <li>
-                  <b>Loại:</b> {deduction.LoaiKT}
-                </li>
-                <li>
-                  <b>Phần trăm:</b>{" "}
-                  <span className="text-red-500 font-semibold">
-                    {Number(deduction.PhanTram)}%
-                  </span>
-                </li>
-              </ul>
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Huỷ</Button>
-              </DialogClose>
-
-              <Button
+        {canDelete(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
                 variant="destructive"
-                onClick={() => deleteDeduction(deduction.MaKT)}
-              >
+                onSelect={(e) => e.preventDefault()}>
                 Xoá
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              </DropdownMenuItem>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Xoá Khấu Trừ</DialogTitle>
+              </DialogHeader>
+
+              <div className="text-sm space-y-1 text-muted-foreground">
+                <p>Bạn có chắc muốn xoá không?</p>
+                <ul>
+                  <li>
+                    <b>Mã khấu trừ:</b> {deduction.MaKT}
+                  </li>
+                  <li>
+                    <b>Loại:</b> {deduction.LoaiKT}
+                  </li>
+                  <li>
+                    <b>Phần trăm:</b>{" "}
+                    <span className="text-red-500 font-semibold">
+                      {Number(deduction.PhanTram)}%
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Huỷ</Button>
+                </DialogClose>
+
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteDeduction(deduction.MaKT)}>
+                  Xoá
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

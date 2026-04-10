@@ -1,8 +1,11 @@
 import { create } from "zustand";
 import { DepartmentServices } from "@/services/informationServices/departmentServices";
-import type { Department, DepartmentTypes } from "@/types/informationTypes/departmentTypes";
+import type {
+  Department,
+  DepartmentTypes,
+} from "@/types/informationTypes/departmentTypes";
 
-export const useDepartmentStore = create<DepartmentTypes>((set, get) => ({
+export const useDepartmentStore = create<DepartmentTypes>((set) => ({
   departments: [],
   initializing: true,
 
@@ -19,7 +22,6 @@ export const useDepartmentStore = create<DepartmentTypes>((set, get) => ({
         departments: [...state.departments, newDepartment],
         initializing: false,
       }));
-
     } catch (error: any) {
       console.error("Lỗi khi tạo phòng ban:", error);
       set({ initializing: false });
@@ -45,11 +47,10 @@ export const useDepartmentStore = create<DepartmentTypes>((set, get) => ({
 
       set((state) => ({
         departments: state.departments.map((dept) =>
-          dept.MaPB === ID ? updated : dept
+          dept.MaPB === ID ? updated : dept,
         ),
         initializing: false,
       }));
-
     } catch (error: any) {
       console.error("Lỗi khi cập nhật phòng ban:", error);
       set({ initializing: false });
@@ -65,7 +66,6 @@ export const useDepartmentStore = create<DepartmentTypes>((set, get) => ({
         departments: state.departments.filter((d) => d.MaPB !== ID),
         initializing: false,
       }));
-
     } catch (error: any) {
       console.error("Lỗi khi xoá phòng ban", error);
       set({ initializing: false });

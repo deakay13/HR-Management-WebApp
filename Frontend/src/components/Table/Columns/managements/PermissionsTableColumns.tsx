@@ -7,7 +7,7 @@ export const columns: ColumnDef<Permission>[] = [
     accessorKey: "MaQuyen",
     header: () => <div className="w-30 text-center">Mã Quyền</div>,
     cell: ({ row }) => (
-      <div className="w-30text-center h-8">{row.original.MaQuyen}</div>
+      <div className="w-30 text-center h-8">{row.original.MaQuyen}</div>
     ),
   },
   {

@@ -73,6 +73,8 @@ import { useDepartmentStore } from "@/stores/informationStores/departmentStores"
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { getEmployeeValidationSchema } from "@/types/informationTypes/employeeTypes";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canCreate } from "@/utils/authorizeUtiles";
 
 export function EmployeeTable({
   data = [],
@@ -96,6 +98,7 @@ export function EmployeeTable({
   const [selectedDept, setSelectedDept] = React.useState("");
   const [selectedGender, setSelectedGender] = React.useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { permissions } = useAuthorizeStore();
 
   const table = useReactTable<Employee>({
     data: data || [],
@@ -237,135 +240,139 @@ export function EmployeeTable({
           </DropdownMenu>
 
           {/* ================== CREATE NEW EMPLOYEE DIALOG ================== */}
-          <Dialog
-            open={openCreate}
-            onOpenChange={(val) => {
-              setOpenCreate(val);
-              if (!val) setErrors({});
-            }}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconPlus />
-                <span className="hidden lg:inline">Tạo mới</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Tạo nhân viên mới</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaNV">Mã nhân viên</Label>
-                    <Input
-                      id="MaNV"
-                      name="MaNV"
-                      placeholder="NVxxx"
-                      className="uppercase"
-                    />
-                    {errors.MaNV && (
-                      <span className="text-xs text-red-500">
-                        {errors.MaNV}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label>Phòng ban</Label>
-                    <Select
-                      value={selectedDept}
-                      onValueChange={setSelectedDept}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn phòng ban" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {departments?.map((dept) => (
-                          <SelectItem key={dept.MaPB} value={dept.MaPB}>
-                            {dept.MaPB} - {dept.TenPB}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.MaPB && (
-                      <span className="text-xs text-red-500">
-                        {errors.MaPB}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="HoVaTen">Họ và tên</Label>
-                    <Input id="HoVaTen" name="HoVaTen" />
-                    {errors.HoVaTen && (
-                      <span className="text-xs text-red-500">
-                        {errors.HoVaTen}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label>Giới tính</Label>
-                    <Select
-                      value={selectedGender}
-                      onValueChange={setSelectedGender}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Chọn giới tính" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Nam">Nam</SelectItem>
-                        <SelectItem value="Nữ">Nữ</SelectItem>
-                        <SelectItem value="Khác">Khác</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {errors.GioiTinh && (
-                      <span className="text-xs text-red-500">
-                        {errors.GioiTinh}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="NgaySinh">Ngày sinh</Label>
-                    <Input id="NgaySinh" name="NgaySinh" type="date" />
-                    {errors.NgaySinh && (
-                      <span className="text-xs text-red-500">
-                        {errors.NgaySinh}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="SDT">Số điện thoại</Label>
-                    <Input id="SDT" name="SDT" />
-                    {errors.SDT && (
-                      <span className="text-xs text-red-500">{errors.SDT}</span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="NgayVaoLam">Ngày vào làm</Label>
-                    <Input id="NgayVaoLam" name="NgayVaoLam" type="date" />
-                    {errors.NgayVaoLam && (
-                      <span className="text-xs text-red-500">
-                        {errors.NgayVaoLam}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="DiaChi">Địa chỉ</Label>
-                    <Input id="DiaChi" name="DiaChi" />
-                    {errors.DiaChi && (
-                      <span className="text-xs text-red-500">
-                        {errors.DiaChi}
-                      </span>
-                    )}
-                  </Field>
-                </FieldGroup>
-                <DialogFooter className="mt-6">
-                  <DialogClose asChild>
-                    <Button variant="outline" type="button">
-                      Huỷ
-                    </Button>
-                  </DialogClose>
-                  <Button type="submit">Tạo nhân viên</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          {canCreate(permissions) && (
+            <Dialog
+              open={openCreate}
+              onOpenChange={(val) => {
+                setOpenCreate(val);
+                if (!val) setErrors({});
+              }}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Tạo nhân viên mới</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="MaNV">Mã nhân viên</Label>
+                      <Input
+                        id="MaNV"
+                        name="MaNV"
+                        placeholder="NVxxx"
+                        className="uppercase"
+                      />
+                      {errors.MaNV && (
+                        <span className="text-xs text-red-500">
+                          {errors.MaNV}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label>Phòng ban</Label>
+                      <Select
+                        value={selectedDept}
+                        onValueChange={setSelectedDept}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn phòng ban" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departments?.map((dept) => (
+                            <SelectItem key={dept.MaPB} value={dept.MaPB}>
+                              {dept.MaPB} - {dept.TenPB}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.MaPB && (
+                        <span className="text-xs text-red-500">
+                          {errors.MaPB}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="HoVaTen">Họ và tên</Label>
+                      <Input id="HoVaTen" name="HoVaTen" />
+                      {errors.HoVaTen && (
+                        <span className="text-xs text-red-500">
+                          {errors.HoVaTen}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label>Giới tính</Label>
+                      <Select
+                        value={selectedGender}
+                        onValueChange={setSelectedGender}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Chọn giới tính" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Nam">Nam</SelectItem>
+                          <SelectItem value="Nữ">Nữ</SelectItem>
+                          <SelectItem value="Khác">Khác</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {errors.GioiTinh && (
+                        <span className="text-xs text-red-500">
+                          {errors.GioiTinh}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="NgaySinh">Ngày sinh</Label>
+                      <Input id="NgaySinh" name="NgaySinh" type="date" />
+                      {errors.NgaySinh && (
+                        <span className="text-xs text-red-500">
+                          {errors.NgaySinh}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="SDT">Số điện thoại</Label>
+                      <Input id="SDT" name="SDT" />
+                      {errors.SDT && (
+                        <span className="text-xs text-red-500">
+                          {errors.SDT}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="NgayVaoLam">Ngày vào làm</Label>
+                      <Input id="NgayVaoLam" name="NgayVaoLam" type="date" />
+                      {errors.NgayVaoLam && (
+                        <span className="text-xs text-red-500">
+                          {errors.NgayVaoLam}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="DiaChi">Địa chỉ</Label>
+                      <Input id="DiaChi" name="DiaChi" />
+                      {errors.DiaChi && (
+                        <span className="text-xs text-red-500">
+                          {errors.DiaChi}
+                        </span>
+                      )}
+                    </Field>
+                  </FieldGroup>
+                  <DialogFooter className="mt-6">
+                    <DialogClose asChild>
+                      <Button variant="outline" type="button">
+                        Huỷ
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit">Tạo nhân viên</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
           {/* ================== END CREATE NEW EMPLOYEE DIALOG ================== */}
         </div>
       </div>

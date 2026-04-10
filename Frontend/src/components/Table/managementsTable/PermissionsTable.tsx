@@ -57,6 +57,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -69,6 +70,7 @@ import { columns } from "../Columns/managements/PermissionsTableColumns";
 import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
 import { Link } from "react-router-dom";
 import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 
 export function PermissionsTable({
   data,
@@ -85,6 +87,8 @@ export function PermissionsTable({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const { createPermissions } = usePermissionsStore();
+  const { role } = useAuthorizeStore();
+  const isAdmin = role?.MaVT === "VT001";
   const [formData, setFormData] = React.useState({
     MaQuyen: "",
     TenQuyen: "",
@@ -191,65 +195,69 @@ export function PermissionsTable({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Button create */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setFormData({
-                    MaQuyen: "",
-                    TenQuyen: "",
-                  })
-                }>
-                <IconPlus />
-                <span className="hidden lg:inline">Tạo mới</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-sm">
-              <form onSubmit={handleCreate} className="space-y-6">
-                <DialogHeader>
-                  <DialogTitle>Tạo vai trò</DialogTitle>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaQuyen">Mã Quyền</Label>
-                    <Input
-                      id="MaQuyen"
-                      name="MaQuyen"
-                      defaultValue="MQxxx"
-                      value={formData.MaQuyen}
-                      onChange={(e) =>
-                        setFormData({ ...formData, MaQuyen: e.target.value })
-                      }
-                    />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="TenQuyen">Tên Quyền</Label>
-                    <Input
-                      id="TenQuyen"
-                      name="TenQuyen"
-                      value={formData.TenQuyen}
-                      onChange={(e) =>
-                        setFormData({ ...formData, TenQuyen: e.target.value })
-                      }
-                    />
-                  </Field>
-                </FieldGroup>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
-                  </DialogClose>
-                  <Button
-                    type="submit"
-                    disabled={!formData.MaQuyen || !formData.TenQuyen}>
-                    Thêm
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          {/* Button create - Admin only */}
+          {isAdmin && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFormData({
+                      MaQuyen: "",
+                      TenQuyen: "",
+                    })
+                  }>
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-sm">
+                <form onSubmit={handleCreate} className="space-y-6">
+                  <DialogHeader>
+                    <DialogTitle>Tạo vai trò</DialogTitle>
+                    <DialogDescription>
+                      Hãy nhập thông tin và nhấn Thêm để tạo Vai Trò
+                    </DialogDescription>
+                  </DialogHeader>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="MaQuyen">Mã Quyền</Label>
+                      <Input
+                        id="MaQuyen"
+                        name="MaQuyen"
+                        value={formData.MaQuyen}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaQuyen: e.target.value })
+                        }
+                      />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="TenQuyen">Tên Quyền</Label>
+                      <Input
+                        id="TenQuyen"
+                        name="TenQuyen"
+                        value={formData.TenQuyen}
+                        onChange={(e) =>
+                          setFormData({ ...formData, TenQuyen: e.target.value })
+                        }
+                      />
+                    </Field>
+                  </FieldGroup>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Huỷ</Button>
+                    </DialogClose>
+                    <Button
+                      type="submit"
+                      disabled={!formData.MaQuyen || !formData.TenQuyen}>
+                      Thêm
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 

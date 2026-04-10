@@ -1,4 +1,3 @@
-
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,6 +30,8 @@ import {
   BaseSalaryInputSchema,
   type BaseSalaryInput,
 } from "@/types/payRollTypes/baseSalaryTypes";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtiles";
 
 export function BaseSalaryActionCell({
   baseSalary,
@@ -38,6 +39,9 @@ export function BaseSalaryActionCell({
   baseSalary: BaseSalary;
 }) {
   const { deleteBaseSalary, updateBaseSalary } = useBaseSalaryStore();
+  const { permissions } = useAuthorizeStore();
+
+  if (!canWrite(permissions)) return null;
 
   // 🔥 react-hook-form
   const {
@@ -71,116 +75,116 @@ export function BaseSalaryActionCell({
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon"
-        >
+          size="icon">
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        
         {/* ===== UPDATE ===== */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              onSelect={(e) => {
-                e.preventDefault();
-                handleOpenEdit();
-              }}
-            >
-              Sửa
-            </DropdownMenuItem>
-          </DialogTrigger>
+        {canUpdate(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
+                onSelect={(e) => {
+                  e.preventDefault();
+                  handleOpenEdit();
+                }}>
+                Sửa
+              </DropdownMenuItem>
+            </DialogTrigger>
 
-          <DialogContent className="sm:max-w-md">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  Sửa Lương Cơ Bản
-                </DialogTitle>
-              </DialogHeader>
+            <DialogContent className="sm:max-w-md">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <DialogHeader>
+                  <DialogTitle className="text-lg font-semibold">
+                    Sửa Lương Cơ Bản
+                  </DialogTitle>
+                </DialogHeader>
 
-              <FieldGroup className="space-y-4">
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
+                <FieldGroup className="space-y-4">
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
 
-                  <Input
-                    id="LuongCB"
-                    type="number"
-                    className="h-10"
-                    {...register("LuongCB")}
-                  />
+                    <Input
+                      id="LuongCB"
+                      type="number"
+                      className="h-10"
+                      {...register("LuongCB")}
+                    />
 
-                  {/* 🔥 ERROR */}
-                  {errors.LuongCB && (
-                    <p className="text-red-500 text-sm">
-                      {errors.LuongCB.message}
-                    </p>
-                  )}
-                </Field>
-              </FieldGroup>
+                    {/* 🔥 ERROR */}
+                    {errors.LuongCB && (
+                      <p className="text-red-500 text-sm">
+                        {errors.LuongCB.message}
+                      </p>
+                    )}
+                  </Field>
+                </FieldGroup>
 
-              <DialogFooter className="gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Huỷ
+                <DialogFooter className="gap-2">
+                  <DialogClose asChild>
+                    <Button type="button" variant="outline">
+                      Huỷ
+                    </Button>
+                  </DialogClose>
+
+                  <Button type="submit" disabled={isSubmitting}>
+                    Lưu thay đổi
                   </Button>
-                </DialogClose>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
 
-                <Button type="submit" disabled={isSubmitting}>
-                  Lưu thay đổi
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-
-        <DropdownMenuSeparator />
+        {canUpdate(permissions) && canDelete(permissions) && (
+          <DropdownMenuSeparator />
+        )}
 
         {/* ===== DELETE ===== */}
-        <Dialog>
-          <DialogTrigger asChild>
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={(e) => e.preventDefault()}
-            >
-              Xoá
-            </DropdownMenuItem>
-          </DialogTrigger>
-
-          <DialogContent className="sm:max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Xoá Lương Cơ Bản</DialogTitle>
-            </DialogHeader>
-
-            <div className="text-sm space-y-1 text-muted-foreground">
-              <p>Bạn có chắc muốn xoá không?</p>
-              <ul>
-                <li>
-                  <b>Mã:</b> {baseSalary.MaLCB}
-                </li>
-                <li>
-                  <b>Lương:</b>{" "}
-                  {Number(baseSalary.LuongCB).toLocaleString()} VNĐ
-                </li>
-              </ul>
-            </div>
-
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Huỷ</Button>
-              </DialogClose>
-
-              <Button
+        {canDelete(permissions) && (
+          <Dialog>
+            <DialogTrigger asChild>
+              <DropdownMenuItem
                 variant="destructive"
-                onClick={() => deleteBaseSalary(baseSalary.MaLCB)}
-              >
+                onSelect={(e) => e.preventDefault()}>
                 Xoá
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+              </DropdownMenuItem>
+            </DialogTrigger>
+
+            <DialogContent className="sm:max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Xoá Lương Cơ Bản</DialogTitle>
+              </DialogHeader>
+
+              <div className="text-sm space-y-1 text-muted-foreground">
+                <p>Bạn có chắc muốn xoá không?</p>
+                <ul>
+                  <li>
+                    <b>Mã:</b> {baseSalary.MaLCB}
+                  </li>
+                  <li>
+                    <b>Lương:</b> {Number(baseSalary.LuongCB).toLocaleString()}{" "}
+                    VNĐ
+                  </li>
+                </ul>
+              </div>
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Huỷ</Button>
+                </DialogClose>
+
+                <Button
+                  variant="destructive"
+                  onClick={() => deleteBaseSalary(baseSalary.MaLCB)}>
+                  Xoá
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

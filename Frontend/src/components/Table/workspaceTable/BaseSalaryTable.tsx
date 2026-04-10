@@ -69,6 +69,8 @@ import { columns } from "../Columns/workspace/baseSalaryColumns";
 import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
 import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStores";
 import { Link } from "react-router-dom";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canCreate } from "@/utils/authorizeUtiles";
 
 export function BaseSalaryTable({
   data,
@@ -80,19 +82,20 @@ export function BaseSalaryTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-    const { createBaseSalary } = useBaseSalaryStore();
-        // STATE
-    const [formData, setFormData] = React.useState({
-      MaLCB: "",
-      LuongCB: 0,
-    });
+  const { createBaseSalary } = useBaseSalaryStore();
+  const { permissions } = useAuthorizeStore();
+  // STATE
+  const [formData, setFormData] = React.useState({
+    MaLCB: "",
+    LuongCB: 0,
+  });
 
-    // HANDLE CREATE
-    const handleCreate = async (e: React.FormEvent) => {
-      e.preventDefault();
+  // HANDLE CREATE
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      await createBaseSalary(formData);
-    };
+    await createBaseSalary(formData);
+  };
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
@@ -191,83 +194,80 @@ export function BaseSalaryTable({
           </DropdownMenu>
 
           {/* Button create */}
-          <Dialog>
-          <DialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() =>
-                setFormData({
-                  MaLCB: "",
-                  LuongCB: 0,
-                })
-              }
-            >
-              <IconPlus />
-              <span className="hidden lg:inline">Tạo mới</span>
-            </Button>
-          </DialogTrigger>
-
-          <DialogContent className="sm:max-w-md">
-            <form onSubmit={handleCreate} className="space-y-6">
-
-              <DialogHeader>
-                <DialogTitle className="text-lg font-semibold">
-                  Tạo lương cơ bản
-                </DialogTitle>
-              </DialogHeader>
-
-              
-              <FieldGroup className="space-y-4">
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
-                  <Input
-                    id="MaLCB"
-                    placeholder="VD: LCB001"
-                    className="h-10"
-                    value={formData.MaLCB}
-                    onChange={(e) =>
-                      setFormData({ ...formData, MaLCB: e.target.value })
-                    }
-                  />
-                </Field>
-
-                <Field className="flex flex-col gap-2">
-                  <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
-                  <Input
-                    id="LuongCB"
-                    type="number"
-                    placeholder="VD: 5000000"
-                    className="h-10"
-                    value={formData.LuongCB}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        LuongCB: Number(e.target.value),
-                      })
-                    }
-                  />
-                </Field>
-              </FieldGroup>
-
-              <DialogFooter className="gap-2">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Huỷ
-                  </Button>
-                </DialogClose>
-
+          {canCreate(permissions) && (
+            <Dialog>
+              <DialogTrigger asChild>
                 <Button
-                  type="submit"
-                  disabled={!formData.MaLCB || formData.LuongCB <= 0}
-                >
-                  Tạo mới
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFormData({
+                      MaLCB: "",
+                      LuongCB: 0,
+                    })
+                  }>
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
                 </Button>
-              </DialogFooter>
+              </DialogTrigger>
 
-            </form>
-          </DialogContent>
-        </Dialog>
+              <DialogContent className="sm:max-w-md">
+                <form onSubmit={handleCreate} className="space-y-6">
+                  <DialogHeader>
+                    <DialogTitle className="text-lg font-semibold">
+                      Tạo lương cơ bản
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <FieldGroup className="space-y-4">
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="MaLCB">Mã Lương Cơ Bản</Label>
+                      <Input
+                        id="MaLCB"
+                        placeholder="VD: LCB001"
+                        className="h-10"
+                        value={formData.MaLCB}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaLCB: e.target.value })
+                        }
+                      />
+                    </Field>
+
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
+                      <Input
+                        id="LuongCB"
+                        type="number"
+                        placeholder="VD: 5000000"
+                        className="h-10"
+                        value={formData.LuongCB}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            LuongCB: Number(e.target.value),
+                          })
+                        }
+                      />
+                    </Field>
+                  </FieldGroup>
+
+                  <DialogFooter className="gap-2">
+                    <DialogClose asChild>
+                      <Button type="button" variant="outline">
+                        Huỷ
+                      </Button>
+                    </DialogClose>
+
+                    <Button
+                      type="submit"
+                      disabled={!formData.MaLCB || formData.LuongCB <= 0}>
+                      Tạo mới
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 

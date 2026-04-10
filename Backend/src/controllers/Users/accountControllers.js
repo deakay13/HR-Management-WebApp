@@ -78,8 +78,7 @@ export const createAccount = async (req, res) => {
             MaTK, MaNV, MaVT, TenTaiKhoan, MatKhau: HashedPassword
         })
         
-        //return status No Content can't show data
-        return res.sendStatus(201).json({message:"Tạo Tài Khoản thành công" });
+        return res.status(201).json({message:"Tạo Tài Khoản thành công" });
 
     } catch (error) {
         

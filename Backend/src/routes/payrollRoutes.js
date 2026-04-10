@@ -1,44 +1,42 @@
 import express from "express";
-
+import { authorize } from '../middlewares/middlewareAuthorize.js';
 import {createBaseSalary, getBaseSalaries, getBaseSalaryById, updateBaseSalary, deleteBaseSalary } from "../controllers/Payroll/baseSalaryController.js";
 import {createDeduction, getDeductions, getDeductionById, updateDeduction, deleteDeduction } from "../controllers/Payroll/deductionController.js";
 import { createAllowance, getAllowances, getAllowanceById, updateAllowance, deleteAllowance } from "../controllers/Payroll/allowanceController.js";
 import { createHour, getHours, getHourById, updateHour, deleteHour } from "../controllers/Payroll/hoursController.js";
 import { calculatePayroll, getPayrolls, getPayrollById,getPayrollByMonth,getPayrollByEmployee, deletePayroll, updatePayroll, exportPayrollToExcel, searchPayroll } from "../controllers/Payroll/payRollController.js";
 const router = express.Router();
+
 // Base Salary routes
-router.post("/basesalary", createBaseSalary);
-router.get("/basesalary", getBaseSalaries);
-router.get("/basesalary/:ID", getBaseSalaryById);
-router.put("/basesalary/:ID", updateBaseSalary);
-router.delete("/basesalary/:ID", deleteBaseSalary);
+router.post("/basesalary",authorize(["Tạo"]), createBaseSalary);
+router.get("/basesalary",authorize(["Đọc"]), getBaseSalaries);
+router.get("/basesalary/:ID",authorize(["Đọc"]), getBaseSalaryById);
+router.put("/basesalary/:ID",authorize(["Sửa"]), updateBaseSalary);
+router.delete("/basesalary/:ID",authorize(["Xoá"]), deleteBaseSalary);
 // Deduction routes
-router.post("/deductions", createDeduction);
-router.get("/deductions", getDeductions);
-router.get("/deductions/:ID", getDeductionById);
-router.put("/deductions/:ID", updateDeduction);
-router.delete("/deductions/:ID", deleteDeduction);
+router.post("/deductions",authorize(["Tạo"]), createDeduction);
+router.get("/deductions", authorize(["Đọc"]), getDeductions);
+router.get("/deductions/:ID",authorize(["Đọc"]),  getDeductionById);
+router.put("/deductions/:ID",authorize(["Sửa"]),  updateDeduction);
+router.delete("/deductions/:ID",authorize(["Xoá"]),  deleteDeduction);
 // Allowance routes will be added here in the future
-router.post("/allowances", createAllowance);
-router.get("/allowances", getAllowances);
-router.get("/allowances/:ID", getAllowanceById);
-router.put("/allowances/:ID", updateAllowance);
-router.delete("/allowances/:ID", deleteAllowance);
+router.post("/allowances",authorize(["Tạo"]),  createAllowance);
+router.get("/allowances",authorize(["Đọc"]),  getAllowances);
+router.get("/allowances/:ID", authorize(["Đọc"]), getAllowanceById);
+router.put("/allowances/:ID",authorize(["Sửa"]),  updateAllowance);
+router.delete("/allowances/:ID",authorize(["Xoá"]),  deleteAllowance);
 // Hour routes 
-router.post("/hours", createHour);
-router.get("/hours", getHours);
-router.get("/hours/:ID", getHourById);
-router.put("/hours/:ID", updateHour);
-router.delete("/hours/:ID", deleteHour);
+router.post("/hours",authorize(["Tạo"]),  createHour);
+router.get("/hours",authorize(["Đọc"]),  getHours);
+router.get("/hours/:ID",authorize(["Đọc"]),  getHourById);
+router.put("/hours/:ID",authorize(["Sửa"]),  updateHour);
+router.delete("/hours/:ID",authorize(["Xoá"]),  deleteHour);
 // Payroll calculation routes
-router.post("/payrolls", calculatePayroll);
-router.get("/payrolls", getPayrolls);
-router.get("/payrolls/search", searchPayroll);
-router.get("/payrolls/:ID", getPayrollById);
-router.delete("/payrolls/:ID", deletePayroll);
-router.get("/payrolls/month/:month", getPayrollByMonth);
-router.get("/payrolls/employee/:ID", getPayrollByEmployee);
-router.put("/payrolls/:ID", updatePayroll)
-router.get("/payrolls/export/excel", exportPayrollToExcel)
+router.post("/payrolls",authorize(["Tạo"]),  calculatePayroll);
+router.get("/payrolls",authorize(["Đọc"]),  getPayrolls);
+router.get("/payrolls/:ID",authorize(["Đọc"]),  getPayrollById);
+router.delete("/payrolls/:ID", authorize(["Xoá"]), deletePayroll);
+router.get("/payrolls/month/:month",authorize(["Đọc"]),  getPayrollByMonth);
+router.get("/payrolls/employee/:ID",authorize(["Đọc"]),  getPayrollByEmployee);
 
 export default router;

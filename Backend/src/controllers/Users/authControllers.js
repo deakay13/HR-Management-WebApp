@@ -135,15 +135,15 @@ export const refreshToken = async (req,res) => {
 
         //compare refreshToken with DB
         const session = await Session.findOne({ where: { refreshToken: token } });
-        
-        //check account in Session DB
-        const account = await Session.findOne({ where: { MaTK: session.MaTK } });
-        if (!account) {
-        return res.status(404).json({ message: "Không tìm thấy tài khoản" });
-        }
 
         if (!session) {
             return res.status(403).json({ message: "Token không hợp lệ hoặc hết hạn" });
+        }
+
+        //check account by MaTK from Session
+        const account = await TaiKhoan.findOne({ where: { MaTK: session.MaTK } });
+        if (!account) {
+            return res.status(404).json({ message: "Không tìm thấy tài khoản" });
         }
 
         //check expires

@@ -66,15 +66,16 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "../Columns/managements/RolesTableColumns";
-import type { Role } from "@/types/permissionTypes/RolesTypes";
+import type { RoleWithPermissions } from "@/types/permissionTypes/Role&GrantPermissionsTypes";
 import { Link } from "react-router-dom";
 import { useRolesStore } from "@/stores/permissionStores/RolesStore";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 
 export function RolesTable({
   data,
   loading,
 }: {
-  data: Role[];
+  data: RoleWithPermissions[];
   loading?: boolean;
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
@@ -85,6 +86,8 @@ export function RolesTable({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const { createRoles } = useRolesStore();
+  const { role } = useAuthorizeStore();
+  const isAdmin = role?.MaVT === "VT001";
   const [formData, setFormData] = React.useState({
     MaVT: "",
     TenVaiTro: "",
@@ -103,7 +106,7 @@ export function RolesTable({
     pageSize: 10,
   });
 
-  const table = useReactTable<Role>({
+  const table = useReactTable<RoleWithPermissions>({
     data,
     columns,
     state: {
@@ -192,64 +195,69 @@ export function RolesTable({
           </DropdownMenu>
 
           {/* Button create */}
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() =>
-                  setFormData({
-                    MaVT: "",
-                    TenVaiTro: "",
-                  })
-                }>
-                <IconPlus />
-                <span className="hidden lg:inline">Tạo mới</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-sm">
-              <form onSubmit={handleCreate} className="space-y-6">
-                <DialogHeader>
-                  <DialogTitle>Tạo vai trò</DialogTitle>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaVT">Mã Vai trò</Label>
-                    <Input
-                      id="MaVT"
-                      name="MaVT"
-                      defaultValue="VTxxx"
-                      value={formData.MaVT}
-                      onChange={(e) =>
-                        setFormData({ ...formData, MaVT: e.target.value })
-                      }
-                    />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="TenVaiTro">Tên Vai trò</Label>
-                    <Input
-                      id="TenVaiTro"
-                      name="TenVaiTro"
-                      value={formData.TenVaiTro}
-                      onChange={(e) =>
-                        setFormData({ ...formData, TenVaiTro: e.target.value })
-                      }
-                    />
-                  </Field>
-                </FieldGroup>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
-                  </DialogClose>
-                  <Button
-                    type="submit"
-                    disabled={!formData.MaVT || !formData.TenVaiTro}>
-                    Thêm
-                  </Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          {isAdmin && (
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setFormData({
+                      MaVT: "",
+                      TenVaiTro: "",
+                    })
+                  }>
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-sm">
+                <form onSubmit={handleCreate} className="space-y-6">
+                  <DialogHeader>
+                    <DialogTitle>Tạo vai trò</DialogTitle>
+                  </DialogHeader>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="MaVT">Mã Vai trò</Label>
+                      <Input
+                        id="MaVT"
+                        name="MaVT"
+                        defaultValue="VTxxx"
+                        value={formData.MaVT}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaVT: e.target.value })
+                        }
+                      />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="TenVaiTro">Tên Vai trò</Label>
+                      <Input
+                        id="TenVaiTro"
+                        name="TenVaiTro"
+                        value={formData.TenVaiTro}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            TenVaiTro: e.target.value,
+                          })
+                        }
+                      />
+                    </Field>
+                  </FieldGroup>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Huỷ</Button>
+                    </DialogClose>
+                    <Button
+                      type="submit"
+                      disabled={!formData.MaVT || !formData.TenVaiTro}>
+                      Thêm
+                    </Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 

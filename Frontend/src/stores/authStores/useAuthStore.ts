@@ -2,6 +2,8 @@ import { create } from "zustand";
 import { toast } from "sonner";
 import { authServices } from "@/services/userServices/authService";
 import type { AuthTypes } from "@/types/authTypes/authType";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { normalizePermissions, roleFromMaVT } from "@/utils/authorizeUtiles";
 
 export const useAuthStore = create<AuthTypes>((set, get) => ({
   accessToken: null,
@@ -15,6 +17,7 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
       accessToken: null,
       account: null,
     });
+    useAuthorizeStore.getState().clearState();
   },
 
   signIn: async (TenTaiKhoan, MatKhau) => {
@@ -49,14 +52,23 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
   },
   getCurrentAccount: async () => {
     set({ initializing: true });
+    useAuthorizeStore.getState().setInitializing(true);
     try {
       const currentAccount = await authServices.getCurrentAccount();
       set({ account: currentAccount });
+
+      const role = roleFromMaVT(currentAccount?.MaVT);
+      const permissions = normalizePermissions(currentAccount?.permissions);
+      const authorizeState = useAuthorizeStore.getState();
+
+      authorizeState.setRole(role);
+      authorizeState.setPermissions(permissions);
     } catch (err) {
       console.error(err);
       toast.error("Không thể lấy tài khoản hiện tại");
     } finally {
       set({ initializing: false });
+      useAuthorizeStore.getState().setInitializing(false);
     }
   },
   refresh: async () => {

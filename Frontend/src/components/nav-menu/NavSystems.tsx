@@ -21,6 +21,7 @@ export function NavSecondary({
     name: string;
     url: string;
     icon: Icon;
+    disabled?: boolean;
   }[];
 } & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
   return (

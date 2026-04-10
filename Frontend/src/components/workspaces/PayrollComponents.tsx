@@ -3,13 +3,15 @@ import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
 import { PayRollTable } from "@/components/Table/workspaceTable/PayRollTable";
 
+const PayRollComponents = () => {
+  const { PayRolls, initializing, getPayRolls } = usePayRollStore();
   const accessToken = useAuthStore((state) => state.accessToken);
 
   useEffect(() => {
     if (!accessToken) return;
 
     getPayRolls();
-  }, [accessToken]);
+  }, [accessToken, getPayRolls]);
 
   if (!accessToken) return null;
 

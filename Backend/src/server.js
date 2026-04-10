@@ -10,11 +10,9 @@ import authRoutes from './routes/authRoutes.js';
 import permissionRoutes from './routes/permissionsRoutes.js';
 import payRollRoutes from './routes/payrollRoutes.js';
 import informationRoutes from './routes/infomationRoutes.js';
-
+import { currentAccount } from './controllers/Users/CurrentAccount.js';
 //import middlewares
 import { protectedRoute } from './middlewares/middlewareVerifyJWT.js';
-
-import { currentAccount } from './controllers/Users/CurrentAccount.js';
 
 //config
 dotenv.config();
@@ -26,7 +24,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({origin: process.env.CLIENT_URL, credentials:true}))
 
-//puclic Route
+//public Route
 app.use('/api/auth', authRoutes);
 
 //private Route

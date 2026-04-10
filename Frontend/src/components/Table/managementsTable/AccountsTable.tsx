@@ -73,6 +73,8 @@ import type { Role } from "@/types/permissionTypes/RolesTypes";
 import { useAccountsStore } from "@/stores/authStores/accountStore";
 import { useRolesStore } from "@/stores/permissionStores/RolesStore";
 import { Link } from "react-router-dom";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canCreate } from "@/utils/authorizeUtiles";
 
 export function AccountsTable({
   data,
@@ -92,6 +94,7 @@ export function AccountsTable({
     pageIndex: 0,
     pageSize: 10,
   });
+  const { permissions } = useAuthorizeStore();
   const table = useReactTable<Account>({
     data,
     columns,
@@ -200,75 +203,77 @@ export function AccountsTable({
           </DropdownMenu>
 
           {/* Button create */}
-          <Dialog>
-            <form onSubmit={handleSubmit}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <DialogHeader>
-                  <DialogTitle>Tạo Tài Khoản</DialogTitle>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaTk">Mã Tài Khoản</Label>
-                    <Input id="MaTk" name="MaTk" defaultValue="TKxxx" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaNV">Mã Nhân Viên</Label>
-                    <Select>
-                      <SelectTrigger className="w-full max-w-48">
-                        <SelectValue placeholder="Chọn NVXXX" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectItem value="apple">Apple</SelectItem>
-                          <SelectItem value="banana">Banana</SelectItem>
-                          <SelectItem value="blueberry">Blueberry</SelectItem>
-                          <SelectItem value="grapes">Grapes</SelectItem>
-                          <SelectItem value="pineapple">Pineapple</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MaVT">Mã Vai Trò</Label>
-                    <Select>
-                      <SelectTrigger className="w-full max-w-48">
-                        <SelectValue placeholder="Chọn VTXXX" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {Roles.map((vt: Role) => (
-                            <SelectItem key={vt.MaVT} value={vt.MaVT}>
-                              {vt.MaVT} - {vt.TenVaiTro}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-                  <Field>
-                    <Label htmlFor="TenTaiKhoan">Tên Tài Khoản</Label>
-                    <Input id="TenTaiKhoan" name="TenTaiKhoan" />
-                  </Field>
-                  <Field>
-                    <Label htmlFor="MatKhau">Mật Khẩu</Label>
-                    <Input id="MatKhau" name="MatKhau" />
-                  </Field>
-                </FieldGroup>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
-                  </DialogClose>
-                  <Button type="submit">Tạo</Button>
-                </DialogFooter>
-              </DialogContent>
-            </form>
-          </Dialog>
+          {canCreate(permissions) && (
+            <Dialog>
+              <form onSubmit={handleSubmit}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <IconPlus />
+                    <span className="hidden lg:inline">Tạo mới</span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-sm">
+                  <DialogHeader>
+                    <DialogTitle>Tạo Tài Khoản</DialogTitle>
+                  </DialogHeader>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="MaTk">Mã Tài Khoản</Label>
+                      <Input id="MaTk" name="MaTk" defaultValue="TKxxx" />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="MaNV">Mã Nhân Viên</Label>
+                      <Select>
+                        <SelectTrigger className="w-full max-w-48">
+                          <SelectValue placeholder="Chọn NVXXX" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            <SelectItem value="apple">Apple</SelectItem>
+                            <SelectItem value="banana">Banana</SelectItem>
+                            <SelectItem value="blueberry">Blueberry</SelectItem>
+                            <SelectItem value="grapes">Grapes</SelectItem>
+                            <SelectItem value="pineapple">Pineapple</SelectItem>
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field>
+                      <Label htmlFor="MaVT">Mã Vai Trò</Label>
+                      <Select>
+                        <SelectTrigger className="w-full max-w-48">
+                          <SelectValue placeholder="Chọn VTXXX" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {Roles.map((vt: Role) => (
+                              <SelectItem key={vt.MaVT} value={vt.MaVT}>
+                                {vt.MaVT} - {vt.TenVaiTro}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                    <Field>
+                      <Label htmlFor="TenTaiKhoan">Tên Tài Khoản</Label>
+                      <Input id="TenTaiKhoan" name="TenTaiKhoan" />
+                    </Field>
+                    <Field>
+                      <Label htmlFor="MatKhau">Mật Khẩu</Label>
+                      <Input id="MatKhau" name="MatKhau" />
+                    </Field>
+                  </FieldGroup>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button variant="outline">Huỷ</Button>
+                    </DialogClose>
+                    <Button type="submit">Tạo</Button>
+                  </DialogFooter>
+                </DialogContent>
+              </form>
+            </Dialog>
+          )}
         </div>
       </div>
 

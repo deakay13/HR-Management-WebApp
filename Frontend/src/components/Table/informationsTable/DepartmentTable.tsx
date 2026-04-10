@@ -70,6 +70,8 @@ import { useDepartmentStore } from "@/stores/informationStores/departmentStores"
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { getDepartmentValidationSchema } from "@/types/informationTypes/departmentTypes";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { canCreate } from "@/utils/authorizeUtiles";
 
 export function DepartmentTable({
   data = [],
@@ -87,6 +89,7 @@ export function DepartmentTable({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [openCreate, setOpenCreate] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const { permissions } = useAuthorizeStore();
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
@@ -201,49 +204,51 @@ export function DepartmentTable({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Dialog open={openCreate} onOpenChange={setOpenCreate}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconPlus />
-                <span className="hidden lg:inline">Tạo mới</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Tạo phòng ban mới</DialogTitle>
-              </DialogHeader>
-              <form onSubmit={handleSubmit}>
-                <FieldGroup>
-                  <Field>
-                    <Label htmlFor="MaPB">Mã phòng ban</Label>
-                    <Input id="MaPB" name="MaPB" placeholder="PB001" />
-                    {errors.MaPB && (
-                      <span className="text-xs text-red-500">
-                        {errors.MaPB}
-                      </span>
-                    )}
-                  </Field>
-                  <Field>
-                    <Label htmlFor="TenPB">Tên phòng ban</Label>
-                    <Input id="TenPB" name="TenPB" />
-                    {errors.TenPB && (
-                      <span className="text-xs text-red-500">
-                        {errors.TenPB}
-                      </span>
-                    )}
-                  </Field>
-                </FieldGroup>
-                <DialogFooter className="mt-4">
-                  <DialogClose asChild>
-                    <Button variant="outline" type="button">
-                      Huỷ
-                    </Button>
-                  </DialogClose>
-                  <Button type="submit">Tạo phòng ban</Button>
-                </DialogFooter>
-              </form>
-            </DialogContent>
-          </Dialog>
+          {canCreate(permissions) && (
+            <Dialog open={openCreate} onOpenChange={setOpenCreate}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconPlus />
+                  <span className="hidden lg:inline">Tạo mới</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Tạo phòng ban mới</DialogTitle>
+                </DialogHeader>
+                <form onSubmit={handleSubmit}>
+                  <FieldGroup>
+                    <Field>
+                      <Label htmlFor="MaPB">Mã phòng ban</Label>
+                      <Input id="MaPB" name="MaPB" placeholder="PB001" />
+                      {errors.MaPB && (
+                        <span className="text-xs text-red-500">
+                          {errors.MaPB}
+                        </span>
+                      )}
+                    </Field>
+                    <Field>
+                      <Label htmlFor="TenPB">Tên phòng ban</Label>
+                      <Input id="TenPB" name="TenPB" />
+                      {errors.TenPB && (
+                        <span className="text-xs text-red-500">
+                          {errors.TenPB}
+                        </span>
+                      )}
+                    </Field>
+                  </FieldGroup>
+                  <DialogFooter className="mt-4">
+                    <DialogClose asChild>
+                      <Button variant="outline" type="button">
+                        Huỷ
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit">Tạo phòng ban</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import express from 'express';
+import { authorize } from '../middlewares/middlewareAuthorize.js';
 import { getAllDepartments, getDepartmentById, createDepartment, updateDepartment, deleteDepartment  } from '../controllers/Information/departmentsControllers.js';
 import { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee } from '../controllers/Information/employeeControllers.js';
 import { getAllContracts, getContractById, createContract, updateContract, deleteContract } from '../controllers/Information/contractControllers.js';
@@ -7,24 +8,24 @@ import upload from '../config/multerConfig.js';
 const router = express.Router();
 
 // Routes for Phongban
-router.get('/departments', getAllDepartments);
-router.get('/departments/:id', getDepartmentById);
-router.post('/departments', createDepartment);
-router.put('/departments/:id', updateDepartment);
-router.delete('/departments/:id', deleteDepartment);
+router.get('/departments', authorize(["Đọc"]),getAllDepartments);
+router.get('/departments/:id',authorize(["Đọc"]), getDepartmentById);
+router.post('/departments', authorize(["Tạo"]),createDepartment);
+router.put('/departments/:id', authorize(["Sửa"]),updateDepartment);
+router.delete('/departments/:id',authorize(["Xoá"]), deleteDepartment);
 
 // Routes for NhanVien
-router.get('/employees', getAllEmployees);
-router.get('/employees/:id', getEmployeeById);
-router.post('/employees', upload.single('HinhAnh'), createEmployee);      
-router.put('/employees/:id', upload.single('HinhAnh'), updateEmployee);  
-router.delete('/employees/:id', deleteEmployee);
+router.get('/employees', authorize(["Đọc"]),getAllEmployees);
+router.get('/employees/:id', authorize(["Đọc"]),getEmployeeById);
+router.post('/employees',authorize(["Tạo"]), upload.single('HinhAnh'), createEmployee);      
+router.put('/employees/:id',authorize(["Sửa"]), upload.single('HinhAnh'), updateEmployee);  
+router.delete('/employees/:id',authorize(["Xoá"]), deleteEmployee);
 
 // Routes for HopDong 
-router.get('/contracts', getAllContracts);
-router.get('/contracts/:id', getContractById);
-router.post('/contracts', upload.single('HinhAnhHopDong'), createContract);
-router.put('/contracts/:id', upload.single('HinhAnhHopDong'), updateContract);
-router.delete('/contracts/:id', deleteContract);
+router.get('/contracts',authorize(["Đọc"]), getAllContracts);
+router.get('/contracts/:id',authorize(["Đọc"]), getContractById);
+router.post('/contracts',authorize(["Tạo"]), upload.single('HinhAnhHopDong'), createContract);
+router.put('/contracts/:id',authorize(["Sửa"]), upload.single('HinhAnhHopDong'), updateContract);
+router.delete('/contracts/:id',authorize(["Xoá"]), deleteContract);
 
 export default router;

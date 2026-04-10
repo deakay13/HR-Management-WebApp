@@ -6,14 +6,14 @@ import {
     readAccountById,
     updateAccountById,
 } from "../controllers/Users/accountControllers.js";
-
+import { authorize } from '../middlewares/middlewareAuthorize.js';
 const router = express.Router();
 
-router.post("/Accounts", createAccount);
-router.get("/Accounts", readAllAccount);
-router.get("/Accounts/:ID", readAccountById);
-router.put("/Accounts/:ID", updateAccountById)
-router.delete("/Accounts/:ID", deleteAccount);
+router.post("/Accounts",authorize(["Tạo"]), createAccount);
+router.get("/Accounts",authorize(["Đọc"]), readAllAccount);
+router.get("/Accounts/:ID",authorize(["Đọc"]),  readAccountById);
+router.put("/Accounts/:ID",authorize(["Sửa"]),  updateAccountById)
+router.delete("/Accounts/:ID",authorize(["Xoá"]),  deleteAccount);
 
 
 export default router;

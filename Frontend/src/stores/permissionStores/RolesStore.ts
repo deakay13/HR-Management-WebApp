@@ -40,11 +40,8 @@ export const useRolesStore = create<RolesTypes>()((set, get) => ({
     },
     updateRoles: async (ID: string, data) => {
         try {
-            const updated = await RolesServices.updateRoles(ID, data);
+            await RolesServices.updateRoles(ID, data);
             await get().getRoles();
-            set({
-                Roles: get().Roles.map((Rol) => (Rol.MaVT === ID ? updated : Rol)),
-            });
             toast.success("Cập nhật Vai Trò thành công");
         } catch (error) {
             console.error("Lỗi khi cập nhật Vai Trò", error);

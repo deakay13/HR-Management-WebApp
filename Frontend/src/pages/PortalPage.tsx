@@ -1,9 +1,6 @@
-import { AppSidebar } from "@/components/sidebarMenu"
-import { SiteHeader } from "@/components/siteHeader"
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/sideBarMenu";
+import { SiteHeader } from "@/components/siteHeader";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Outlet } from "react-router";
 
 const DashBoard = () => {
@@ -19,7 +16,7 @@ const DashBoard = () => {
       <SidebarInset>
         <SiteHeader />
         <div className="flex flex-1 flex-col">
-          <Outlet/>
+          <Outlet />
         </div>
       </SidebarInset>
     </SidebarProvider>

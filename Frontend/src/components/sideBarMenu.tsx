@@ -1,5 +1,6 @@
 import * as React from "react";
 import {
+  type Icon,
   IconLayoutDashboard,
   IconFileCertificate,
   IconSettings,
@@ -29,9 +30,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { hasRole, ROLE_EMPLOYEE, ROLE_HR } from "@/utils/authorizeUtiles";
 import { Link } from "react-router-dom";
+
+type SidebarItem = {
+  name: string;
+  url: string;
+  icon: Icon;
+  disabled?: boolean;
+};
+
 const data = {
- 
   navWorkspaces: [
     {
       name: "Trang tổng quát",
@@ -111,6 +121,23 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const role = useAuthorizeStore((state) => state.role);
+
+  const isEmployee = hasRole(role, ROLE_EMPLOYEE);
+  const isHR = hasRole(role, ROLE_HR);
+
+  const managementItems: SidebarItem[] = data.NavManagements.map((item) => {
+    if (isEmployee) {
+      return { ...item, disabled: true };
+    }
+
+    if (isHR && item.name === "Quyền") {
+      return { ...item, disabled: true };
+    }
+
+    return item;
+  });
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -129,7 +156,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navWorkspaces} />
-        <NavDocuments items={data.NavManagements} />
+        <NavDocuments items={managementItems} />
         <NavSecondary items={data.navSystems} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

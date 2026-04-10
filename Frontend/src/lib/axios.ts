@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/authStores/useAuthStore";
 
 const api = axios.create({
   baseURL:
-    import.meta.env.MODE === "development" ? "http://localhost:5000/" : "api",
+    import.meta.env.MODE === "development" ? "http://localhost:5000/" : "/api/",
   withCredentials: true,
 });
 
@@ -30,12 +30,9 @@ api.interceptors.response.use(
     }
 
     originalRequest._retryCount = originalRequest._retryCount || 0;
-    if (
-      (error.response?.status === 403) &&
-      originalRequest._retryCount < 4
-    ) {
+    if (error.response?.status === 403 && originalRequest._retryCount < 4) {
       originalRequest._retryCount += 1;
-      console.log("refresh", originalRequest._retryCount += 1);
+      console.log("refresh", (originalRequest._retryCount += 1));
       try {
         const res = await api.post("/api/auth/refresh", null, {
           withCredentials: true,
