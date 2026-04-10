@@ -41,15 +41,24 @@ export const PayRollSchema = PayRollInputSchema.extend({
 export type PayRollInput = z.infer<typeof PayRollInputSchema>;
 export type PayRoll = z.infer<typeof PayRollSchema>;
 
-
 export interface PayRollTypes {
   PayRolls: PayRoll[];
   initializing: boolean;
 
+  //  thêm cho search + pagination
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  searchParams: any;
+
+  // actions
   clearState: () => void;
   getPayRolls: () => Promise<void>;
   deletePayRoll: (ID: string) => Promise<void>;
 
   createPayRolls: (data: PayRollInput) => Promise<void>;
   updatePayRoll: (ID: string, data: PayRollInput) => Promise<void>;
+
+  //  thêm search
+  searchPayRolls: (params: any) => Promise<void>;
 }

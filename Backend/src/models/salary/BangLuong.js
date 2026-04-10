@@ -8,9 +8,9 @@ const BangLuong = sequelize.define("BangLuong", {
   MaPC:{type:DataTypes.STRING,allowNull:false},
   MaKT:{type:DataTypes.STRING,allowNull:false},
   MaGL:{type:DataTypes.STRING,allowNull:false},
-  Thang:{type:DataTypes.DATEONLY,allowNull:false},
+  Thang:{type:DataTypes.STRING,allowNull:false},
   TongLuong:{type:DataTypes.DECIMAL(12,2),allowNull:false},
-  NgayTinhLuong:{type:DataTypes.DATE,allowNull:false,defaultValue:DataTypes.NOW},
+  NgayTinhLuong:{type:DataTypes.DATEONLY,allowNull:false,defaultValue:DataTypes.NOW},
   TrangThai:{type:DataTypes.STRING,allowNull:false,defaultValue:"DA_TINH"}
 },{
   tableName:"BangLuong",

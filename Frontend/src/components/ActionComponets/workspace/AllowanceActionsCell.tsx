@@ -117,7 +117,7 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     id="SoTien"
                     type="number"
                     className="h-10"
-                    {...register("SoTien", { valueAsNumber: true })}
+                    {...register("SoTien")}
                     />
                   {errors.SoTien && (
                     <p className="text-red-500 text-sm">
@@ -160,7 +160,22 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
               <DialogHeader>
                 <DialogTitle>Xoá Phụ Cấp</DialogTitle>
               </DialogHeader>
+            <div className="text-sm space-y-1 text-muted-foreground">
+                <p>Bạn có chắc muốn xoá không?</p>
 
+                <ul>
+                  <li>
+                    <b>Mã phụ cấp:</b> {allowance.MaPC}
+                  </li>
+                  <li>
+                    <b>Loại:</b> {allowance.LoaiPC}
+                  </li>
+                  <li>
+                    <b>Số tiền:</b>{" "}
+                    {Number(allowance.SoTien).toLocaleString()} VNĐ
+                  </li>
+                </ul>
+              </div>
               <DialogFooter>
                 <DialogClose asChild>
                   <Button variant="outline">Huỷ</Button>

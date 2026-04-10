@@ -54,7 +54,7 @@ export default {
       },
 
       Thang: {
-        type: Sequelize.DATEONLY,
+        type: Sequelize.STRING,
         allowNull: false,
       },
 
@@ -64,7 +64,7 @@ export default {
       },
 
       NgayTinhLuong: {
-        type: Sequelize.DATE,
+        type: Sequelize.DATEONLY,
         allowNull: false,
         defaultValue: Sequelize.NOW,
       },

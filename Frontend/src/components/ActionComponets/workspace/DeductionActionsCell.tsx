@@ -165,10 +165,23 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
               <DialogTitle>Xoá Khấu Trừ</DialogTitle>
             </DialogHeader>
 
-            <p className="text-sm text-muted-foreground">
-              Bạn có chắc muốn xoá <b>{deduction.MaKT}</b> không?
-            </p>
-
+            <div className="text-sm space-y-1 text-muted-foreground">
+              <p>Bạn có chắc muốn xoá không?</p>
+              <ul>
+                <li>
+                  <b>Mã khấu trừ:</b> {deduction.MaKT}
+                </li>
+                <li>
+                  <b>Loại:</b> {deduction.LoaiKT}
+                </li>
+                <li>
+                  <b>Phần trăm:</b>{" "}
+                  <span className="text-red-500 font-semibold">
+                    {Number(deduction.PhanTram)}%
+                  </span>
+                </li>
+              </ul>
+            </div>
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Huỷ</Button>
