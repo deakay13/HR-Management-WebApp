@@ -52,7 +52,7 @@ import {
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from "../ui/breadcrumb";
+} from "../../ui/breadcrumb";
 import {
   Dialog,
   DialogClose,
@@ -65,7 +65,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { columns } from "./Columns/PermissionsTableColumns";
+import { columns } from "../Columns/managements/PermissionsTableColumns";
 import type { Permission } from "@/types/permissionTypes/PermissionsTypes";
 import { Link } from "react-router-dom";
 import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
@@ -93,9 +93,9 @@ export function PermissionsTable({
     e.preventDefault();
     await createPermissions(formData);
     setFormData({
-        MaQuyen: "",
-        TenQuyen: "",
-      });
+      MaQuyen: "",
+      TenQuyen: "",
+    });
   };
 
   const [pagination, setPagination] = React.useState({
@@ -243,9 +243,7 @@ export function PermissionsTable({
                   </DialogClose>
                   <Button
                     type="submit"
-                    disabled={
-                      !formData.MaQuyen || !formData.TenQuyen
-                    }>
+                    disabled={!formData.MaQuyen || !formData.TenQuyen}>
                     Thêm
                   </Button>
                 </DialogFooter>

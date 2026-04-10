@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useContractStore } from "@/stores/informationStores/contractStore"; 
-import { ContractTable } from "../Table/ContractTable";
+import { ContractTable } from "@/components/Table/informationsTable/ContractTable";
 
 export default function ContractComponents() {
   const { contracts, initializing, getContracts } = useContractStore();
