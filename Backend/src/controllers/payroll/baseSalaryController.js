@@ -1,6 +1,7 @@
 import LuongCoBan from "../../models/salary/LuongCoBan.js";
 import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
+
 const createBaseSalarySchema = z.object({
     MaLCB: z    
         .string()
@@ -53,7 +54,7 @@ export const createBaseSalary = async (req, res) => {
         const luong = await LuongCoBan.create({ MaLCB, LuongCB });
 
         // response
-        return res.status(200).json({
+        return res.status(201).json({
             message: "Tạo lương cơ bản thành công",
             luong
         });
@@ -63,7 +64,6 @@ export const createBaseSalary = async (req, res) => {
         res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
-
 export const updateBaseSalary = async (req, res) => {
     try {
         // Validate input

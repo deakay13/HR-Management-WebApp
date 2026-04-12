@@ -49,7 +49,7 @@ export const createRole = async (req, res) => {
         const role = await VaiTro.create({ MaVT, TenVaiTro });
         
         //respon status 200
-        return res.status(200).json({ message: "Tạo Vai trò thành công", role });
+        return res.status(201).json({ message: "Tạo Vai trò thành công", role });
         
     } catch (error) {
         console.error("Lỗi khi gọi", error);

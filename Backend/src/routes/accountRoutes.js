@@ -5,8 +5,8 @@ import {
     readAllAccount,
     readAccountById,
     updateAccountById,
-} from "../controllers/Users/accountControllers.js";
-import { authorize } from '../middlewares/middlewareAuthorize.js';
+} from "../controllers/users/accountControllers.js";
+import { authorize } from '../middlewares/authorize.js';
 const router = express.Router();
 
 router.post("/Accounts",authorize(["Tạo"]), createAccount);

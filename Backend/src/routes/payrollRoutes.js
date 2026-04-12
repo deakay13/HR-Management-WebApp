@@ -1,10 +1,10 @@
 import express from "express";
-import { authorize } from '../middlewares/middlewareAuthorize.js';
-import {createBaseSalary, getBaseSalaries, getBaseSalaryById, updateBaseSalary, deleteBaseSalary } from "../controllers/Payroll/baseSalaryController.js";
-import {createDeduction, getDeductions, getDeductionById, updateDeduction, deleteDeduction } from "../controllers/Payroll/deductionController.js";
-import { createAllowance, getAllowances, getAllowanceById, updateAllowance, deleteAllowance } from "../controllers/Payroll/allowanceController.js";
-import { createHour, getHours, getHourById, updateHour, deleteHour } from "../controllers/Payroll/hoursController.js";
-import { calculatePayroll, getPayrolls, getPayrollById,getPayrollByMonth,getPayrollByEmployee, deletePayroll, updatePayroll, exportPayrollToExcel, searchPayroll } from "../controllers/Payroll/payRollController.js";
+import { authorize } from '../middlewares/authorize.js';
+import {createBaseSalary, getBaseSalaries, getBaseSalaryById, updateBaseSalary, deleteBaseSalary } from "../controllers/payroll/baseSalaryController.js";
+import {createDeduction, getDeductions, getDeductionById, updateDeduction, deleteDeduction } from "../controllers/payroll/deductionController.js";
+import { createAllowance, getAllowances, getAllowanceById, updateAllowance, deleteAllowance } from "../controllers/payroll/allowanceController.js";
+import { createHour, getHours, getHourById, updateHour, deleteHour } from "../controllers/payroll/hoursController.js";
+import { calculatePayroll, getPayrolls, getPayrollById,getPayrollByMonth,getPayrollByEmployee, deletePayroll, updatePayroll, exportPayrollToExcel, searchPayroll } from "../controllers/payroll/payRollController.js";
 const router = express.Router();
 
 // Base Salary routes

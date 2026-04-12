@@ -13,72 +13,68 @@ export const calculatePayroll = async (req, res) => {
 
     try {
 
-        const { MaBL, MaNV, MaLCB, MaPC, MaKT, MaGL, Thang } = req.body
-
-        if (!MaBL || !MaNV || !MaLCB || !MaPC || !MaKT || !MaGL || !Thang) {
-            return res.status(400).json({
-                message: "Thiếu dữ liệu tính lương"
-            })
-        }
-
-        const existPayroll = await BangLuong.findByPk(MaBL)
-
-        if (existPayroll) {
-            return res.status(400).json({
-                message: "Bảng lương đã tồn tại"
-            })
-        }
-
-        const luongCoBan = await LuongCoBan.findByPk(MaLCB)
-        const phuCap = await PhuCap.findByPk(MaPC)
-        const khauTru = await KhauTru.findByPk(MaKT)
-        const gioLam = await GioLam.findByPk(MaGL)
-
-        if (!luongCoBan || !phuCap || !khauTru || !gioLam) {
-            return res.status(404).json({
-                message: "Không tìm thấy dữ liệu lương"
-            })
-        }
-
-        const baseSalary = Number(luongCoBan.LuongCB)
-        const allowance = Number(phuCap.SoTien)
-        const deductionPercent = Number(khauTru.PhanTram)
-        const hours = Number(gioLam.SoGioLam)
-
-       const STANDARD_HOURS = 208 // 26 * 8
-
-        // Lương theo giờ làm
-        const salaryByHours = (baseSalary / STANDARD_HOURS) * hours
-
-        // Tiền bị trừ
-        const deductionAmount = salaryByHours * (deductionPercent / 100)
-
-        // Lương cuối cùng
-        const totalSalary = salaryByHours + allowance - deductionAmount
-
-       const payroll = await BangLuong.create({
-                MaBL,
-                MaNV,
-                MaLCB,
-                MaPC,
-                MaKT,   
-                MaGL,
-                Thang,
-                TongLuong: totalSalary
-            }) 
-
-        return res.status(201).json({
-            message: "Tính lương thành công",
-            payroll
+      const { MaBL, MaNV, MaLCB, MaPC, MaKT, MaGL, Thang } = req.body
+      if (!MaBL || !MaNV || !MaLCB || !MaPC || !MaKT || !MaGL || !Thang) {
+        return res.status(400).json({
+          message: "Thiếu dữ liệu tính lương"
         })
+      }
 
+      const existPayroll = await BangLuong.findByPk(MaBL)
+
+      if (existPayroll) {
+        return res.status(400).json({
+          message: "Bảng lương đã tồn tại"
+        })
+      }
+
+      const luongCoBan = await LuongCoBan.findByPk(MaLCB)
+      const phuCap = await PhuCap.findByPk(MaPC)
+      const khauTru = await KhauTru.findByPk(MaKT)
+      const gioLam = await GioLam.findByPk(MaGL)
+
+      if (!luongCoBan || !phuCap || !khauTru || !gioLam) {
+        return res.status(404).json({
+          message: "Không tìm thấy dữ liệu lương"
+        })
+      }
+
+      const baseSalary = Number(luongCoBan.LuongCB)
+      const allowance = Number(phuCap.SoTien)
+      const deductionPercent = Number(khauTru.PhanTram)
+      const hours = Number(gioLam.SoGioLam)
+
+      const STANDARD_HOURS = 208 // 26 * 8
+
+      // Lương theo giờ làm
+      const salaryByHours = (baseSalary / STANDARD_HOURS) * hours
+
+      // Tiền bị trừ
+      const deductionAmount = salaryByHours * (deductionPercent / 100)
+
+      // Lương cuối cùng
+      const totalSalary = salaryByHours + allowance - deductionAmount
+
+      const payroll = await BangLuong.create({
+        MaBL,
+        MaNV,
+        MaLCB,
+        MaPC,
+        MaKT,   
+        MaGL,
+        Thang,
+        TongLuong: totalSalary
+      }) 
+
+      return res.status(201).json({
+        message: "Tính lương thành công",
+        payroll
+      })
     } catch (error) {
-
-        console.error("Lỗi khi tính lương:", error)
-
-        return res.status(500).json({
-            message: "Lỗi hệ thống"
-        })
+      console.error("Lỗi khi tính lương:", error)
+      return res.status(500).json({
+          message: "Lỗi hệ thống"
+      })
     }
 };
 export const updatePayroll = async (req, res) => {
