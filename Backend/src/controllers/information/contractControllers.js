@@ -15,7 +15,6 @@ const getAllContracts = async (req, res) => {
         res.status(500).json({ message: 'Lỗi khi lấy danh sách hợp đồng: ' + error.message });
     }
 };
-
 const getContractById = async (req, res) => {
     try {
         const contract = await Contract.findByPk(req.params.id, {
@@ -32,7 +31,6 @@ const getContractById = async (req, res) => {
         res.status(500).json({ message: 'Lỗi khi lấy hợp đồng: ' + error.message });
     }
 };
-
 const createContract = async (req, res) => {
     try {
         const { MaHopDong, MaNV, LoaiHD, NgayBatDau, NgayKetThuc } = req.body;
@@ -49,7 +47,6 @@ const createContract = async (req, res) => {
         res.status(400).json({ message: 'Lỗi khi tạo hợp đồng: ' + error.message });
     }
 };
-
 const updateContract = async (req, res) => {
     try {
         const contract = await Contract.findByPk(req.params.id);
@@ -69,7 +66,6 @@ const updateContract = async (req, res) => {
         res.status(400).json({ message: 'Lỗi khi cập nhật hợp đồng: ' + error.message });
     }
 };
-
 const deleteContract = async (req, res) => {
     try {
         const contract = await Contract.findByPk(req.params.id);
@@ -80,5 +76,4 @@ const deleteContract = async (req, res) => {
         res.status(500).json({ message: 'Lỗi khi xóa hợp đồng: ' + error.message });
     }
 };
-
 export { getAllContracts, getContractById, createContract, updateContract, deleteContract };

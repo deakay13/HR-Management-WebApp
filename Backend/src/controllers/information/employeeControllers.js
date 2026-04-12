@@ -16,7 +16,6 @@ const getAllEmployees = async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi lấy danh sách nhân viên: ' + error.message });
   }
 };
-
 const getEmployeeById = async (req, res) => {
   try {
     const employee = await Employee.findByPk(req.params.id, {
@@ -34,7 +33,6 @@ const getEmployeeById = async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi lấy nhân viên: ' + error.message });
   }
 };
-
 const createEmployee = async (req, res) => {
     try {
         const { MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT } = req.body;
@@ -53,7 +51,6 @@ const createEmployee = async (req, res) => {
         res.status(400).json({ message: 'Lỗi khi tạo nhân viên: ' + error.message });
     }
 };
-
 const updateEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByPk(req.params.id);
@@ -77,7 +74,6 @@ const updateEmployee = async (req, res) => {
     res.status(400).json({ message: 'Lỗi khi cập nhật nhân viên: ' + error.message });
   }
 };
-
 const deleteEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByPk(req.params.id);
@@ -90,5 +86,4 @@ const deleteEmployee = async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi xóa nhân viên: ' + error.message });
   }
 };
-
 export { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee };

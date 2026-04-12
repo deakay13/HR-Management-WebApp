@@ -9,10 +9,10 @@ import accountRoutes from './routes/accountRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import permissionRoutes from './routes/permissionsRoutes.js';
 import payRollRoutes from './routes/payrollRoutes.js';
-import informationRoutes from './routes/infomationRoutes.js';
-import { currentAccount } from './controllers/Users/CurrentAccount.js';
+import informationRoutes from './routes/informationRoutes.js';
+import { currentAccount } from './controllers/users/currentAccount.js';
 //import middlewares
-import { protectedRoute } from './middlewares/middlewareVerifyJWT.js';
+import { protectedRoute } from './middlewares/verifyJWT.js';
 
 //config
 dotenv.config();

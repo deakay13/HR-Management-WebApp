@@ -1,57 +1,44 @@
 import VaiTro_Quyen from '../../models/auth/VaiTro_Quyen.js';
 import Quyen from '../../models/auth/Quyen.js';
 import VaiTro from '../../models/auth/VaiTro.js';
+import { sequelize } from '../../models/index.js';
 import { Pagination } from '../../utils/paginations.js';
-// import { z } from "zod";
-
-// const createPermission_RoleSchema = z.object({
-//     MaQuyen: z
-//         .string()
-//         .min(1, "Mã Quyền không được để trống")
-//         .regex(/^MQ\d{3}$/, "Mã Quyền phải có dạng MQxxx"),
-//     TenQuyen: z.string()
-//     .min(3, "Tên vai Quyền phải có ít nhất 3 ký tự")
-// });
-// const updatePermission_RoleSchema = z.object({
-//     TenQuyen: z.string()
-//         .min(3, "Tên vai Quyền phải có ít nhất 3 ký tự")
-// });
 
 export const assignPermission_Role = async (req, res) => {
+    const transaction = await sequelize.transaction();
     try {
         const { MaVT, MaQuyen } = req.body;
 
-        const role = await VaiTro.findByPk(MaVT);
+        const role = await VaiTro.findByPk(MaVT, { transaction });
         if (!role) {
-        return res.status(404).json({ message: "Vai trò không tồn tại" });
+            await transaction.rollback();
+            return res.status(404).json({ message: "Vai trò không tồn tại" });
         }
-
-        const already = [];
 
         for (const quyenId of MaQuyen) {
-        const permission = await Quyen.findByPk(quyenId);
-        if (!permission) {
-            return res.status(404).json({ message: `Quyền ${quyenId} không tồn tại` });
+            const permission = await Quyen.findByPk(quyenId, { transaction });
+            if (!permission) {
+                await transaction.rollback();
+                return res.status(404).json({ message: `Quyền ${quyenId} không tồn tại` });
+            }
+
+            const exist = await VaiTro_Quyen.findOne({ where: { MaVT, MaQuyen: quyenId }, transaction });
+            if (exist) {
+                await transaction.rollback();
+                return res.status(400).json({
+                    message: `Vai trò ${MaVT} - ${role.TenVaiTro} đã có quyền ${quyenId} - ${permission.TenQuyen}`
+                });
+            }
+
+            await VaiTro_Quyen.create({ MaVT, MaQuyen: quyenId }, { transaction });
         }
 
-        const exist = await VaiTro_Quyen.findOne({ where: { MaVT, MaQuyen: quyenId } });
-        if (exist) {
-            already.push(`${quyenId} - ${permission.TenQuyen}`);
-        } else {
-            await VaiTro_Quyen.create({ MaVT, MaQuyen: quyenId });
-        }
-        }
-
-        if (already.length > 0) {
-        return res.status(400).json({
-            message: `Vai trò ${MaVT} - ${role.TenVaiTro} đã có các quyền ${already.join(", ")}`
-        });
-        }
-
+        await transaction.commit();
         return res.status(201).json({
-        message: `Thêm quyền cho vai trò ${MaVT} - ${role.TenVaiTro} thành công`
+            message: `Thêm quyền cho vai trò ${MaVT} - ${role.TenVaiTro} thành công`
         });
     } catch (error) {
+        await transaction.rollback();
         console.error("Lỗi khi gọi", error);
         res.status(500).json({ message: "Lỗi hệ thống" });
     }

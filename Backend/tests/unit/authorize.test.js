@@ -4,7 +4,7 @@ describe('authorize middleware', () => {
   let authorize;
 
   beforeAll(async () => {
-    const mod = await import('../../src/middlewares/middlewareAuthorize.js');
+    const mod = await import('../../src/middlewares/authorize.js');
     authorize = mod.authorize;
   });
 
