@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { AuthorizeTypes } from "@/types/authTypes/authorizeType";
+import type { AuthorizeTypes } from "@/types/authTypes/authorizeTypes";
 
 export const useAuthorizeStore = create<AuthorizeTypes>((set) => ({
   role: null,

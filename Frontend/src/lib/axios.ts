@@ -21,7 +21,7 @@ api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalRequest = error.config;
-    //check api
+    //check api - skip auth endpoints
     if (
       originalRequest.url.includes("/api/auth/signin") ||
       originalRequest.url.includes("/api/auth/refresh")
@@ -30,9 +30,14 @@ api.interceptors.response.use(
     }
 
     originalRequest._retryCount = originalRequest._retryCount || 0;
-    if (error.response?.status === 403 && originalRequest._retryCount < 4) {
+
+    // 403 from JWT expired (not permission denied) — retry with refresh
+    const is403 = error.response?.status === 403;
+    const isPermissionDenied =
+      error.response?.data?.message === "Không có quyền truy cập";
+
+    if (is403 && !isPermissionDenied && originalRequest._retryCount < 1) {
       originalRequest._retryCount += 1;
-      console.log("refresh", (originalRequest._retryCount += 1));
       try {
         const res = await api.post("/api/auth/refresh", null, {
           withCredentials: true,
@@ -40,7 +45,7 @@ api.interceptors.response.use(
         const newAccessToken = res.data.accessToken;
         useAuthStore.getState().setAccessToken(newAccessToken);
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        console.log("New token:", newAccessToken);
+        return api(originalRequest);
       } catch (refreshError) {
         useAuthStore.getState().clearState();
         return Promise.reject(refreshError);

@@ -1,7 +1,7 @@
-import { useAllowanceStore } from "@/stores/payRollStores/allowanceStores";
+import { useAllowanceStore } from "@/stores/payRollStores/allowanceStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { AllowanceTable } from "@/components/Table/workspaceTable/AllowanceTable";
+import { AllowanceTable } from "@/components/table/workspaceTable/AllowanceTable";
 
 const AllowanceComponents = () => {
   const { Allowances, initializing, getAllowances } = useAllowanceStore();

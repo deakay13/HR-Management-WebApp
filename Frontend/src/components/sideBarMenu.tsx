@@ -17,10 +17,10 @@ import {
   IconHelpCircle,
 } from "@tabler/icons-react";
 import MyIcon from "@/assets/logo.svg?react";
-import { NavDocuments } from "@/components/nav-menu/NavManagements";
-import { NavMain } from "@/components/nav-menu/NavWorkspaces";
-import { NavSecondary } from "@/components/nav-menu/NavSystems";
-import { NavUserMini } from "@/components/nav-menu/NavUserMini";
+import { NavDocuments } from "@/components/navMenu/NavManagements";
+import { NavMain } from "@/components/navMenu/NavWorkspaces";
+import { NavSecondary } from "@/components/navMenu/NavSystems";
+import { NavUserMini } from "@/components/navMenu/NavUserMini";
 import {
   Sidebar,
   SidebarContent,
@@ -31,7 +31,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
-import { hasRole, ROLE_EMPLOYEE, ROLE_HR } from "@/utils/authorizeUtiles";
+import { hasRole, ROLE_EMPLOYEE, ROLE_HR } from "@/utils/authorizeUtils";
 import { Link } from "react-router-dom";
 
 type SidebarItem = {

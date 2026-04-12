@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { toast } from "sonner";
-import { authServices } from "@/services/userServices/authService";
-import type { AuthTypes } from "@/types/authTypes/authType";
+import { authServices } from "@/services/userServices/authServices";
+import type { AuthTypes } from "@/types/authTypes/authTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
-import { normalizePermissions, roleFromMaVT } from "@/utils/authorizeUtiles";
+import { normalizePermissions, roleFromMaVT } from "@/utils/authorizeUtils";
 
 export const useAuthStore = create<AuthTypes>((set, get) => ({
   accessToken: null,
@@ -57,7 +57,11 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
       const currentAccount = await authServices.getCurrentAccount();
       set({ account: currentAccount });
 
-      const role = roleFromMaVT(currentAccount?.MaVT);
+      // Lấy TenVaiTro từ API response (VaiTro include)
+      const tenVaiTro = currentAccount?.VaiTro?.TenVaiTro;
+      const role = tenVaiTro
+        ? { MaVT: currentAccount.MaVT, TenVaiTro: tenVaiTro }
+        : roleFromMaVT(currentAccount?.MaVT);
       const permissions = normalizePermissions(currentAccount?.permissions);
       const authorizeState = useAuthorizeStore.getState();
 

@@ -3,21 +3,36 @@ import { useEffect, useState } from "react";
 import { Outlet, Navigate } from "react-router";
 
 const ProtectedRoute = () => {
-  const { accessToken, account, initializing, refresh, getCurrentAccount } = useAuthStore();
-  const [ starting, setStarting ] = useState(true);
+  const [starting, setStarting] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const init = async () => {
-      if (!accessToken) {
-        await refresh();
+      try {
+        const { accessToken, refresh, getCurrentAccount } =
+          useAuthStore.getState();
+
+        if (!accessToken) {
+          await refresh();
+        }
+
+        // Re-read state after refresh
+        const state = useAuthStore.getState();
+        if (state.accessToken && !state.account) {
+          await getCurrentAccount();
+        }
+      } catch (error) {
+        console.error("Auth initialization failed:", error);
       }
-      if (accessToken && !account) {
-        await getCurrentAccount();
-      }
-      setStarting(false);
+      if (isMounted) setStarting(false);
     };
     init();
-  }, [accessToken, account, refresh, getCurrentAccount]);
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const { accessToken, account, initializing } = useAuthStore();
 
   if (starting || initializing) {
     return (
@@ -30,7 +45,7 @@ const ProtectedRoute = () => {
   if (!accessToken || !account) {
     return <Navigate to="/signin" replace />;
   }
-  return <Outlet></Outlet>;
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

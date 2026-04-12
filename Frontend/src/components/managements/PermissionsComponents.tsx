@@ -1,7 +1,7 @@
-import { usePermissionsStore } from "@/stores/permissionStores/PermissionsStore";
+import { usePermissionsStore } from "@/stores/permissionStores/permissionsStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { PermissionsTable } from "../Table/managementsTable/PermissionsTable";
+import { PermissionsTable } from "../table/managementsTable/PermissionsTable";
 
 const PermissionsComponents = () => {
   const { Permissions, initializing, getPermissions } = usePermissionsStore();

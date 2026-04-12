@@ -7,22 +7,22 @@ import SignInPage from "./pages/SignInPage";
 import PortalPage from "./pages/PortalPage";
 
 //import workspaces
-import DashBoard from "./components/workspaces/DashBoardComponents";
-import Contract from "./components/workspaces/ContractComponents";
-import Employee from "./components/workspaces/EmployeeComponents";
-import Department from "./components/workspaces/DepartmentComponents";
-import WorkingHours from "./components/workspaces/WorkingHours";
-import Payroll from "./components/workspaces/PayrollComponents";
+import DashBoard from "./components/workspaces/DashboardComponents";
+import Contract from "./components/workspaces/ContractsComponents";
+import Employee from "./components/workspaces/EmployeesComponents";
+import Department from "./components/workspaces/DepartmentsComponents";
+import WorkingHours from "./components/workspaces/WorkingHoursComponents";
+import Payroll from "./components/workspaces/PayRollComponents";
 import BasicSalary from "./components/workspaces/BasicSalaryComponents";
 import Allowances from "./components/workspaces/AllowancesComponents";
-import Deductions from "./components/workspaces/DeductrionsComponents";
+import Deductions from "./components/workspaces/DeductionsComponents";
 
-//importmanagements
+{/*import managements*/}
 import Accounts from "./components/managements/AccountsComponents";
-import Roles from "./components/managements/RoleComponents";
+import Roles from "./components/managements/RolesComponents";
 import Permissions from "./components/managements/PermissionsComponents";
 
-//import systems
+{/*import systems*/}
 import GetHelp from "./components/systems/GetHelpComponents";
 import Settings from "./components/systems/SettingsComponents";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
@@ -37,7 +37,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<PortalPage />} />
             <Route path="/PortalPage" element={<PortalPage />}>
-              //import workspaces
+              {/* Workspace routes */}
               <Route path="DashBoard" element={<DashBoard />} />
               <Route path="Contract" element={<Contract />} />
               <Route path="Employee" element={<Employee />} />
@@ -47,11 +47,11 @@ function App() {
               <Route path="BasicSalary" element={<BasicSalary />} />
               <Route path="Allowances" element={<Allowances />} />
               <Route path="Deductions" element={<Deductions />} />
-              //NavManagements routes
+              {/* Management routes */}
               <Route path="Accounts" element={<Accounts />} />
               <Route path="Roles" element={<Roles />} />
               <Route path="Permissions" element={<Permissions />} />
-              //systems routes
+              {/* System routes */}
               <Route path="Settings" element={<Settings />} />
               <Route path="GetHelp" element={<GetHelp />} />
             </Route>

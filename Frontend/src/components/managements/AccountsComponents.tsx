@@ -1,7 +1,7 @@
 import { useAccountsStore } from "@/stores/authStores/accountStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
-import { AccountsTable } from "../Table/managementsTable/AccountsTable";
+import { AccountsTable } from "../table/managementsTable/AccountsTable";
 
 export default function RolesComponents() {
   const { accounts, initializing, getAccounts } = useAccountsStore();

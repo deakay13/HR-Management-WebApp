@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { toast } from "sonner";
-import { accountsServices } from "@/services/userServices/accountsService";
-import type {Account, AccountTypes } from "@/types/authTypes/accountType";
+import { accountsServices } from "@/services/userServices/accountsServices";
+import type { Account, AccountTypes } from "@/types/authTypes/accountTypes";
 
 export const useAccountsStore = create<AccountTypes>((set, get) => ({
   accounts: [],
@@ -12,13 +12,14 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
   createAccount: async (data: Account) => {
     try {
       set({ initializing: true });
-      const newAcc = await accountsServices.createAccount(data);
-      set((state) => ({
-        accounts: [...state.accounts, newAcc],
-        initializing: false,
-      }));
+      await accountsServices.createAccount(data);
+      await get().getAccounts();
+      toast.success("Tạo tài khoản thành công");
     } catch (error) {
       console.error("Lỗi khi tạo tài khoản:", error);
+      toast.error("Không thể tạo tài khoản");
+      throw error;
+    } finally {
       set({ initializing: false });
     }
   },
@@ -31,6 +32,20 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
     } catch (error) {
       console.error("Lỗi khi lấy danh sách tài khoản", error);
       toast.error("Không thể lấy danh sách tài khoản");
+    } finally {
+      set({ initializing: false });
+    }
+  },
+  updateAccount: async (ID: string, data: Partial<Account>) => {
+    try {
+      set({ initializing: true });
+      await accountsServices.updateAccount(ID, data);
+      await get().getAccounts();
+      toast.success("Cập nhật tài khoản thành công");
+    } catch (error) {
+      console.error("Lỗi khi cập nhật tài khoản:", error);
+      toast.error("Không thể cập nhật tài khoản");
+      throw error;
     } finally {
       set({ initializing: false });
     }

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Paintbrush, Bell, Monitor } from "lucide-react";
-import DisplayChildren from "./componentChilds/DisplayChilds";
-import NotifycatiionChildren from "./componentChilds/NotifycatiionChilds";
-import AppreancesChildren from "./componentChilds/AppreancesChilds";
+import DisplayChildren from "./children/DisplayChildren";
+import NotificationChildren from "./children/NotificationChildren";
+import AppearanceChildren from "./children/AppearanceChildren";
 const sidebarLinks = [
   { name: "Giao diện", icon: Paintbrush },
   { name: "Thông báo", icon: Bell },
@@ -41,8 +41,8 @@ export default function SettingsComponents() {
 
         {/* Main content */}
         <main className="flex-1 p-6">
-          {active === "Giao diện" && <AppreancesChildren />}
-          {active === "Thông báo" && <NotifycatiionChildren />}
+          {active === "Giao diện" && <AppearanceChildren />}
+          {active === "Thông báo" && <NotificationChildren />}
           {active === "Màn hình" && <DisplayChildren />}
         </main>
       </div>
