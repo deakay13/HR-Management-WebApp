@@ -4,15 +4,15 @@ import {    createRole,
     getRolesById,
     updateRole,
     deleteRole
-} from "../controllers/Permission/roleControllers.js"
+} from "../controllers/permission/roleControllers.js"
 import {
     createPermission,
     getPermissions,
     getPermissionsById,
     updatePermission,
     deletePermission
-} from "../controllers/Permission/permissionsControllers.js";
-import { authorize } from '../middlewares/middlewareAuthorize.js';
+} from "../controllers/permission/permissionsControllers.js";
+import { authorize } from '../middlewares/authorize.js';
 import {
     assignPermission_Role,
     getPermission_Role,
@@ -20,7 +20,7 @@ import {
     updatePermission_Role,
     deleteAllPermission_Role,
     deletePermission_RoleOnePermission,
-} from "../controllers/Permission/rolePermissionControllers.js";
+} from "../controllers/permission/rolePermissionControllers.js";
 
 const router = express.Router();
 

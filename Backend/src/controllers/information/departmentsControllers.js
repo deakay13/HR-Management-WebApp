@@ -8,7 +8,6 @@ const getAllDepartments = async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi lấy danh sách phòng ban: ' + error.message });
   }
 };
-
 const getDepartmentById = async (req, res) => {
   try {
     const department = await Department.findByPk(req.params.id);
@@ -20,7 +19,6 @@ const getDepartmentById = async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi lấy phòng ban: ' + error.message });
   }
 };
-
 const createDepartment = async (req, res) => {
   try {
     const { MaPB, TenPB } = req.body;
@@ -30,7 +28,6 @@ const createDepartment = async (req, res) => {
     res.status(400).json({ message: 'Lỗi khi tạo phòng ban: ' + error.message });
   }
 };
-
 const updateDepartment = async (req, res) => {
   try {
     const department = await Department.findByPk(req.params.id);
@@ -43,7 +40,6 @@ const updateDepartment = async (req, res) => {
     res.status(400).json({ message: 'Lỗi khi cập nhật phòng ban: ' + error.message });
   }
 };
-
 const deleteDepartment = async (req, res) => {
   try {
     const department = await Department.findByPk(req.params.id);
@@ -56,5 +52,4 @@ const deleteDepartment = async (req, res) => {
     res.status(500).json({ message: 'Lỗi khi xóa phòng ban: ' + error.message });
   }
 };
-
 export { getAllDepartments, getDepartmentById, createDepartment, updateDepartment, deleteDepartment };

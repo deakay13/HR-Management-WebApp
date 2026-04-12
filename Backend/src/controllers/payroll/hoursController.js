@@ -10,7 +10,7 @@ const createHourSchema = z.object({
 
     SoGioLam: z.coerce
         .number(
-             "Số giờ làm phải là số"
+            "Số giờ làm phải là số"
         )
         .min(1, "Số giờ làm phải lớn hơn 0")
         .max(24, "Số giờ làm không hợp lệ")
@@ -72,7 +72,7 @@ export const createHour = async (req, res) => {
     }
 };
 export const getHours = async (req, res) => {
-     try {
+    try {
         //set page and size rows in papge
         const { offset, limit, page, finalSize } = Pagination(req.query);
 
@@ -164,7 +164,6 @@ export const updateHour = async (req, res) => {
         })
     }
 };
-
 export const deleteHour = async (req, res) => {
     try {
 

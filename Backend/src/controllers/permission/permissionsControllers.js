@@ -14,7 +14,6 @@ const updatePermissionSchema = z.object({
     TenQuyen: z.string()
         .min(3, "Tên vai Quyền phải có ít nhất 3 ký tự")
 });
-
 export const createPermission = async (req, res) => {
     try {
         //validate input

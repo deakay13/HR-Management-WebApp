@@ -1,8 +1,8 @@
 import express from 'express';
-import { authorize } from '../middlewares/middlewareAuthorize.js';
-import { getAllDepartments, getDepartmentById, createDepartment, updateDepartment, deleteDepartment  } from '../controllers/Information/departmentsControllers.js';
-import { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee } from '../controllers/Information/employeeControllers.js';
-import { getAllContracts, getContractById, createContract, updateContract, deleteContract } from '../controllers/Information/contractControllers.js';
+import { authorize } from '../middlewares/authorize.js';
+import { getAllDepartments, getDepartmentById, createDepartment, updateDepartment, deleteDepartment  } from '../controllers/information/departmentsControllers.js';
+import { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee } from '../controllers/information/employeeControllers.js';
+import { getAllContracts, getContractById, createContract, updateContract, deleteContract } from '../controllers/information/contractControllers.js';
 import upload from '../config/multerConfig.js';
 
 const router = express.Router();
