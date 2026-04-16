@@ -156,24 +156,13 @@ export function PayRollTable({
                 onKeyDown={handleKeyDown}
               />
             </div>
-            {/* Month filter */}
-            <Input
-              type="month"
-              className="h-9 w-[150px]"
-              value={filters.Thang}
-              onChange={(e) => setFilters((prev) => ({ ...prev, Thang: e.target.value }))}
-              onKeyDown={handleKeyDown}
-            />
-            <Button variant="outline" size="sm" onClick={handleSearch} className="h-9">
-              {t("Tìm kiếm")}
-            </Button>
             <Button
               variant="outline"
               size="sm"
               onClick={handleExport}
-              className="h-9 flex items-center gap-2">
+              className="h-9 w-9 p-0"
+              title={t("Xuất Excel")}>
               <IconFileSpreadsheet size={18} />
-              <span>{t("Xuất Excel")}</span>
             </Button>
           </div>
 
@@ -310,7 +299,7 @@ export function PayRollTable({
       <TabsContent
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
-        <div className="overflow-hidden rounded-lg border">
+        <div className="overflow-x-auto rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
