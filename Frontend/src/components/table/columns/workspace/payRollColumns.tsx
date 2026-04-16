@@ -25,6 +25,15 @@ export const columns: ColumnDef<PayRoll>[] = [
     ),
   },
   {
+    accessorKey: "HoVaTen",
+    header: () => <H k="Họ và Tên" />,
+    cell: ({ row }) => (
+      <div className="w-30 text-center h-8">
+        {row.original.NhanVien?.HoVaTen || "N/A"}
+      </div>
+    ),
+  },
+  {
     accessorKey: "MaKT",
     header: () => <H k="Mã Khấu Trừ" />,
     cell: ({ row }) => (

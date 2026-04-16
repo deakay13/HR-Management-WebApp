@@ -3,6 +3,7 @@ import LuongCoBan from "../../models/salary/LuongCoBan.js"
 import PhuCap from "../../models/salary/PhuCap.js"
 import KhauTru from "../../models/salary/KhauTru.js"
 import GioLam from "../../models/salary/GioLam.js"
+import NhanVien from "../../models/information/NhanVien.js"
 import { Pagination } from '../../utils/paginations.js';
 import { searchService } from "../../utils/search.js";
 import ExcelJS from "exceljs"
@@ -147,7 +148,10 @@ export const getPayrolls = async (req, res) => {
         options.offset = offset;
         }
 
-        const { count, rows } = await BangLuong.findAndCountAll(options);
+        const { count, rows } = await BangLuong.findAndCountAll({
+          ...options,
+          include: [{ model: NhanVien, as: 'NhanVien', attributes: ['HoVaTen'] }]
+        });
 
         return res.status(200).json({
         totalItems: count,
@@ -285,7 +289,8 @@ export const searchPayroll = async (req, res) => {
         // 5. Lọc khoảng ngày tính lương
         // Bạn có thể thêm xử lý Date Range vào buildWhereClause
         
-        order: [["NgayTinhLuong", "DESC"]]
+        order: [["NgayTinhLuong", "DESC"]],
+        include: [{ model: NhanVien, as: "NhanVien", attributes: ["HoVaTen"] }]
       }
     );
 
@@ -306,6 +311,7 @@ export const exportPayrollToExcel = async (req, res) => {
     worksheet.columns = [
       { header: "Mã BL", key: "MaBL", width: 15 },
       { header: "Mã NV", key: "MaNV", width: 15 },
+      { header: "Họ và Tên", key: "HoVaTen", width: 25 },
       { header: "Tháng", key: "Thang", width: 15 },
       { header: "Lương cơ bản", key: "LuongCB", width: 18 },
       { header: "Giờ làm", key: "SoGioLam", width: 12 },
@@ -317,6 +323,7 @@ export const exportPayrollToExcel = async (req, res) => {
     // ===== DATA =====
     for (const p of payrolls) {
 
+      const nv = await NhanVien.findByPk(p.MaNV)
       const luong = await LuongCoBan.findByPk(p.MaLCB)
       const gio = await GioLam.findByPk(p.MaGL)
       const pc = await PhuCap.findByPk(p.MaPC)
@@ -325,6 +332,7 @@ export const exportPayrollToExcel = async (req, res) => {
       worksheet.addRow({
         MaBL: p.MaBL,
         MaNV: p.MaNV,
+        HoVaTen: nv?.HoVaTen || "N/A",
         Thang: p.Thang,
         LuongCB: luong?.LuongCB || 0,
         SoGioLam: gio?.SoGioLam || 0,

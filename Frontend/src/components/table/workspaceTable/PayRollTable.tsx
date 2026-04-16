@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IconPlus, IconSearch } from "@tabler/icons-react";
+import { IconPlus, IconSearch, IconFileSpreadsheet } from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,
@@ -47,6 +47,8 @@ import { canCreate } from "@/utils/authorizeUtils";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
+import { PayRollServices } from "@/services/payRollServices/payRollServices";
+import { toast } from "sonner";
 
 export function PayRollTable({
   data,
@@ -83,6 +85,23 @@ export function PayRollTable({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       handleSearch();
+    }
+  };
+
+  const handleExport = async () => {
+    try {
+      const blob = await PayRollServices.exportPayRoll();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `bang_luong.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Xuất file excel thành công");
+    } catch (error) {
+      console.error("Lỗi export excel:", error);
+      toast.error("Không thể xuất file excel");
     }
   };
 
@@ -145,8 +164,16 @@ export function PayRollTable({
               onChange={(e) => setFilters((prev) => ({ ...prev, Thang: e.target.value }))}
               onKeyDown={handleKeyDown}
             />
-            <Button variant="default" size="sm" onClick={handleSearch} className="h-9">
+            <Button variant="outline" size="sm" onClick={handleSearch} className="h-9">
               {t("Tìm kiếm")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              className="h-9 flex items-center gap-2">
+              <IconFileSpreadsheet size={18} />
+              <span>{t("Xuất Excel")}</span>
             </Button>
           </div>
 
