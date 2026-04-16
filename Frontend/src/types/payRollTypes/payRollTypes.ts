@@ -36,6 +36,9 @@ export const PayRollSchema = PayRollInputSchema.extend({
   NgayTinhLuong: z.string(),
   TongLuong: z.number(),
   TrangThai: z.string(),
+  NhanVien: z.object({
+    HoVaTen: z.string(),
+  }).optional(),
 });
 
 export type PayRollInput = z.infer<typeof PayRollInputSchema>;

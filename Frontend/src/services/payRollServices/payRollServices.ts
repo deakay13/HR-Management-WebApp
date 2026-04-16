@@ -31,4 +31,11 @@ export const PayRollServices = {
     });
     return res.data;
 },
+    exportPayRoll: async () => {
+        const res = await api.get("/api/payroll/payrolls/export", {
+            responseType: "blob",
+            withCredentials: true,
+        });
+        return res.data;
+    },
 };
