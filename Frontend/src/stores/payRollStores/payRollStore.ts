@@ -21,12 +21,8 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
         try {
             const response = await PayRollServices.getPayRolls();
             
-            // Backend của bạn trả về: { data: rows, totalItems, ... }
-            // Phải lấy đúng response.data
-            const actualData = response?.data || [];
-            
             set({ 
-                PayRolls: actualData,
+                PayRolls: response?.data || [],
                 totalItems: response?.totalItems || 0,
                 totalPages: response?.totalPages || 0
             });
@@ -51,12 +47,8 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
     // CREATE
     createPayRolls: async (data) => {
         try {
-            const newItem = await PayRollServices.createPayRoll(data);
+            await PayRollServices.createPayRoll(data);
             await get().getPayRolls(); // Tải lại danh sách sau khi thêm
-            set({
-                    PayRolls: [...get().PayRolls, newItem],
-                });
-        
             toast.success("Thêm Bảng lương thành công");
         } catch (error) {
             console.error("Lỗi khi thêm Bảng lương", error);
@@ -66,14 +58,8 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
     // UPDATE
     updatePayRoll: async (ID: string, data) => {
             try {
-                const updated = await PayRollServices.updatePayRoll(ID, data);
+                await PayRollServices.updatePayRoll(ID, data);
                 await get().getPayRolls(); // Tải lại danh sách sau khi cập nhật
-                set({
-                    PayRolls: get().PayRolls.map((d) =>
-                    d.MaBL === ID ? updated : d
-                    ),
-                });
-                
                 toast.success("Cập nhật Bảng lương thành công");
             } catch (error) {
                 console.error("Lỗi khi cập nhật Bảng lương", error);
