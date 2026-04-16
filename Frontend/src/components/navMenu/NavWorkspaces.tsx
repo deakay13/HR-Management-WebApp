@@ -1,4 +1,5 @@
 import { type Icon } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -19,9 +20,10 @@ export function NavMain({
     disabled?: boolean;
   }[];
 }) {
+  const { t } = useTranslation();
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Danh Mục</SidebarGroupLabel>
+      <SidebarGroupLabel>{t("Danh Mục")}</SidebarGroupLabel>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => (
@@ -29,7 +31,7 @@ export function NavMain({
               <SidebarMenuButton asChild>
                 <Link to={item.url}>
                   <item.icon />
-                  <span>{item.name}</span>
+                  <span>{t(item.name)}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

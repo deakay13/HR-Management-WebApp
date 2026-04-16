@@ -30,7 +30,15 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 function App() {
   return (
     <>
-      <Toaster richColors />
+      <Toaster 
+        richColors 
+        toastOptions={{
+          classNames: {
+            error: 'bg-[#cd3536] text-white border-[#cd3536]',
+            success: 'bg-[#42c584] text-white border-[#42c584]',
+          }
+        }}
+      />
       <BrowserRouter>
         <Routes>
           <Route path="/Signin" element={<SignInPage />} />

@@ -33,8 +33,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { usePermissionsStore } from "@/stores/permissionStores/permissionsStore";
+import { useTranslation } from "react-i18next";
 
 export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
+  const { t } = useTranslation();
   const { deleteRole, updateRoles } = useRolesStore();
   const { role } = useAuthorizeStore();
   const isAdmin = role?.MaVT === "VT001";
@@ -50,18 +52,14 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
   const { Permissions } = usePermissionsStore();
   const [oldQuyen, setOldQuyen] = React.useState("");
   const [newQuyen, setNewQuyen] = React.useState("");
-  const [selectedPermissions, setSelectedPermissions] = React.useState<
-    string[]
-  >([]);
+  const [selectedPermissions, setSelectedPermissions] = React.useState<string[]>([]);
 
   const [formData, setFormData] = React.useState({
     TenVaiTro: rol.TenVaiTro,
   });
-  //  RESET DATA
+
   const handleOpenEdit = () => {
-    setFormData({
-      TenVaiTro: rol.TenVaiTro,
-    });
+    setFormData({ TenVaiTro: rol.TenVaiTro });
   };
   const handleOpenAssign = () => {
     setSelectedPermissions([]);
@@ -69,13 +67,10 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
   const handleOpenDeletePermissions = () => {
     setSelectedPermissions([]);
   };
-  //  HANDLE UPDATE
+
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateRoles(rol.MaVT, {
-      MaVT: rol.MaVT,
-      ...formData,
-    });
+    await updateRoles(rol.MaVT, { MaVT: rol.MaVT, ...formData });
   };
   const togglePermission = (id: string) => {
     setSelectedPermissions((prev) =>
@@ -93,7 +88,6 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
     setOldQuyen(rol.permissions[0]?.MaQuyen ?? "");
     setNewQuyen("");
   };
-
   const handleChangePermission = async (e: React.FormEvent) => {
     e.preventDefault();
     await updateGrantPermissions(rol.MaVT, oldQuyen, newQuyen);
@@ -121,7 +115,8 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
               <IconDotsVertical />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-32">
+          <DropdownMenuContent align="end" className="w-36">
+            {/* Cấp Quyền */}
             <Dialog>
               <DialogTrigger asChild>
                 <DropdownMenuItem
@@ -129,49 +124,39 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                     e.preventDefault();
                     handleOpenAssign();
                   }}>
-                  Cấp Quyền
+                  {t("Cấp Quyền")}
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
                 <form onSubmit={handleAssign} className="space-y-6">
                   <DialogHeader>
-                    <DialogTitle>Cấp Quyền</DialogTitle>
+                    <DialogTitle>{t("Cấp Quyền")}</DialogTitle>
                     <DialogDescription>
-                      Tích chọn Quyền để cấp cho vai trò {rol.TenVaiTro}
+                      {t("Tích chọn Quyền để cấp cho vai trò")} {rol.TenVaiTro}
                     </DialogDescription>
                   </DialogHeader>
                   <FieldGroup>
                     <Field>
-                      <Label>Tên Vai Trò</Label>
+                      <Label>{t("Tên Vai Trò")}</Label>
                       <Input value={rol.TenVaiTro} disabled />
                     </Field>
                     <Field>
-                      <Label>Danh sách Quyền</Label>
+                      <Label>{t("Danh Sách Quyền")}</Label>
                       <div className="space-y-2 border rounded-md p-3 max-h-60 overflow-y-auto">
                         {Permissions.filter(
-                          (p) =>
-                            !rol.permissions.some(
-                              (rp) => rp.MaQuyen === p.MaQuyen,
-                            ),
+                          (p) => !rol.permissions.some((rp) => rp.MaQuyen === p.MaQuyen),
                         ).length === 0 ? (
                           <p className="text-muted-foreground text-sm">
-                            Đã được cấp tất cả quyền
+                            {t("Đã được cấp tất cả quyền")}
                           </p>
                         ) : (
                           Permissions.filter(
-                            (p) =>
-                              !rol.permissions.some(
-                                (rp) => rp.MaQuyen === p.MaQuyen,
-                              ),
+                            (p) => !rol.permissions.some((rp) => rp.MaQuyen === p.MaQuyen),
                           ).map((p) => (
-                            <label
-                              key={p.MaQuyen}
-                              className="flex items-center gap-2">
+                            <label key={p.MaQuyen} className="flex items-center gap-2">
                               <input
                                 type="checkbox"
-                                checked={selectedPermissions.includes(
-                                  p.MaQuyen,
-                                )}
+                                checked={selectedPermissions.includes(p.MaQuyen)}
                                 onChange={() => togglePermission(p.MaQuyen)}
                               />
                               {p.TenQuyen}
@@ -183,19 +168,19 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                   </FieldGroup>
                   <DialogFooter>
                     <DialogClose asChild>
-                      <Button variant="outline">Huỷ</Button>
+                      <Button variant="outline">{t("Huỷ")}</Button>
                     </DialogClose>
                     <DialogClose asChild>
-                      <Button
-                        type="submit"
-                        disabled={selectedPermissions.length === 0}>
-                        Cấp Quyền
+                      <Button type="submit" disabled={selectedPermissions.length === 0}>
+                        {t("Cấp Quyền")}
                       </Button>
                     </DialogClose>
                   </DialogFooter>
                 </form>
               </DialogContent>
             </Dialog>
+
+            {/* Sửa Vai Trò */}
             {isAdmin && (
               <Dialog>
                 <DialogTrigger asChild>
@@ -204,45 +189,44 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                       e.preventDefault();
                       handleOpenEdit();
                     }}>
-                    Sửa Vai Trò
+                    {t("Sửa Vai Trò")}
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                   <form onSubmit={handleUpdate} className="space-y-6">
                     <DialogHeader>
-                      <DialogTitle>Sửa vai trò</DialogTitle>
+                      <DialogTitle>{t("Sửa Vai Trò")}</DialogTitle>
                       <DialogDescription>
-                        Nhập thông tin mới và Lưu thay đổi để lưu.
+                        {t("Nhập thông tin mới và Lưu thay đổi để lưu.")}
                       </DialogDescription>
                     </DialogHeader>
                     <FieldGroup>
                       <Field>
-                        <Label htmlFor="TenVaiTro">Tên Vai trò</Label>
+                        <Label htmlFor="TenVaiTro">{t("Tên Vai Trò")}</Label>
                         <Input
                           id="TenVaiTro"
                           name="TenVaiTro"
                           value={formData.TenVaiTro}
                           onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              TenVaiTro: e.target.value,
-                            })
+                            setFormData({ ...formData, TenVaiTro: e.target.value })
                           }
                         />
                       </Field>
                     </FieldGroup>
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button variant="outline">Huỷ</Button>
+                        <Button variant="outline">{t("Huỷ")}</Button>
                       </DialogClose>
                       <Button type="submit" disabled={!formData.TenVaiTro}>
-                        Lưu thay đổi
+                        {t("Lưu thay đổi")}
                       </Button>
                     </DialogFooter>
                   </form>
                 </DialogContent>
               </Dialog>
             )}
+
+            {/* Thay đổi Quyền */}
             {isAdmin && (
               <Dialog>
                 <DialogTrigger asChild>
@@ -251,23 +235,23 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                       e.preventDefault();
                       handleOpenChangePermission();
                     }}>
-                    Thay đổi Quyền
+                    {t("Thay Đổi Quyền")}
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
                   <form onSubmit={handleChangePermission} className="space-y-6">
                     <DialogHeader>
-                      <DialogTitle>Thay đổi Quyền</DialogTitle>
+                      <DialogTitle>{t("Thay Đổi Quyền")}</DialogTitle>
                       <DialogDescription>
-                        Chọn quyền cũ và quyền mới để thay đổi
+                        {t("Chọn quyền cũ và quyền mới để thay đổi")}
                       </DialogDescription>
                     </DialogHeader>
                     <FieldGroup>
                       <Field>
-                        <Label>Quyền hiện tại</Label>
+                        <Label>{t("Quyền Hiện Tại")}</Label>
                         <Select value={oldQuyen} onValueChange={setOldQuyen}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Chọn quyền hiện tại" />
+                            <SelectValue placeholder={t("Chọn quyền hiện tại")} />
                           </SelectTrigger>
                           <SelectContent>
                             {rol.permissions.map((p) => (
@@ -279,10 +263,10 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                         </Select>
                       </Field>
                       <Field>
-                        <Label>Quyền mới</Label>
+                        <Label>{t("Quyền Mới")}</Label>
                         <Select value={newQuyen} onValueChange={setNewQuyen}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Chọn quyền mới" />
+                            <SelectValue placeholder={t("Chọn quyền mới")} />
                           </SelectTrigger>
                           <SelectContent>
                             {Permissions.map(
@@ -298,11 +282,11 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                     </FieldGroup>
                     <DialogFooter>
                       <DialogClose asChild>
-                        <Button variant="outline">Huỷ</Button>
+                        <Button variant="outline">{t("Huỷ")}</Button>
                       </DialogClose>
                       <DialogClose asChild>
                         <Button type="submit" disabled={!oldQuyen || !newQuyen}>
-                          Thay đổi
+                          {t("Thay Đổi")}
                         </Button>
                       </DialogClose>
                     </DialogFooter>
@@ -310,9 +294,11 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                 </DialogContent>
               </Dialog>
             )}
+
             {isAdmin && (
               <>
                 <DropdownMenuSeparator />
+                {/* Xoá Từng Quyền */}
                 <Dialog>
                   <form>
                     <DialogTrigger asChild>
@@ -322,22 +308,20 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                           e.preventDefault();
                           handleOpenDeletePermissions();
                         }}>
-                        Xoá Từng Quyền
+                        {t("Xoá Từng Quyền")}
                       </DropdownMenuItem>
                     </DialogTrigger>
-                    <DialogContent
-                      className="sm:max-w-sm"
-                      showCloseButton={false}>
+                    <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                       <DialogHeader>
-                        <DialogTitle>Lựa chọn Quyền bạn muốn xoá</DialogTitle>
+                        <DialogTitle>{t("Lựa Chọn Quyền Muốn Xoá")}</DialogTitle>
                         <DialogDescription>
-                          Tích chọn quyền và bấm Xoá để xoá quyền được chọn
+                          {t("Tích chọn quyền và bấm Xoá để xoá quyền được chọn")}
                         </DialogDescription>
                       </DialogHeader>
                       <FieldGroup>
                         {rol.permissions.length === 0 ? (
                           <p className="text-muted-foreground text-sm">
-                            Vai trò chưa có quyền nào
+                            {t("Vai trò chưa có quyền nào")}
                           </p>
                         ) : (
                           rol.permissions.map((perm) => (
@@ -347,12 +331,8 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                               <Label>
                                 <input
                                   type="checkbox"
-                                  checked={selectedPermissions.includes(
-                                    perm.MaQuyen,
-                                  )}
-                                  onChange={() =>
-                                    togglePermission(perm.MaQuyen)
-                                  }
+                                  checked={selectedPermissions.includes(perm.MaQuyen)}
+                                  onChange={() => togglePermission(perm.MaQuyen)}
                                 />
                                 {perm.TenQuyen}
                               </Label>
@@ -362,55 +342,89 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                       </FieldGroup>
                       <DialogFooter>
                         <DialogClose asChild>
-                          <Button variant="outline">Huỷ</Button>
+                          <Button variant="outline">{t("Huỷ")}</Button>
                         </DialogClose>
                         <DialogClose asChild>
                           <Button
                             variant="destructive"
                             disabled={selectedPermissions.length === 0}
                             onClick={handleDeleteSelected}>
-                            Xoá các quyền đã chọn
+                            {t("Xoá Các Quyền Đã Chọn")}
                           </Button>
                         </DialogClose>
                       </DialogFooter>
                     </DialogContent>
                   </form>
                 </Dialog>
+                {/* Xoá tất cả Quyền */}
                 <Dialog>
                   <form>
                     <DialogTrigger asChild>
                       <DropdownMenuItem
                         variant="destructive"
                         onSelect={(e) => e.preventDefault()}>
-                        Xoá tất cả Quyền
+                        {t("Xoá Tất Cả Quyền")}
                       </DropdownMenuItem>
                     </DialogTrigger>
-                    <DialogContent
-                      className="sm:max-w-sm"
-                      showCloseButton={false}>
+                    <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                       <DialogHeader>
-                        <DialogTitle>Xoá tất cả Quyền</DialogTitle>
+                        <DialogTitle>{t("Xoá Tất Cả Quyền")}</DialogTitle>
                         <DialogDescription>
-                          Bấm xoá để xoá tất cả quyền được cấp
+                          {t("Bấm xoá để xoá tất cả quyền được cấp")}
                         </DialogDescription>
                       </DialogHeader>
                       <FieldGroup>
                         <Field>
-                          <Label htmlFor="MaVT">
-                            Bạn có muốn xoá tất cả quyền được cấp hay không?
-                          </Label>
+                          <Label>{t("Bạn có chắc muốn xoá tất cả quyền?")}</Label>
                         </Field>
                       </FieldGroup>
                       <DialogFooter>
                         <DialogClose asChild>
-                          <Button variant="outline">Huỷ</Button>
+                          <Button variant="outline">{t("Huỷ")}</Button>
                         </DialogClose>
                         <DialogClose asChild>
                           <Button
                             onClick={async () =>
                               await deleteAllGrantPermissions(rol.MaVT)
                             }>
-                            Xoá
+                            {t("Xoá")}
+                          </Button>
+                        </DialogClose>
+                      </DialogFooter>
+                    </DialogContent>
+                  </form>
+                </Dialog>
+                {/* Xoá Vai trò */}
+                <Dialog>
+                  <form>
+                    <DialogTrigger asChild>
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onSelect={(e) => e.preventDefault()}>
+                        {t("Xoá Vai Trò")}
+                      </DropdownMenuItem>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+                      <DialogHeader>
+                        <DialogTitle>{t("Xoá Vai Trò")}</DialogTitle>
+                        <DialogDescription>
+                          {t("Để xoá vai trò bạn phải xoá quyền trước")}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <FieldGroup>
+                        <Field>
+                          <Label>
+                            {t("Bạn có chắc muốn xoá vai trò")} {rol.MaVT} - {rol.TenVaiTro}?
+                          </Label>
+                        </Field>
+                      </FieldGroup>
+                      <DialogFooter>
+                        <DialogClose asChild>
+                          <Button variant="outline">{t("Huỷ")}</Button>
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <Button onClick={async () => await deleteRole(rol.MaVT)}>
+                            {t("Xoá")}
                           </Button>
                         </DialogClose>
                       </DialogFooter>
@@ -418,48 +432,6 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                   </form>
                 </Dialog>
               </>
-            )}
-            {isAdmin && (
-              <Dialog>
-                <form>
-                  <DialogTrigger asChild>
-                    <DropdownMenuItem
-                      variant="destructive"
-                      onSelect={(e) => e.preventDefault()}>
-                      Xoá Vai trò
-                    </DropdownMenuItem>
-                  </DialogTrigger>
-                  <DialogContent
-                    className="sm:max-w-sm"
-                    showCloseButton={false}>
-                    <DialogHeader>
-                      <DialogTitle>Xoá Vai Trò</DialogTitle>
-                      <DialogDescription>
-                        Để Xoá vai trò bạn phải xoá quyền trước
-                      </DialogDescription>
-                    </DialogHeader>
-                    <FieldGroup>
-                      <Field>
-                        <Label htmlFor="MaVT">
-                          Bạn có muốn xoá Mã Vai Trò {rol.MaVT} -{" "}
-                          {rol.TenVaiTro}
-                        </Label>
-                      </Field>
-                    </FieldGroup>
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button variant="outline">Huỷ</Button>
-                      </DialogClose>
-                      <DialogClose asChild>
-                        <Button
-                          onClick={async () => await deleteRole(rol.MaVT)}>
-                          Xoá
-                        </Button>
-                      </DialogClose>
-                    </DialogFooter>
-                  </DialogContent>
-                </form>
-              </Dialog>
             )}
           </DropdownMenuContent>
         </DropdownMenu>

@@ -24,13 +24,17 @@ import {
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 export function NavUserMini() {
   const { isMobile } = useSidebar();
   const { signOut, account } = useAuthStore();
   const { role } = useAuthorizeStore();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   if (!account) return null;
+
   const handleSignOut = async () => {
     try {
       await signOut();
@@ -59,9 +63,7 @@ export function NavUserMini() {
                 <span className="truncate font-medium">
                   {account.TenTaiKhoan}
                 </span>
-                <span className="text-muted-foreground truncate text-xs">
-                  {roleName}
-                </span>
+                <span className="opacity-80 truncate text-xs">{roleName}</span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -82,7 +84,7 @@ export function NavUserMini() {
                   <span className="truncate font-medium">
                     {account.TenTaiKhoan}
                   </span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="opacity-80 truncate text-xs">
                     {roleName}
                   </span>
                 </div>
@@ -92,17 +94,21 @@ export function NavUserMini() {
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <IconId />
-                Hồ Sơ
+                {t("Hồ Sơ")}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconBellRinging />
-                Thông Báo
+                {t("Thông Báo")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut}>
+            <DropdownMenuItem 
+              onClick={handleSignOut} 
+              variant="destructive" 
+              className="text-red-500 hover:text-red-500 dark:text-red-500 focus:bg-red-500! focus:text-white!"
+            >
               <IconLogout2 />
-              Đăng Xuất
+              {t("Đăng Xuất")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

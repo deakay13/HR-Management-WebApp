@@ -1,6 +1,7 @@
 "use client";
 
 import { type Icon } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 import {
   SidebarGroup,
@@ -21,9 +22,10 @@ export function NavDocuments({
     disabled?: boolean;
   }[];
 }) {
+  const { t } = useTranslation();
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Phân Quyền</SidebarGroupLabel>
+      <SidebarGroupLabel>{t("Phân Quyền")}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
@@ -32,13 +34,13 @@ export function NavDocuments({
                 disabled
                 className="cursor-not-allowed opacity-50">
                 <item.icon />
-                <span>{item.name}</span>
+                <span>{t(item.name)}</span>
               </SidebarMenuButton>
             ) : (
               <SidebarMenuButton asChild>
                 <Link to={item.url}>
                   <item.icon />
-                  <span>{item.name}</span>
+                  <span>{t(item.name)}</span>
                 </Link>
               </SidebarMenuButton>
             )}

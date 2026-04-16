@@ -1,22 +1,26 @@
-# ✅ Bỏ qua file môi trường
-**/.env
+# Dependencies
+node_modules/
 
-# ✅ Bỏ qua thư mục node_modules (cả frontend và backend)
-**/node_modules/
+# Environments
+.env
+.env.*
 
-# ✅ Bỏ qua file log
+# Logs
 *.log
+npm-debug.log*
 
-**/dist/
-**/build/
+# Uploads
+uploads/
 
-# ✅ Bỏ qua cache của VSCode
+# Build outputs
+dist/
+build/
+
+# IDE & OS
 .vscode/
+.idea/
 *.swp
+.DS_Store
 
-# ✅ Bỏ qua file lock nếu không muốn theo dõi
-package-lock.json
-
-# ✅ Bỏ qua Docker volumes hoặc file tạm
-**/.docker/
-**/tmp/
+# Tests
+coverage/

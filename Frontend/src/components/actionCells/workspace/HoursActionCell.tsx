@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,6 @@ import { Label } from "@/components/ui/label";
 import { useHoursStore } from "@/stores/payRollStores/hoursStore";
 import type { Hours } from "@/types/payRollTypes/hoursTypes";
 
-// 🔥 thêm
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -32,22 +32,21 @@ import {
 } from "@/types/payRollTypes/hoursTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 import React from "react";
 
 export function HoursActionCell({ hours }: { hours: Hours }) {
+  const { t } = useTranslation();
   const { deleteHours, updateHours } = useHoursStore();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
-
-  if (!canWrite(permissions)) return null;
-
-  // 🔥 form chuẩn
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<HoursInput>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(HoursInputSchema) as any,
     defaultValues: {
       MaGL: hours.MaGL,
@@ -55,7 +54,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
     },
   });
 
-  // reset khi mở dialog
+  if (!canWrite(permissions)) return null;
+
   const handleOpenEdit = () => {
     reset({
       MaGL: hours.MaGL,
@@ -80,7 +80,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        {/* ===== UPDATE ===== */}
+        {/* UPDATE */}
         {canUpdate(permissions) && (
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
@@ -90,7 +90,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                   handleOpenEdit();
                   setEditOpen(true);
                 }}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
 
@@ -98,23 +98,23 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
-                    Sửa Giờ Làm
+                    {t("Sửa Giờ Làm")}
                   </DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="SoGioLam">Số giờ làm</Label>
-
+                    <Label htmlFor="SoGioLam">{t("Số Giờ Làm")}</Label>
                     <Input
                       id="SoGioLam"
                       type="number"
                       className="h-10"
-                      placeholder="VD: 8"
+                      placeholder={t("VD: 8")}
                       {...register("SoGioLam")}
                     />
-
-                    {/* 🔥 ERROR */}
                     {errors.SoGioLam && (
                       <p className="text-red-500 text-sm">
                         {errors.SoGioLam.message}
@@ -126,12 +126,11 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                 <DialogFooter className="gap-2">
                   <DialogClose asChild>
                     <Button type="button" variant="outline">
-                      Huỷ
+                      {t("Huỷ")}
                     </Button>
                   </DialogClose>
-
                   <Button type="submit" disabled={isSubmitting}>
-                    Lưu thay đổi
+                    {t("Lưu thay đổi")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -143,45 +142,46 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
           <DropdownMenuSeparator />
         )}
 
-        {/* ===== DELETE ===== */}
+        {/* DELETE */}
         {canDelete(permissions) && (
           <Dialog>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
                 onSelect={(e) => e.preventDefault()}>
-                Xoá
+                {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
-                <DialogTitle>Xoá Giờ Làm</DialogTitle>
+                <DialogTitle>{t("Xoá Giờ Làm")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
               </DialogHeader>
               <div className="text-sm space-y-1 text-muted-foreground">
-                <p>Bạn có chắc muốn xoá không?</p>
-
+                <p>{t("Bạn có chắc muốn xoá không?")}</p>
                 <ul>
                   <li>
-                    <b>Mã giờ làm:</b> {hours.MaGL}
+                    <b>{t("Mã Giờ Làm")}:</b> {hours.MaGL}
                   </li>
                   <li>
-                    <b>Số giờ:</b>{" "}
+                    <b>{t("Số giờ")}:</b>{" "}
                     <span className="text-red-500 font-semibold">
-                      {Number(hours.SoGioLam)} giờ
+                      {Number(hours.SoGioLam)} {t("giờ")}
                     </span>
                   </li>
                 </ul>
               </div>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Huỷ</Button>
+                  <Button variant="outline">{t("Huỷ")}</Button>
                 </DialogClose>
-
                 <Button
                   variant="destructive"
                   onClick={() => deleteHours(hours.MaGL)}>
-                  Xoá
+                  {t("Xoá")}
                 </Button>
               </DialogFooter>
             </DialogContent>

@@ -1,22 +1,27 @@
 # ✅ Bỏ qua file môi trường
 **/.env
+**/.env.*
+/.agent
+/GEMINI.md
 
-# ✅ Bỏ qua thư mục node_modules (cả frontend và backend)
+# ✅ Bỏ qua thư mục node_modules
 **/node_modules/
 
 # ✅ Bỏ qua file log
 *.log
 
+# ✅ Compile outputs
 **/dist/
 **/build/
 
-# ✅ Bỏ qua cache của VSCode
+# ✅ IDE & OS
 .vscode/
+.idea/
+.DS_Store
 *.swp
 
-# ✅ Bỏ qua file lock nếu không muốn theo dõi
-package-lock.json
+# ✅ Lưu ý: KHÔNG NÊN bỏ qua package-lock.json vì nó dùng để đồng bộ phiên bản thư viện giữa các máy và khi build Docker.
+# package-lock.json
 
-# ✅ Bỏ qua Docker volumes hoặc file tạm
 **/.docker/
 **/tmp/

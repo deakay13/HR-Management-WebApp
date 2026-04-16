@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
@@ -27,8 +28,10 @@ import { z } from "zod";
 import { getDepartmentValidationSchema } from "@/types/informationTypes/departmentTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 
 export function DepartmentActionCell({ dept }: { dept: Department }) {
+  const { t } = useTranslation();
   const { deleteDepartment, updateDepartment } = useDepartmentStore();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = useState(false);
@@ -37,6 +40,7 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
 
   useEffect(() => {
     if (editOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormData(dept);
       setErrors({});
     }
@@ -50,7 +54,6 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
         MaPB: formData.MaPB,
         TenPB: formData.TenPB,
       });
-
       setErrors({});
       await updateDepartment(dept.MaPB, {
         MaPB: formData.MaPB,
@@ -87,28 +90,28 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
                   e.preventDefault();
                   setEditOpen(true);
                 }}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Sửa thông tin phòng ban</DialogTitle>
+                <DialogTitle>{t("Sửa Thông Tin Phòng Ban")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
-                  <Label htmlFor="MaPB">Mã phòng ban</Label>
+                  <Label htmlFor="MaPB">{t("Mã Phòng Ban")}</Label>
                   <Input id="MaPB" value={formData.MaPB} disabled />
                 </Field>
                 <Field>
-                  <Label htmlFor="TenPB">Tên phòng ban</Label>
+                  <Label htmlFor="TenPB">{t("Tên Phòng Ban")}</Label>
                   <Input
                     id="TenPB"
                     value={formData.TenPB}
                     onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        TenPB: e.target.value,
-                      }))
+                      setFormData((prev) => ({ ...prev, TenPB: e.target.value }))
                     }
                   />
                   {errors.TenPB && (
@@ -119,10 +122,10 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
               <DialogFooter>
                 <DialogClose asChild>
                   <Button type="button" variant="outline">
-                    Hủy
+                    {t("Huỷ")}
                   </Button>
                 </DialogClose>
-                <Button onClick={handleUpdate}>Lưu thay đổi</Button>
+                <Button onClick={handleUpdate}>{t("Lưu thay đổi")}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -138,29 +141,32 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
               <DropdownMenuItem
                 variant="destructive"
                 onSelect={(e) => e.preventDefault()}>
-                Xoá
+                {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm" showCloseButton={false}>
               <DialogHeader>
-                <DialogTitle>Xoá phòng ban</DialogTitle>
+                <DialogTitle>{t("Xoá Phòng Ban")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
                   <Label>
-                    Bạn có chắc chắn muốn xoá phòng ban{" "}
-                    <strong>{dept.TenPB}</strong> ({dept.MaPB}) không?
+                    {t("Bạn có chắc muốn xoá phòng ban")}{" "}
+                    <strong>{dept.TenPB}</strong> ({dept.MaPB})?
                   </Label>
                 </Field>
               </FieldGroup>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Huỷ</Button>
+                  <Button variant="outline">{t("Huỷ")}</Button>
                 </DialogClose>
                 <Button
                   variant="destructive"
                   onClick={() => deleteDepartment(dept.MaPB)}>
-                  Xoá
+                  {t("Xoá")}
                 </Button>
               </DialogFooter>
             </DialogContent>

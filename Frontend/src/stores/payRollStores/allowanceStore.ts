@@ -56,10 +56,10 @@ export const useAllowanceStore = create<AllowanceTypes>((set, get) => ({
       set({
         Allowances: get().Allowances.map((d) => (d.MaPC === ID ? updated : d)),
       });
-      toast.success("Cập nhật phụ cấp thành công");
+      toast.success("Lưu thay đổi phụ cấp thành công");
     } catch (error) {
       console.error("Lỗi khi cập nhật phụ cấp", error);
-      toast.error("Không thể cập nhật phụ cấp");
+      toast.error("Không thể lưu thay đổi phụ cấp");
       throw error;
     }
   },

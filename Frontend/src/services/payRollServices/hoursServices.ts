@@ -12,13 +12,13 @@ export const HoursServices = {
     await api.delete(`/api/payroll/hours/${ID}`, { withCredentials: true });
     return true;
   },
-  updateHours: async (ID: string, hoursData: any) => {
+  updateHours: async (ID: string, hoursData: Record<string, unknown>) => {
     const res = await api.put(`/api/payroll/hours/${ID}`, hoursData, {
       withCredentials: true,
     });
     return res.data.hour;
   },
-  createHours: async (hoursData: any) => {
+  createHours: async (hoursData: Record<string, unknown>) => {
     const res = await api.post(`/api/payroll/hours`, hoursData, {
       withCredentials: true,
     });

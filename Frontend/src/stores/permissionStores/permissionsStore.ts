@@ -22,7 +22,7 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       toast.success("Thêm quyền thành công");
     } catch (error) {
       console.error("Lỗi khi tạo quyền", error);
-      toast.error("Không thể thể tạo quyền");
+      toast.error("Không thể tạo quyền");
     } finally {
       set({ initializing: false });
     }
@@ -48,10 +48,10 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
           per.MaQuyen === ID ? updated : per,
         ),
       });
-      toast.success("Cập nhật phụ cấp thành công");
+      toast.success("Lưu thay đổi quyền thành công");
     } catch (error) {
       console.error("Lỗi khi cập nhật phụ cấp", error);
-      toast.error("Không thể cập nhật phụ cấp");
+      toast.error("Không thể lưu thay đổi quyền");
     }
   },
   deletePermission: async (ID: string) => {

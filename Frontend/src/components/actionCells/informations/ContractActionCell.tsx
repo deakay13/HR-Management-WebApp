@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
@@ -25,27 +26,27 @@ import { useEffect, useState } from "react";
 import type { Contract } from "@/types/informationTypes/contractTypes";
 import { getContractValidationSchema } from "@/types/informationTypes/contractTypes";
 import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
-
 import { z } from "zod";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 
 export function ContractActionCell({ contract }: { contract: Contract }) {
+  const { t } = useTranslation();
   const { deleteContract, updateContract } = useContractStore();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = useState(false);
   const { employees } = useEmployeeStore();
   const [formDataState, setFormDataState] = useState<Contract>(contract);
   const [file, setFile] = useState<File | null>(null);
-
-  // State save errors from Zod validation
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (editOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setFormDataState(contract);
       setFile(null);
-      setErrors({}); // Reset errors
+      setErrors({});
     }
   }, [editOpen, contract]);
 
@@ -53,7 +54,6 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
 
   const handleUpdate = async () => {
     const employeeCodes = employees.map((emp) => emp.MaNV.toUpperCase());
-
     try {
       const validatedData = getContractValidationSchema(
         [],
@@ -71,16 +71,12 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
       setErrors({});
 
       const formData = new FormData();
-
       formData.append("MaNV", validatedData.MaNV);
       formData.append("LoaiHD", validatedData.LoaiHD);
       formData.append("NgayBatDau", validatedData.NgayBatDau);
       formData.append("NgayKetThuc", validatedData.NgayKetThuc);
       formData.append("MaHopDong", validatedData.MaHopDong);
-
-      if (file) {
-        formData.append("HinhAnhHopDong", file);
-      }
+      if (file) formData.append("HinhAnhHopDong", file);
 
       await updateContract(contract.MaHopDong, formData);
       setEditOpen(false);
@@ -88,9 +84,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
         error.issues.forEach((issue) => {
-          if (issue.path[0]) {
-            newErrors[issue.path[0].toString()] = issue.message;
-          }
+          if (issue.path[0]) newErrors[issue.path[0].toString()] = issue.message;
         });
         setErrors(newErrors);
       }
@@ -117,36 +111,32 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                   e.preventDefault();
                   setEditOpen(true);
                 }}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Sửa thông tin hợp đồng</DialogTitle>
+                <DialogTitle>{t("Sửa Thông Tin Hợp Đồng")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
               </DialogHeader>
 
               <FieldGroup>
                 <Field>
-                  <Label htmlFor="MaHopDong">Mã hợp đồng</Label>
-                  <Input
-                    id="MaHopDong"
-                    value={formDataState.MaHopDong}
-                    disabled
-                  />
+                  <Label htmlFor="MaHopDong">{t("Mã HĐ")}</Label>
+                  <Input id="MaHopDong" value={formDataState.MaHopDong} disabled />
                 </Field>
 
                 <Field>
-                  <Label htmlFor="MaNV">Mã nhân viên</Label>
+                  <Label htmlFor="MaNV">{t("Mã NV")}</Label>
                   <Input
                     id="MaNV"
                     className="uppercase"
                     value={formDataState.MaNV}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
-                        ...prev,
-                        MaNV: e.target.value,
-                      }))
+                      setFormDataState((prev) => ({ ...prev, MaNV: e.target.value }))
                     }
                   />
                   {errors.MaNV && (
@@ -155,67 +145,52 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                 </Field>
 
                 <Field>
-                  <Label htmlFor="LoaiHD">Loại hợp đồng</Label>
+                  <Label htmlFor="LoaiHD">{t("Loại HĐ")}</Label>
                   <Input
                     id="LoaiHD"
                     value={formDataState.LoaiHD}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
-                        ...prev,
-                        LoaiHD: e.target.value,
-                      }))
+                      setFormDataState((prev) => ({ ...prev, LoaiHD: e.target.value }))
                     }
                   />
                   {errors.LoaiHD && (
-                    <span className="text-xs text-red-500">
-                      {errors.LoaiHD}
-                    </span>
+                    <span className="text-xs text-red-500">{errors.LoaiHD}</span>
                   )}
                 </Field>
 
                 <Field>
-                  <Label htmlFor="NgayBatDau">Ngày bắt đầu</Label>
+                  <Label htmlFor="NgayBatDau">{t("Ngày Bắt Đầu")}</Label>
                   <Input
                     id="NgayBatDau"
                     type="date"
                     value={formDataState.NgayBatDau}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
-                        ...prev,
-                        NgayBatDau: e.target.value,
-                      }))
+                      setFormDataState((prev) => ({ ...prev, NgayBatDau: e.target.value }))
                     }
                   />
                   {errors.NgayBatDau && (
-                    <span className="text-xs text-red-500">
-                      {errors.NgayBatDau}
-                    </span>
+                    <span className="text-xs text-red-500">{errors.NgayBatDau}</span>
                   )}
                 </Field>
 
                 <Field>
-                  <Label htmlFor="NgayKetThuc">Ngày kết thúc</Label>
+                  <Label htmlFor="NgayKetThuc">{t("Ngày Kết Thúc")}</Label>
                   <Input
                     id="NgayKetThuc"
                     type="date"
                     value={formDataState.NgayKetThuc}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
-                        ...prev,
-                        NgayKetThuc: e.target.value,
-                      }))
+                      setFormDataState((prev) => ({ ...prev, NgayKetThuc: e.target.value }))
                     }
                   />
                   {errors.NgayKetThuc && (
-                    <span className="text-xs text-red-500">
-                      {errors.NgayKetThuc}
-                    </span>
+                    <span className="text-xs text-red-500">{errors.NgayKetThuc}</span>
                   )}
                 </Field>
 
                 <Field>
                   <Label htmlFor="HinhAnhHopDong">
-                    Hình ảnh hợp đồng (chỉ PDF, để trống nếu không đổi)
+                    {t("Hình Ảnh Hợp Đồng")} (PDF)
                   </Label>
                   <Input
                     id="HinhAnhHopDong"
@@ -228,9 +203,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     }}
                   />
                   {errors.HinhAnhHopDong && (
-                    <span className="text-xs text-red-500">
-                      {errors.HinhAnhHopDong}
-                    </span>
+                    <span className="text-xs text-red-500">{errors.HinhAnhHopDong}</span>
                   )}
                 </Field>
               </FieldGroup>
@@ -238,10 +211,10 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
               <DialogFooter>
                 <DialogClose asChild>
                   <Button type="button" variant="outline">
-                    Hủy
+                    {t("Huỷ")}
                   </Button>
                 </DialogClose>
-                <Button onClick={handleUpdate}>Lưu thay đổi</Button>
+                <Button onClick={handleUpdate}>{t("Lưu thay đổi")}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -257,29 +230,32 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
               <DropdownMenuItem
                 variant="destructive"
                 onSelect={(e) => e.preventDefault()}>
-                Xoá
+                {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm" showCloseButton={false}>
               <DialogHeader>
-                <DialogTitle>Xoá hợp đồng</DialogTitle>
+                <DialogTitle>{t("Xoá Hợp Đồng")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
                   <Label>
-                    Bạn có chắc chắn muốn xoá hợp đồng{" "}
-                    <strong>{contract.MaHopDong}</strong> không?
+                    {t("Bạn có chắc muốn xoá hợp đồng")}{" "}
+                    <strong>{contract.MaHopDong}</strong>?
                   </Label>
                 </Field>
               </FieldGroup>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Huỷ</Button>
+                  <Button variant="outline">{t("Huỷ")}</Button>
                 </DialogClose>
                 <Button
                   variant="destructive"
                   onClick={() => deleteContract(contract.MaHopDong)}>
-                  Xoá
+                  {t("Xoá")}
                 </Button>
               </DialogFooter>
             </DialogContent>

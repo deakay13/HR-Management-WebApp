@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+
 import {
   Select,
   SelectTrigger,
@@ -8,58 +7,76 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
+import { useTheme } from "../ThemeProvider";
+import { IconSun, IconMoon, IconDeviceDesktop } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 
 export default function AppearanceChilds() {
-    const [theme, setTheme] = useState("light");
-    const [font, setFont] = useState("Inter");
+  const { theme, setTheme, language, setLanguage } = useTheme();
+  const { t } = useTranslation();
 
-    return (
-        <div>
-        <h2 className="text-lg font-semibold">Tuỳ chỉnh giao diện</h2>
-        <p className="text-sm text-gray-500 mb-6">
-            Chọn font chữ và theme cho dashboard.
+  return (
+    <div>
+      <h2 className="text-lg font-semibold">{t("Tuỳ chỉnh giao diện")}</h2>
+      <p className="text-sm text-gray-500 mb-6">
+        {t("Chọn font chữ và theme cho dashboard.")}
+      </p>
+
+      {/* Language */}
+      <div className="mb-6">
+        <h3 className="text-md font-semibold mb-2">{t("Ngôn ngữ")}</h3>
+        <p className="text-sm text-gray-500 mb-2">
+          {t("Lựa chọn ngôn ngữ bạn muốn sử dụng cho hệ thống.")}
         </p>
+        <Select value={language} onValueChange={(val) => setLanguage(val as Parameters<typeof setLanguage>[0])}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Chọn ngôn ngữ" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="vi">Vietnamese</SelectItem>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="fr">French</SelectItem>
+            <SelectItem value="ru">Russian</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        {/* Font */}
-        <div className="mb-6">
-            <h3 className="text-md font-semibold mb-2">Kiểu chữ</h3>
-            <p className="text-sm text-gray-500 mb-2">
-            lựa chọn kiểu chữ bạn muốn sử dụng cho hệ thống.
-            </p>
-            <Select value={font} onValueChange={setFont}>
-            <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Select font" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="Inter">Inter</SelectItem>
-                <SelectItem value="Roboto">Roboto</SelectItem>
-                <SelectItem value="OpenSans">Open Sans</SelectItem>
-            </SelectContent>
-            </Select>
+      {/* Theme */}
+      <div className="mb-6">
+        <h3 className="text-md font-semibold mb-2">{t("Chủ đề")}</h3>
+        <div className="flex gap-4">
+          <Card
+            className={`p-6 cursor-pointer w-32 flex flex-col items-center gap-2 transition-all ${
+              theme === "light"
+                ? "bg-primary text-primary-foreground font-semibold"
+                : "hover:bg-primary/10"
+            }`}
+            onClick={() => setTheme("light")}>
+            <IconSun className="w-8 h-8" />
+            <span>{t("Sáng")}</span>
+          </Card>
+          <Card
+            className={`p-6 cursor-pointer w-32 flex flex-col items-center gap-2 transition-all ${
+              theme === "dark"
+                ? "bg-primary text-primary-foreground font-semibold"
+                : "hover:bg-primary/10"
+            }`}
+            onClick={() => setTheme("dark")}>
+            <IconMoon className="w-8 h-8" />
+            <span>{t("Tối")}</span>
+          </Card>
+          <Card
+            className={`p-6 cursor-pointer w-32 flex flex-col items-center gap-2 transition-all ${
+              theme === "system"
+                ? "bg-primary text-primary-foreground font-semibold"
+                : "hover:bg-primary/10"
+            }`}
+            onClick={() => setTheme("system")}>
+            <IconDeviceDesktop className="w-8 h-8" />
+            <span>{t("Hệ thống")}</span>
+          </Card>
         </div>
-
-        {/* Theme */}
-        <div className="mb-6">
-            <h3 className="text-md font-semibold mb-2">Chủ đề</h3>
-            <div className="flex gap-4">
-            <Card
-                className={`p-6 cursor-pointer w-40 text-center ${
-                theme === "light" ? "ring-2 ring-black" : ""
-                }`}
-                onClick={() => setTheme("light")}>
-                Sáng
-            </Card>
-            <Card
-                className={`p-6 cursor-pointer w-40 text-center ${
-                theme === "dark" ? "ring-2 ring-black" : ""
-                }`}
-                onClick={() => setTheme("dark")}>
-                Tối
-            </Card>
-            </div>
-        </div>
-
-        <Button className="mt-4">Cập nhật tuỳ chọn</Button>
-        </div>
-    );
+      </div>
+    </div>
+  );
 }

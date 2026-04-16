@@ -21,7 +21,7 @@ export const useRolesStore = create<RolesTypes>()((set, get) => ({
             toast.success("Thêm Vai trò thành công");
         } catch (error) {
             console.error("Lỗi khi tạo Vai Trò", error);
-            toast.error("Không thể thể vai trò");
+            toast.error("Không thể tạo vai trò");
         } finally {
             set({ initializing: false });
         }
@@ -42,10 +42,10 @@ export const useRolesStore = create<RolesTypes>()((set, get) => ({
         try {
             await RolesServices.updateRoles(ID, data);
             await get().getRoles();
-            toast.success("Cập nhật Vai Trò thành công");
+            toast.success("Lưu thay đổi vai trò thành công");
         } catch (error) {
             console.error("Lỗi khi cập nhật Vai Trò", error);
-            toast.error("Không thể cập nhật Vai Trò");
+            toast.error("Không thể lưu thay đổi vai trò");
         }
     },
     deleteRole: async (ID: string) => {

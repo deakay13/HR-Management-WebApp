@@ -1,23 +1,25 @@
 import { useState } from "react";
-import { Paintbrush, Bell, Monitor } from "lucide-react";
+import { IconPalette, IconBell, IconDeviceDesktop } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
 import DisplayChildren from "./children/DisplayChildren";
 import NotificationChildren from "./children/NotificationChildren";
 import AppearanceChildren from "./children/AppearanceChildren";
 const sidebarLinks = [
-  { name: "Giao diện", icon: Paintbrush },
-  { name: "Thông báo", icon: Bell },
-  { name: "Màn hình", icon: Monitor },
+  { name: "Giao diện", icon: IconPalette },
+  { name: "Thông báo", icon: IconBell },
+  { name: "Màn hình", icon: IconDeviceDesktop },
 ];
 
 export default function SettingsComponents() {
-  const [active, setActive] = useState("Display");
+  const { t } = useTranslation();
+  const [active, setActive] = useState("Giao diện");
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="border-b p-6">
-        <h1 className="text-2xl font-bold">Cài đặt</h1>
-        <p className="text-gray-600">Quản lý cài đặt và thiết lập của bạn.</p>
+        <h1 className="text-2xl font-bold">{t("Cài đặt")}</h1>
+        <p className="text-gray-600">{t("Quản lý cài đặt và thiết lập của bạn.")}</p>
       </header>
 
       {/* Content area */}
@@ -29,11 +31,13 @@ export default function SettingsComponents() {
               <div
                 key={name}
                 onClick={() => setActive(name)}
-                className={`flex items-center gap-2 cursor-pointer rounded px-2 py-1 ${
-                  active === name ? "bg-gray-200 font-semibold" : ""
+                className={`flex items-center gap-2 cursor-pointer rounded px-2 py-1 transition-colors ${
+                  active === name 
+                    ? "bg-primary text-primary-foreground font-semibold" 
+                    : "hover:bg-primary hover:text-primary-foreground"
                 }`}>
                 <Icon size={18} />
-                {name}
+                {t(name)}
               </div>
             ))}
           </nav>

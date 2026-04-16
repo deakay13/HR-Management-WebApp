@@ -1,14 +1,14 @@
-
-**/.env
-
+**/.git
+**/.gitignore
+**/.dockerignore
 **/node_modules/
-
+**/dist/
+**/build/
+**/.env
+**/.env.*
 *.log
-
-# Bỏ file Git
-.git
-.gitignore
-
-# Bỏ file cấu hình IDE
 .vscode/
+.idea/
+/.agent
+/GEMINI.md
 *.swp

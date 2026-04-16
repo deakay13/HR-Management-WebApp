@@ -49,7 +49,7 @@ export interface PayRollTypes {
   totalItems: number;
   totalPages: number;
   currentPage: number;
-  searchParams: any;
+  searchParams: Record<string, unknown>;
 
   // actions
   clearState: () => void;
@@ -60,5 +60,5 @@ export interface PayRollTypes {
   updatePayRoll: (ID: string, data: PayRollInput) => Promise<void>;
 
   //  thêm search
-  searchPayRolls: (params: any) => Promise<void>;
+  searchPayRolls: (params: Record<string, unknown>) => Promise<void>;
 }

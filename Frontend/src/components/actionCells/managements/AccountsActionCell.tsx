@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
@@ -34,8 +35,10 @@ import type { Account } from "@/types/authTypes/accountTypes";
 import type { Role } from "@/types/permissionTypes/rolesTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 
 export function AccountsActionCell({ acc }: { acc: Account }) {
+  const { t } = useTranslation();
   const { updateAccount, deleteAccount } = useAccountsStore();
   const { Roles, getRoles } = useRolesStore();
   const { permissions } = useAuthorizeStore();
@@ -51,6 +54,7 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
 
   useEffect(() => {
     if (editOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setEditTenTK(acc.TenTaiKhoan);
       setEditMaVT(acc.MaVT);
       setEditMatKhau("");
@@ -90,19 +94,22 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
-                <DialogTitle>Sửa Tài Khoản</DialogTitle>
+                <DialogTitle>{t("Sửa Tài Khoản")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
-                  <Label>Vai trò</Label>
+                  <Label>{t("Vai Trò")}</Label>
                   <Select value={editMaVT} onValueChange={setEditMaVT}>
                     <SelectTrigger className="w-full max-w-48">
-                      <SelectValue placeholder="Chọn vai trò" />
+                      <SelectValue placeholder={t("Chọn vai trò")} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
@@ -116,17 +123,17 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
                   </Select>
                 </Field>
                 <Field>
-                  <Label>Tên Tài Khoản</Label>
+                  <Label>{t("Tên Tài Khoản")}</Label>
                   <Input
                     value={editTenTK}
                     onChange={(e) => setEditTenTK(e.target.value)}
                   />
                 </Field>
                 <Field>
-                  <Label>Mật Khẩu</Label>
+                  <Label>{t("Mật Khẩu")}</Label>
                   <Input
                     type="password"
-                    placeholder="Để trống nếu không đổi"
+                    placeholder={t("Để trống nếu không đổi")}
                     value={editMatKhau}
                     onChange={(e) => setEditMatKhau(e.target.value)}
                   />
@@ -134,9 +141,9 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
               </FieldGroup>
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Huỷ</Button>
+                  <Button variant="outline">{t("Huỷ")}</Button>
                 </DialogClose>
-                <Button onClick={handleUpdate}>Lưu thay đổi</Button>
+                <Button onClick={handleUpdate}>{t("Lưu thay đổi")}</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -151,25 +158,28 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
                 <DropdownMenuItem
                   variant="destructive"
                   onSelect={(e) => e.preventDefault()}>
-                  Xoá
+                  {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
-                  <DialogTitle>Xoá Tài Khoản</DialogTitle>
+                  <DialogTitle>{t("Xoá Tài Khoản")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="MaTK">
-                      Bạn Có muốn xoá tài khoản đã chọn không
-                    </Label>
+                    <Label>{t("Bạn có chắc muốn xoá tài khoản đã chọn?")}</Label>
                   </Field>
                 </FieldGroup>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
+                    <Button variant="outline">{t("Huỷ")}</Button>
                   </DialogClose>
-                  <Button onClick={() => deleteAccount(acc.MaTK)}>Xoá</Button>
+                  <Button onClick={() => deleteAccount(acc.MaTK)}>
+                    {t("Xoá")}
+                  </Button>
                 </DialogFooter>
               </DialogContent>
             </form>

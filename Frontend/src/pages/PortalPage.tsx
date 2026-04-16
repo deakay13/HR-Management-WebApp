@@ -13,7 +13,7 @@ const DashBoard = () => {
         } as React.CSSProperties
       }>
       <AppSidebar variant="inset" />
-      <SidebarInset>
+      <SidebarInset className="bg-transparent">
         <SiteHeader />
         <div className="flex flex-1 flex-col">
           <Outlet />

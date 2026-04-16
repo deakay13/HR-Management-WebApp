@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -30,21 +31,21 @@ import {
 } from "@/types/payRollTypes/allowanceTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 import React from "react";
 
 export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
+  const { t } = useTranslation();
   const { deleteAllowance, updateAllowance } = useAllowanceStore();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
-
-  if (!canWrite(permissions)) return null;
-
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<AllowanceInput>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(AllowanceInputSchema) as any,
     defaultValues: {
       MaPC: allowance.MaPC,
@@ -53,7 +54,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
     },
   });
 
-  // reset khi mở dialog
+  if (!canWrite(permissions)) return null;
+
   const handleOpenEdit = () => {
     reset({
       MaPC: allowance.MaPC,
@@ -79,7 +81,6 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        {/* ===== UPDATE ===== */}
         {canUpdate(permissions) && (
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
@@ -89,7 +90,7 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                   handleOpenEdit();
                   setEditOpen(true);
                 }}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
 
@@ -97,14 +98,16 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
-                    Sửa Phụ Cấp
+                    {t("Sửa Phụ Cấp")}
                   </DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
-                  {/* LoaiPC */}
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="LoaiPC">Loại Phụ Cấp</Label>
+                    <Label htmlFor="LoaiPC">{t("Loại Phụ Cấp")}</Label>
                     <Input
                       id="LoaiPC"
                       className="h-10"
@@ -117,9 +120,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     )}
                   </Field>
 
-                  {/* SoTien */}
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="SoTien">Số tiền</Label>
+                    <Label htmlFor="SoTien">{t("Số Tiền")}</Label>
                     <Input
                       id="SoTien"
                       type="number"
@@ -137,12 +139,11 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                 <DialogFooter className="gap-2">
                   <DialogClose asChild>
                     <Button type="button" variant="outline">
-                      Huỷ
+                      {t("Huỷ")}
                     </Button>
                   </DialogClose>
-
                   <Button type="submit" disabled={isSubmitting}>
-                    Lưu Thay đổi
+                    {t("Lưu thay đổi")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -150,7 +151,6 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
           </Dialog>
         )}
 
-        {/* ===== DELETE ===== */}
         {canUpdate(permissions) && canDelete(permissions) && (
           <DropdownMenuSeparator />
         )}
@@ -162,39 +162,40 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                 <DropdownMenuItem
                   variant="destructive"
                   onSelect={(e) => e.preventDefault()}>
-                  Xoá
+                  {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
-                  <DialogTitle>Xoá Phụ Cấp</DialogTitle>
+                  <DialogTitle>{t("Xoá Phụ Cấp")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
                 </DialogHeader>
                 <div className="text-sm space-y-1 text-muted-foreground">
-                  <p>Bạn có chắc muốn xoá không?</p>
-
+                  <p>{t("Bạn có chắc muốn xoá không?")}</p>
                   <ul>
                     <li>
-                      <b>Mã phụ cấp:</b> {allowance.MaPC}
+                      <b>{t("Mã Phụ Cấp")}:</b> {allowance.MaPC}
                     </li>
                     <li>
-                      <b>Loại:</b> {allowance.LoaiPC}
+                      <b>{t("Loại")}:</b> {allowance.LoaiPC}
                     </li>
                     <li>
-                      <b>Số tiền:</b>{" "}
+                      <b>{t("Số Tiền")}:</b>{" "}
                       {Number(allowance.SoTien).toLocaleString()} VNĐ
                     </li>
                   </ul>
                 </div>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
+                    <Button variant="outline">{t("Huỷ")}</Button>
                   </DialogClose>
-
                   <Button
                     variant="destructive"
                     onClick={() => deleteAllowance(allowance.MaPC)}>
-                    Xoá
+                    {t("Xoá")}
                   </Button>
                 </DialogFooter>
               </DialogContent>

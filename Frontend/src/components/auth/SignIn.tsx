@@ -8,28 +8,9 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useNavigate } from "react-router";
-
-const signInSchema = z.object({
-  TenTaiKhoan: z
-    .string()
-    .min(5, "Tài Khoản đăng nhập phải có ít nhất 5 ký tự")
-    .max(50, "Tài khoản đăng nhập không quá 50 ký tự")
-    .regex(/^[a-zA-Z0-9._]+$/, "Chỉ cho phép chữ, số, dấu chấm và gạch dưới"),
-  MatKhau: z
-    .string()
-    .min(8, "Mật khẩu phải có ít nhất 8 ký tự")
-    .regex(/[A-Z]/, "Phải có ít nhất một chữ hoa")
-    .regex(/[a-z]/, "Phải có ít nhất một chữ thường")
-    .regex(/[0-9]/, "Phải có ít nhất một chữ số")
-    .regex(/[@#$%!^&*]/, "Phải có ít nhất một ký tự đặc biệt"),
-});
-
-type signInFormValues = z.infer<typeof signInSchema>;
 
 export function SignInFrom({
   className,
@@ -37,24 +18,29 @@ export function SignInFrom({
 }: React.ComponentProps<"div">) {
   const { signIn } = useAuthStore();
   const navigate = useNavigate();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<signInFormValues>({
-    resolver: zodResolver(signInSchema),
-  });
-  const onSubmit = async (data: signInFormValues) => {
-    const { TenTaiKhoan, MatKhau } = data;
-    await signIn(TenTaiKhoan, MatKhau);
-    navigate("/PortalPage/DashBoard");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!username.trim() || !password.trim()) return;
+    setIsSubmitting(true);
+    try {
+      await signIn(username.trim(), password);
+      navigate("/PortalPage/DashBoard");
+    } catch {
+      // toast is handled inside authStore
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0 border-border">
         <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
+          <form className="p-6 md:p-8" onSubmit={onSubmit}>
             <FieldGroup>
               <div className="flex flex-col items-center gap-2 text-center">
                 <h1 className="text-2xl font-bold">Đăng Nhập</h1>
@@ -64,27 +50,30 @@ export function SignInFrom({
               </div>
               <Field>
                 <FieldLabel htmlFor="UserName">Tên tài khoản</FieldLabel>
-                <Input id="UserName" {...register("TenTaiKhoan")} />
-                {errors.TenTaiKhoan && (
-                  <p className="text-destructive text-sm">
-                    {errors.TenTaiKhoan.message}
-                  </p>
-                )}
+                <Input
+                  id="UserName"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  autoComplete="username"
+                  disabled={isSubmitting}
+                />
               </Field>
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Mật khẩu</FieldLabel>
                 </div>
-                <Input id="password" type="password" {...register("MatKhau")} />
-                {errors.MatKhau && (
-                  <p className="text-destructive text-sm">
-                    {errors.MatKhau.message}
-                  </p>
-                )}
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  disabled={isSubmitting}
+                />
               </Field>
               <Field>
-                <Button type="submit" disabled={isSubmitting}>
-                  Đăng nhập
+                <Button type="submit" disabled={isSubmitting || !username.trim() || !password.trim()}>
+                  {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
                 </Button>
               </Field>
             </FieldGroup>

@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { toast } from "sonner";
 import { ContractServices } from "@/services/informationServices/contractServices";
 import type { Contract } from "@/types/informationTypes/contractTypes";
 
@@ -14,6 +15,7 @@ interface ContractState {
 export const useContractStore = create<ContractState>((set, get) => ({
   contracts: [],
   initializing: true,
+
   getContracts: async () => {
     try {
       set({ initializing: true });
@@ -21,31 +23,43 @@ export const useContractStore = create<ContractState>((set, get) => ({
       set({ contracts: data, initializing: false });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách hợp đồng:", error);
+      toast.error("Không thể tải danh sách hợp đồng");
       set({ initializing: false });
     }
   },
+
   createContract: async (data: FormData) => {
     try {
       await ContractServices.createContract(data);
-      await get().getContracts(); // Refresh the list after creating a new contract
+      await get().getContracts();
+      toast.success("Thêm hợp đồng thành công");
     } catch (error) {
       console.error("Lỗi khi tạo hợp đồng:", error);
+      toast.error("Không thể thêm hợp đồng");
+      throw error;
     }
   },
+
   updateContract: async (id: string, data: FormData) => {
     try {
       await ContractServices.updateContract(id, data);
       await get().getContracts();
+      toast.success("Lưu thay đổi hợp đồng thành công");
     } catch (error) {
       console.error("Lỗi khi cập nhật hợp đồng:", error);
+      toast.error("Không thể lưu thay đổi hợp đồng");
+      throw error;
     }
   },
+
   deleteContract: async (id: string) => {
     try {
       await ContractServices.deleteContract(id);
       await get().getContracts();
+      toast.success("Xoá hợp đồng thành công");
     } catch (error) {
       console.error("Lỗi khi xóa hợp đồng:", error);
+      toast.error("Không thể xoá hợp đồng");
     }
   },
 }));

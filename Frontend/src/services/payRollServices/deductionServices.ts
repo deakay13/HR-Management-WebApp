@@ -14,13 +14,13 @@ export const DeductionServices = {
     });
     return true;
   },
-  updateDeduction: async (ID: string, deductionData: any) => {
+  updateDeduction: async (ID: string, deductionData: Record<string, unknown>) => {
     const res = await api.put(`/api/payroll/deductions/${ID}`, deductionData, {
       withCredentials: true,
     });
     return res.data.deduction;
   },
-  createDeduction: async (deductionData: any) => {
+  createDeduction: async (deductionData: Record<string, unknown>) => {
     const res = await api.post(`/api/payroll/deductions`, deductionData, {
       withCredentials: true,
     });

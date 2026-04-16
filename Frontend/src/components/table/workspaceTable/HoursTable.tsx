@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-  IconChevronDown,
-  IconChevronLeft,
-  IconChevronRight,
-  IconChevronsLeft,
-  IconChevronsRight,
-  IconLayoutColumns,
-  IconPlus,
-} from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,
@@ -21,22 +13,10 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -47,13 +27,6 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "../../ui/breadcrumb";
-import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -61,6 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -68,9 +42,11 @@ import { Input } from "@/components/ui/input";
 import { columns } from "../columns/workspace/hoursColumns";
 import type { Hours } from "@/types/payRollTypes/hoursTypes";
 import { useHoursStore } from "@/stores/payRollStores/hoursStore";
-import { Link } from "react-router-dom";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canCreate } from "@/utils/authorizeUtils";
+import { TablePagination } from "@/components/table/shared/TablePagination";
+import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
+import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 
 export function HoursTable({
   data,
@@ -79,13 +55,10 @@ export function HoursTable({
   data: Hours[];
   loading?: boolean;
 }) {
+  const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [formData, setFormData] = React.useState({
-    MaGL: "",
-    SoGioLam: 0,
-  });
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [formData, setFormData] = React.useState({ MaGL: "", SoGioLam: 0 });
   const { createHours } = useHoursStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
@@ -96,30 +69,20 @@ export function HoursTable({
       await createHours(formData);
       setCreateOpen(false);
       setFormData({ MaGL: "", SoGioLam: 0 });
-    } catch (error) {
+    } catch {
       // store handles toast
     }
   };
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
 
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Hours>({
     data,
     columns,
-    state: {
-      sorting,
-      columnVisibility,
-      rowSelection,
-      columnFilters,
-      pagination,
-    },
+    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
     getRowId: (row) => row.MaGL.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -136,69 +99,18 @@ export function HoursTable({
   });
 
   if (loading) {
-    return <p className="text-center py-4">Đang tải dữ liệu...</p>;
+    return <p className="text-center py-4">{t("Đang tải dữ liệu...")}</p>;
   }
 
   return (
-    <Tabs
-      defaultValue="outline"
-      className="w-full flex-col justify-start gap-6">
+    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
-        {/*breadcumm */}
-        <Breadcrumb className="hidden @4xl/main:flex">
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink asChild>
-                <Link to="/PortalPage/DashBoard">Dash Board</Link>
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>Phân quyền</BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>Giờ làm việc</BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-        {/*button */}
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconLayoutColumns />
-                <span className="hidden lg:inline">Lọc</span>
-                <IconChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) =>
-                    typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide(),
-                )
-                .map((column) => {
-                  const visibleColumns = table
-                    .getAllColumns()
-                    .filter((col) => col.getIsVisible());
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => {
-                        if (!value && visibleColumns.length <= 3) {
-                          return; // không làm gì
-                        }
-                        column.toggleVisibility(!!value);
-                      }}>
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <TableBreadcrumb section={t("Danh Mục")} page={t("Giờ Làm")} />
 
-          {/* Button create */}
+        <div className="flex items-center gap-2">
+          <TableColumnFilter table={table} />
+
+          {/* Create button */}
           {canCreate(permissions) && (
             <Dialog open={createOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
@@ -206,14 +118,11 @@ export function HoursTable({
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setFormData({
-                      MaGL: "",
-                      SoGioLam: 0,
-                    });
+                    setFormData({ MaGL: "", SoGioLam: 0 });
                     setCreateOpen(true);
                   }}>
                   <IconPlus />
-                  <span className="hidden lg:inline">Tạo mới</span>
+                  <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
 
@@ -221,39 +130,34 @@ export function HoursTable({
                 <form onSubmit={handleCreate} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
-                      Tạo giờ làm
+                      {t("Tạo giờ làm")}
                     </DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để tạo mới.")}
+                    </DialogDescription>
                   </DialogHeader>
                   <FieldGroup className="space-y-4">
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaGL">Mã Giờ Làm</Label>
+                      <Label htmlFor="MaGL">{t("Mã Giờ Làm")}</Label>
                       <Input
                         id="MaGL"
-                        placeholder="VD: GL001"
+                        placeholder={t("VD: GL001")}
                         className="h-10"
                         value={formData.MaGL}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            MaGL: e.target.value,
-                          })
-                        }
+                        onChange={(e) => setFormData({ ...formData, MaGL: e.target.value })}
                       />
                     </Field>
 
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="SoGioLam">Số Giờ Làm</Label>
+                      <Label htmlFor="SoGioLam">{t("Số Giờ Làm")}</Label>
                       <Input
                         id="SoGioLam"
                         type="number"
-                        placeholder="VD: 8"
+                        placeholder={t("VD: 8")}
                         className="h-10"
                         value={formData.SoGioLam}
                         onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            SoGioLam: Number(e.target.value),
-                          })
+                          setFormData({ ...formData, SoGioLam: Number(e.target.value) })
                         }
                       />
                     </Field>
@@ -262,14 +166,13 @@ export function HoursTable({
                   <DialogFooter className="gap-2">
                     <DialogClose asChild>
                       <Button type="button" variant="outline">
-                        Huỷ
+                        {t("Huỷ")}
                       </Button>
                     </DialogClose>
-
                     <Button
                       type="submit"
                       disabled={!formData.MaGL || formData.SoGioLam <= 0}>
-                      Tạo mới
+                      {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -285,36 +188,26 @@ export function HoursTable({
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           <Table>
-            <TableHeader className="bg-muted sticky top-0 z-10">
+            <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <TableHead key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                      </TableHead>
-                    );
-                  })}
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))}
                 </TableRow>
               ))}
             </TableHeader>
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}>
+                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -323,83 +216,15 @@ export function HoursTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center">
-                    Không có dữ liệu.
+                    className="h-24 text-center text-muted-foreground">
+                    {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>
               )}
             </TableBody>
           </Table>
         </div>
-        {/*panigations */}
-        <div className="flex items-center justify-between px-4">
-          <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
-            {table.getFilteredSelectedRowModel().rows.length} trong số{" "}
-            {table.getFilteredRowModel().rows.length} hàng được.
-          </div>
-          <div className="flex w-full items-center gap-8 lg:w-fit">
-            <div className="hidden items-center gap-2 lg:flex">
-              <Label htmlFor="rows-per-page" className="text-sm font-medium">
-                số hàng trên mỗi trang
-              </Label>
-              <Select
-                value={`${table.getState().pagination.pageSize}`}
-                onValueChange={(value) => {
-                  table.setPageSize(Number(value));
-                }}>
-                <SelectTrigger size="sm" className="w-20" id="rows-per-page">
-                  <SelectValue
-                    placeholder={table.getState().pagination.pageSize}
-                  />
-                </SelectTrigger>
-                <SelectContent side="top">
-                  {[10, 20, 30, 40, 50].map((pageSize) => (
-                    <SelectItem key={pageSize} value={`${pageSize}`}>
-                      {pageSize}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex w-fit items-center justify-center text-sm font-medium">
-              Trang {table.getState().pagination.pageIndex + 1} trên{" "}
-              {table.getPageCount()}
-            </div>
-            <div className="ml-auto flex items-center gap-2 lg:ml-0">
-              <Button
-                variant="outline"
-                className="hidden h-8 w-8 p-0 lg:flex"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}>
-                <IconChevronsLeft />
-              </Button>
-              <Button
-                variant="outline"
-                className="size-8"
-                size="icon"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}>
-                <IconChevronLeft />
-              </Button>
-              <Button
-                variant="outline"
-                className="size-8"
-                size="icon"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}>
-                <IconChevronRight />
-              </Button>
-              <Button
-                variant="outline"
-                className="hidden size-8 lg:flex"
-                size="icon"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}>
-                <IconChevronsRight />
-              </Button>
-            </div>
-          </div>
-        </div>
+        <TablePagination table={table} />
       </TabsContent>
     </Tabs>
   );

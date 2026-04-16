@@ -12,19 +12,19 @@ export const PayRollServices = {
         await api.delete(`/api/payroll/payrolls/${ID}`, { withCredentials: true,});
         return true;
     },
-     updatePayRoll: async (ID: string, payRollData: any) => {
+     updatePayRoll: async (ID: string, payRollData: Record<string, unknown>) => {
         const res = await api.put(`/api/payroll/payrolls/${ID}`, payRollData, {
             withCredentials: true,
         });
         return res.data.data;
         },
-    createPayRoll: async (payRollData: any) => {
+    createPayRoll: async (payRollData: Record<string, unknown>) => {
         const res = await api.post(`/api/payroll/payrolls`, payRollData, {
             withCredentials: true,
         });
         return res.data.data;
         },
-    searchPayRolls: async (params: any) => {
+    searchPayRolls: async (params: Record<string, unknown>) => {
     const res = await api.get("/api/payroll/payrolls/search", {
         params,
         withCredentials: true,

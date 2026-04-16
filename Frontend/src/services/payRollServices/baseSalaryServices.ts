@@ -14,13 +14,13 @@ export const BaseSalaryServices = {
     });
     return true;
   },
-  updateBaseSalary: async (ID: string, baseSalaryData: any) => {
+  updateBaseSalary: async (ID: string, baseSalaryData: Record<string, unknown>) => {
     const res = await api.put(`/api/payroll/basesalary/${ID}`, baseSalaryData, {
       withCredentials: true,
     });
     return res.data.luong;
   },
-  createBaseSalary: async (baseSalaryData: any) => {
+  createBaseSalary: async (baseSalaryData: Record<string, unknown>) => {
     const res = await api.post(`/api/payroll/basesalary`, baseSalaryData, {
       withCredentials: true,
     });

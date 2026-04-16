@@ -24,17 +24,16 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
     set({ initializing: true });
     try {
       const res = await authServices.signIn(TenTaiKhoan, MatKhau);
-
-      // lấy token từ response
       const token = res.accessToken;
-      // lưu vào store
       get().setAccessToken(token);
       await get().getCurrentAccount();
-
-      toast.success(res.message || "Chào mừng đã đến HR-System");
+      toast.success(res.message || "Chào mừng đã đến HR-System 🎉");
     } catch (error) {
       console.error(error);
-      toast.error("Đăng nhập không thành công");
+      toast.error("Sai tên tài khoản hoặc mật khẩu", {
+        description: "Vui lòng kiểm tra lại thông tin đăng nhập.",
+      });
+      throw error; // re-throw để SignIn form biết có lỗi
     } finally {
       set({ initializing: false });
     }
@@ -44,12 +43,13 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
     try {
       await authServices.signOut();
       get().clearState();
-      toast.success("đăng xuất thành công");
+      toast.success("Đăng xuất thành công");
     } catch (error) {
       console.error(error);
       toast.error("Không thể đăng xuất");
     }
   },
+
   getCurrentAccount: async () => {
     set({ initializing: true });
     useAuthorizeStore.getState().setInitializing(true);
@@ -57,7 +57,6 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
       const currentAccount = await authServices.getCurrentAccount();
       set({ account: currentAccount });
 
-      // Lấy TenVaiTro từ API response (VaiTro include)
       const tenVaiTro = currentAccount?.VaiTro?.TenVaiTro;
       const role = tenVaiTro
         ? { MaVT: currentAccount.MaVT, TenVaiTro: tenVaiTro }
@@ -75,6 +74,7 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
       useAuthorizeStore.getState().setInitializing(false);
     }
   },
+
   refresh: async () => {
     try {
       const { account, getCurrentAccount } = get();
@@ -86,7 +86,7 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
       }
     } catch (error) {
       console.error(error);
-      toast.error("Phiên đăng nhập đã hết hạn, Vui lòng đăng nhập lại");
+      toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại");
       get().clearState();
     } finally {
       set({ initializing: false });

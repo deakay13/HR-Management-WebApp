@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,6 @@ import { Label } from "@/components/ui/label";
 import { useDeductionStore } from "@/stores/payRollStores/deductionStore";
 import type { Deduction } from "@/types/payRollTypes/deductionTypes";
 
-// 🔥 thêm
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -32,22 +32,21 @@ import {
 } from "@/types/payRollTypes/deductionTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 import React from "react";
 
 export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
+  const { t } = useTranslation();
   const { deleteDeduction, updateDeduction } = useDeductionStore();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
-
-  if (!canWrite(permissions)) return null;
-
-  //  react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<DeductionInput>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(DeductionInputSchema) as any,
     defaultValues: {
       MaKT: deduction.MaKT,
@@ -56,7 +55,8 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
     },
   });
 
-  // reset khi mở dialog
+  if (!canWrite(permissions)) return null;
+
   const handleOpenEdit = () => {
     reset({
       MaKT: deduction.MaKT,
@@ -82,7 +82,6 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        {/* ===== UPDATE ===== */}
         {canUpdate(permissions) && (
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
@@ -92,7 +91,7 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                   handleOpenEdit();
                   setEditOpen(true);
                 }}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
 
@@ -100,17 +99,19 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
-                    Sửa Khấu Trừ
+                    {t("Sửa Khấu Trừ")}
                   </DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
-                  {/* LoaiKT */}
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="LoaiKT">Loại Khấu Trừ</Label>
+                    <Label htmlFor="LoaiKT">{t("Loại Khấu Trừ")}</Label>
                     <Input
                       id="LoaiKT"
-                      placeholder="VD: Thuế TNCN"
+                      placeholder={t("VD: Thuế TNCN")}
                       className="h-10"
                       {...register("LoaiKT")}
                     />
@@ -121,13 +122,12 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                     )}
                   </Field>
 
-                  {/* PhanTram */}
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="PhanTram">Phần trăm (%)</Label>
+                    <Label htmlFor="PhanTram">{t("Phần Trăm")} (%)</Label>
                     <Input
                       id="PhanTram"
                       type="number"
-                      placeholder="VD: 10"
+                      placeholder={t("VD: 10")}
                       className="h-10"
                       {...register("PhanTram")}
                     />
@@ -142,12 +142,11 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                 <DialogFooter className="gap-2">
                   <DialogClose asChild>
                     <Button type="button" variant="outline">
-                      Huỷ
+                      {t("Huỷ")}
                     </Button>
                   </DialogClose>
-
                   <Button type="submit" disabled={isSubmitting}>
-                    Lưu thay đổi
+                    {t("Lưu thay đổi")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -159,51 +158,53 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
           <DropdownMenuSeparator />
         )}
 
-        {/* ===== DELETE ===== */}
         {canDelete(permissions) && (
           <Dialog>
-            <DialogTrigger asChild>
-              <DropdownMenuItem
-                variant="destructive"
-                onSelect={(e) => e.preventDefault()}>
-                Xoá
-              </DropdownMenuItem>
-            </DialogTrigger>
-
-            <DialogContent className="sm:max-w-sm">
-              <DialogHeader>
-                <DialogTitle>Xoá Khấu Trừ</DialogTitle>
-              </DialogHeader>
-
-              <div className="text-sm space-y-1 text-muted-foreground">
-                <p>Bạn có chắc muốn xoá không?</p>
-                <ul>
-                  <li>
-                    <b>Mã khấu trừ:</b> {deduction.MaKT}
-                  </li>
-                  <li>
-                    <b>Loại:</b> {deduction.LoaiKT}
-                  </li>
-                  <li>
-                    <b>Phần trăm:</b>{" "}
-                    <span className="text-red-500 font-semibold">
-                      {Number(deduction.PhanTram)}%
-                    </span>
-                  </li>
-                </ul>
-              </div>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Huỷ</Button>
-                </DialogClose>
-
-                <Button
+            <form>
+              <DialogTrigger asChild>
+                <DropdownMenuItem
                   variant="destructive"
-                  onClick={() => deleteDeduction(deduction.MaKT)}>
-                  Xoá
-                </Button>
-              </DialogFooter>
-            </DialogContent>
+                  onSelect={(e) => e.preventDefault()}>
+                  {t("Xoá")}
+                </DropdownMenuItem>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+                <DialogHeader>
+                  <DialogTitle>{t("Xoá Khấu Trừ")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="text-sm space-y-1 text-muted-foreground">
+                  <p>{t("Bạn có chắc muốn xoá không?")}</p>
+                  <ul>
+                    <li>
+                      <b>{t("Mã Khấu Trừ")}:</b> {deduction.MaKT}
+                    </li>
+                    <li>
+                      <b>{t("Loại")}:</b> {deduction.LoaiKT}
+                    </li>
+                    <li>
+                      <b>{t("Phần Trăm")}:</b>{" "}
+                      <span className="text-red-500 font-semibold">
+                        {Number(deduction.PhanTram)}%
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">{t("Huỷ")}</Button>
+                  </DialogClose>
+                  <Button
+                    variant="destructive"
+                    onClick={() => deleteDeduction(deduction.MaKT)}>
+                    {t("Xoá")}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </form>
           </Dialog>
         )}
       </DropdownMenuContent>

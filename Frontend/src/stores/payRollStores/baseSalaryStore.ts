@@ -17,7 +17,7 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set, get) => ({
       set({ BaseSalaries: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách BaseSalaries", error);
-      toast.error("Không thể lấy danh sách BaseSalaries");
+      toast.error("Không thể tải danh sách lương cơ bản");
     } finally {
       set({ initializing: false });
     }
@@ -58,10 +58,10 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set, get) => ({
           d.MaLCB === ID ? updated : d,
         ),
       });
-      toast.success("Cập nhật Lương cơ bản thành công");
+      toast.success("Lưu thay đổi lương cơ bản thành công");
     } catch (error) {
       console.error("Lỗi khi cập nhật Lương cơ bản", error);
-      toast.error("Không thể cập nhật Lương cơ bản");
+      toast.error("Không thể lưu thay đổi lương cơ bản");
       throw error;
     }
   },

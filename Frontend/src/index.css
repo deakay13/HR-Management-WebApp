@@ -1,27 +1,45 @@
+/* Typography System - Roboto Font Family */
+/* h1: 24px-32px / 700 Bold */
+/* h2: 20px-24px / 600 Semi-bold */
+/* h3: 16px-18px / 600 Semi-bold */
+/* Body (p): 14px / 400 Regular */
+/* Caption: 12px / 400 Regular */
 @import "tailwindcss";
 @import "tw-animate-css";
+
+.font-inter {
+  font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+}
+
+.font-roboto {
+  font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+}
+
+.font-opensans {
+  font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+}
 
 @custom-variant dark (&:is(.dark *));
 @config "../tailwind.config.ts";
 
 @layer base {
   :root {
-    /* Base colors - soft pastels */
-    --background: 0 0% 100%; /*violet-50*/
-    --foreground: 217.2 32.6% 17.5%; /* slate-800 */
+    /* Brand & Layout */
+    --background: 0 0% 100%; /* #ffffff */
+    --foreground: 225 11% 7%; /* #101114 (Near Black) */
 
     /* Card system */
-    --card: 250 100% 99%;
-    --card-foreground: 217.2 32.6% 17.5%;
+    --card: 0 0% 100%;
+    --card-foreground: 225 11% 7%;
 
     /* Popover system */
     --popover: 250 100% 99%;
     --popover-foreground: 240 15% 15%;
 
     /* Primary */
-    /* Tím */
-    --primary: 271 79% 47%;
-    --primary-foreground: 210 40% 96.1%; /*slate-100*/
+    /* HR Purple Gradient origin / Brand Accent */
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
     /* Hồng */
     --primary-glow: 320 100% 70%;
 
@@ -29,13 +47,13 @@
     --secondary: 270 50% 92%;
     --secondary-foreground: 280 100% 40%;
 
-    /* Muted */
-    --muted: 260 30% 95%;
-    --muted-foreground: 240 15% 50%;
+    /* Neutral & Muted */
+    --muted: 240 16% 96%;
+    --muted-foreground: 233 11% 46%; /* #686b82 (Cool Gray) */
 
-    /* Accent - cyan */
-    --accent: 180 100% 75%;
-    --accent-foreground: 240 100% 15%;
+    /* Accent & Semantic */
+    --accent: 153 78% 35%; /* #149e61 (Green) */
+    --accent-foreground: 0 0% 100%;
 
     /* Chat colors */
     --chat-bubble-sent: 271 79% 47%;
@@ -60,12 +78,12 @@
     --destructive-foreground: 0 0% 100%;
 
     /* Border and input */
-    --border: 282 16% 87%;
-    --input: 260 30% 92%;
-    --ring: 271 79% 47%;
+    --border: 240 16% 88%; /* #dedee5 (Border Gray) */
+    --input: 240 16% 88%;
+    --ring: 262 83% 58%;
 
     /* Design system values */
-    --radius: 1rem;
+    --radius: 12px;
 
     /* Gradients */
     --gradient-primary: linear-gradient(
@@ -96,7 +114,7 @@
       hsla(0, 0%, 100%, 1) 40%,
       hsla(262, 83%, 58%, 0.5) 100%
     );
-      /* Shadows */ 
+    /* Shadows */
     --shadow-soft: 0 8px 32px -8px hsl(271 79% 47% / 0.15);
     --shadow-glow: 0 0 40px hsl(var(--primary) / 0.3);
     --shadow-bubble: 0 4px 20px -4px hsl(280 50% 70% / 0.2);
@@ -118,40 +136,60 @@
 
     --sidebar-ring: 217.2 91.2% 59.8%;
 
+    /* Dashboard Insights & Badges (Light) */
+    --insight-success-bg: 141 79% 85%; /* #DCFCE7 */
+    --insight-success-text: 143 64% 24%; /* #166534 */
+    --insight-danger-bg: 0 93% 94%; /* #FEE2E2 */
+    --insight-danger-text: 0 70% 35%; /* #991B1B */
+    --insight-neutral-bg: 250 100% 98%; /* #F5F3FF */
+    --insight-neutral-text: 215 14% 34%; /* #4B5563 */
+
+    --badge-active-bg: 253 91% 95%; /* #EDE9FE */
+    --badge-active-text: 263 69% 42%; /* #5B21B6 */
+    --badge-probation-bg: 214 100% 93%; /* #DBEAFE */
+    --badge-probation-text: 226 71% 40%; /* #1E40AF */
+    --badge-terminated-bg: 220 14% 91%; /* #E5E7EB */
+    --badge-terminated-text: 217 19% 27%; /* #374151 */
+
+    --col-name: 244 58% 51%; /* #4338CA */
+    --col-data: 217 19% 27%; /* #374151 */
+    --col-date: 215 16% 47%; /* #6B7280 */
+    --col-divider: 250 100% 98%; /* #F5F3FF */
+
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 
   .dark {
-    /* Dark mode - neon on dark aesthetic */
-    --background: 240 15% 18%;
-    --foreground: 214.3 31.8% 91.4%; /* slate-200 */
+    /* Dark mode */
+    --background: 222 47% 11%; /* #0F172A (Xanh đen đậm) */
+    --foreground: 210 40% 98%;
 
-    --card: 240 15% 12%;
-    --card-foreground: 214.3 31.8% 91.4%;
+    --card: 217 33% 17%; /* #1E293B (Xám xanh đậm) */
+    --card-foreground: 210 40% 98%;
 
-    --popover: 240 15% 12%;
-    --popover-foreground: 250 100% 95%;
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 280 100% 70%;
-    --primary-foreground: 240 15% 8%;
-    --primary-glow: 320 100% 80%;
+    --primary: 267 95% 76%; /* #BB86FC (Tím Pastel) */
+    --primary-foreground: 222 47% 11%;
+    --primary-glow: 271 91% 65%; /* #A855F7 */
 
-    --secondary: 270 20% 20%;
-    --secondary-foreground: 280 100% 80%;
+    --secondary: 215 25% 27%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 240 15% 15%;
-    --muted-foreground: 240 15% 70%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 180 100% 60%;
-    --accent-foreground: 240 15% 8%;
+    --accent: 271 91% 65%; /* Tím #A855F7 */
+    --accent-foreground: 210 40% 98%;
 
     /* Chat bubbles in dark mode */
-    --chat-bubble-sent: 280 100% 65%;
-    --chat-bubble-sent-foreground: 0 0% 100%;
-    --chat-bubble-received: 240 15% 18%;
-    --chat-bubble-received-foreground: 250 100% 90%;
+    --chat-bubble-sent: 267 95% 76%;
+    --chat-bubble-sent-foreground: 222 47% 11%;
+    --chat-bubble-received: 217 33% 17%;
+    --chat-bubble-received-foreground: 210 40% 98%;
 
     /* Status colors */
     --online: 140 100% 60%;
@@ -159,55 +197,123 @@
     --offline: 0 0% 50%;
 
     --destructive: 0 80% 47%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 281 15% 25%;
-    --input: 240 15% 18%;
-    --ring: 280 100% 70%;
+    --border: 215 25% 27%; /* #334155 (Viền) */
+    --input: 215 25% 27%;
+    --ring: 267 95% 76%;
 
-    /* Dark mode gradients */
+    /* Dark mode gradients: Tím (#A855F7), Hồng cánh sen (#EC4899) and Xanh biển (#3B82F6) */
     --gradient-primary: linear-gradient(
       135deg,
-      hsl(280, 100%, 70%),
-      hsl(320, 100%, 80%)
+      hsl(271, 91%, 65%), /* Tím */
+      hsl(330, 81%, 60%)  /* Hồng cánh sen */
     );
     --gradient-chat: linear-gradient(
       135deg,
-      hsl(280, 100%, 70%),
-      hsl(320, 100%, 75%)
+      hsl(267, 95%, 76%), /* Tím Pastel */
+      hsl(271, 91%, 65%)
     );
     --gradient-accent: linear-gradient(
       90deg,
-      hsl(180, 100%, 60%),
-      hsl(200, 100%, 70%)
+      hsl(330, 81%, 60%), /* Hồng cánh sen */
+      hsl(217, 91%, 60%)  /* Xanh biển */
     );
     --gradient-glass: linear-gradient(
       45deg,
-      hsl(240, 15%, 12%) 0%,
-      hsl(240, 15%, 18%) 100%
+      hsl(217, 33%, 17%) 0%,
+      hsl(215, 25%, 27%) 100%
     );
 
-    --gradient-violet: radial-gradient(125% 125% at 50% 100%, #000000 40%, #010133 100%)
-
-    /* Dark shadows with glow */
-    --shadow-soft: 0 8px 32px -8px hsl(280 100% 70% / 0.25);
+    --gradient-violet: radial-gradient(
+        125% 125% at 50% 100%,
+        hsl(222, 47%, 11%) 40%,
+        hsl(217, 33%, 17%) 100%
+      );
+    --shadow-soft: 0 8px 32px -8px hsl(267 95% 76% / 0.25);
     --shadow-glow: 0 0 40px hsl(var(--primary) / 0.4);
-    --shadow-bubble: 0 4px 20px -4px hsl(280 80% 50% / 0.3);
+    --shadow-bubble: 0 4px 20px -4px hsl(267 95% 76% / 0.3);
 
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 267 95% 76%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 33% 17%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 215 25% 27%;
+    --sidebar-ring: 267 95% 76%;
+
+    /* Dashboard Insights & Badges (Dark) */
+    --insight-success-bg: 143 64% 15%; 
+    --insight-success-text: 141 79% 80%; 
+    --insight-danger-bg: 0 70% 20%; 
+    --insight-danger-text: 0 93% 85%; 
+    --insight-neutral-bg: 217 33% 17%; 
+    --insight-neutral-text: 215 14% 75%; 
+
+    --badge-active-bg: 263 50% 20%; 
+    --badge-active-text: 253 91% 85%; 
+    --badge-probation-bg: 226 50% 20%; 
+    --badge-probation-text: 214 100% 85%; 
+    --badge-terminated-bg: 220 14% 20%; 
+    --badge-terminated-text: 217 19% 80%; 
+
+    --col-name: 244 80% 75%; 
+    --col-data: 217 19% 85%; 
+    --col-date: 215 16% 65%; 
+    --col-divider: 215 25% 27%; 
   }
 
   body {
-    @apply text-slate-800 dark:text-slate-200;
+    @apply text-foreground;
+    background: radial-gradient(125% 125% at 50% 10%, hsla(0, 0%, 100%, 1) 40%, hsla(262, 83%, 58%, 0.5) 100%);
+    font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  /* ─── Typography System ─────────────────────────────────── */
+  h1 {
+    font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-size: clamp(24px, 2.5vw, 32px);
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  h2 {
+    font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-size: clamp(20px, 2vw, 24px);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  h3 {
+    font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-size: clamp(16px, 1.5vw, 18px);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  p {
+    font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .caption, caption, small {
+    font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .dark body {
+    @apply bg-background text-foreground;
+    background: hsl(var(--background));
   }
 }
+
 
 /* Chat App Utility Classes */
 @layer components {
@@ -324,14 +430,14 @@
 }
 
 .dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: hsl(222 47% 11%); /* #0F172A */
+  --sidebar-foreground: hsl(210 40% 98%);
+  --sidebar-primary: hsl(267 95% 76%); /* #BB86FC */
+  --sidebar-primary-foreground: hsl(222 47% 11%);
+  --sidebar-accent: hsl(217 33% 17%); /* #1E293B */
+  --sidebar-accent-foreground: hsl(210 40% 98%);
+  --sidebar-border: hsl(215 25% 27%); /* #334155 */
+  --sidebar-ring: hsl(267 95% 76%);
 }
 
 @theme inline {
@@ -343,13 +449,29 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-insight-success-bg: hsl(var(--insight-success-bg));
+  --color-insight-success-text: hsl(var(--insight-success-text));
+  --color-insight-danger-bg: hsl(var(--insight-danger-bg));
+  --color-insight-danger-text: hsl(var(--insight-danger-text));
+  --color-insight-neutral-bg: hsl(var(--insight-neutral-bg));
+  --color-insight-neutral-text: hsl(var(--insight-neutral-text));
+
+  --color-badge-active-bg: hsl(var(--badge-active-bg));
+  --color-badge-active-text: hsl(var(--badge-active-text));
+  --color-badge-probation-bg: hsl(var(--badge-probation-bg));
+  --color-badge-probation-text: hsl(var(--badge-probation-text));
+  --color-badge-terminated-bg: hsl(var(--badge-terminated-bg));
+  --color-badge-terminated-text: hsl(var(--badge-terminated-text));
+
+  --color-col-name: hsl(var(--col-name));
+  --color-col-data: hsl(var(--col-data));
+  --color-col-date: hsl(var(--col-date));
+  --color-col-divider: hsl(var(--col-divider));
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
   }
 }

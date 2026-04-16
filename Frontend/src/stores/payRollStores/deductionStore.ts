@@ -28,10 +28,10 @@ export const useDeductionStore = create<DeductionTypes>((set, get) => ({
       set({
         Deductions: get().Deductions.filter((d) => d.MaKT !== ID),
       });
-      toast.success("Xoá Phụ cấp thành công");
+      toast.success("Xoá khấu trừ thành công");
     } catch (error) {
       console.error("Lỗi khi xoá Phụ cấp", error);
-      toast.error("Không thể xoá Phụ cấp");
+      toast.error("Không thể xoá khấu trừ");
     }
   },
   // CREATE
@@ -41,10 +41,10 @@ export const useDeductionStore = create<DeductionTypes>((set, get) => ({
       set({
         Deductions: [...get().Deductions, newItem],
       });
-      toast.success("Thêm Khấu trừ thành công");
+      toast.success("Thêm khấu trừ thành công");
     } catch (error) {
       console.error("Lỗi khi thêm Khấu trừ", error);
-      toast.error("Không thể thêm Khấu trừ");
+      toast.error("Không thể thêm khấu trừ");
       throw error;
     }
   },
@@ -56,10 +56,10 @@ export const useDeductionStore = create<DeductionTypes>((set, get) => ({
       set({
         Deductions: get().Deductions.map((d) => (d.MaKT === ID ? updated : d)),
       });
-      toast.success("Cập nhật Khấu trừ thành công");
+      toast.success("Lưu thay đổi khấu trừ thành công");
     } catch (error) {
       console.error("Lỗi khi cập nhật Khấu trừ", error);
-      toast.error("Không thể cập nhật Khấu trừ");
+      toast.error("Không thể lưu thay đổi khấu trừ");
       throw error;
     }
   },

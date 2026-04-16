@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -24,24 +25,23 @@ import type { Permission } from "@/types/permissionTypes/permissionsTypes";
 import React from "react";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 
 export function PermissionActionCell({ permis }: { permis: Permission }) {
+  const { t } = useTranslation();
   const { deletePermission, updatePermissions } = usePermissionsStore();
   const { permissions } = useAuthorizeStore();
 
-  if (!canWrite(permissions)) return null;
   const [formData, setFormData] = React.useState({
     TenQuyen: permis.TenQuyen,
   });
 
-  //  RESET DATA
+  if (!canWrite(permissions)) return null;
+
   const handleOpenEdit = () => {
-    setFormData({
-      TenQuyen: permis.TenQuyen,
-    });
+    setFormData({ TenQuyen: permis.TenQuyen });
   };
 
-  //  HANDLE UPDATE
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     await updatePermissions(permis.MaQuyen, {
@@ -49,6 +49,7 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
       ...formData,
     });
   };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -68,36 +69,36 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                   e.preventDefault();
                   handleOpenEdit();
                 }}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm">
               <form onSubmit={handleUpdate} className="space-y-6">
                 <DialogHeader>
-                  <DialogTitle>Sửa Quyền</DialogTitle>
+                  <DialogTitle>{t("Sửa Quyền")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="TenQuyen">Tên Quyền</Label>
+                    <Label htmlFor="TenQuyen">{t("Tên Quyền")}</Label>
                     <Input
                       id="TenQuyen"
                       name="TenQuyen"
                       value={formData.TenQuyen}
                       onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          TenQuyen: e.target.value,
-                        })
+                        setFormData({ ...formData, TenQuyen: e.target.value })
                       }
                     />
                   </Field>
                 </FieldGroup>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
+                    <Button variant="outline">{t("Huỷ")}</Button>
                   </DialogClose>
                   <Button type="submit" disabled={!formData.TenQuyen}>
-                    Lưu Thay đổi
+                    {t("Lưu thay đổi")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -115,24 +116,30 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 <DropdownMenuItem
                   variant="destructive"
                   onSelect={(e) => e.preventDefault()}>
-                  Xoá
+                  {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
-                  <DialogTitle>Xoá Vai Trò</DialogTitle>
+                  <DialogTitle>{t("Xoá Quyền")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label htmlFor="MaVT">Mã Vai trò</Label>
+                    <Label>
+                      {t("Bạn có chắc muốn xoá quyền")}{" "}
+                      <strong>{permis.TenQuyen}</strong>?
+                    </Label>
                   </Field>
                 </FieldGroup>
                 <DialogFooter>
                   <DialogClose asChild>
-                    <Button variant="outline">Huỷ</Button>
+                    <Button variant="outline">{t("Huỷ")}</Button>
                   </DialogClose>
                   <Button onClick={() => deletePermission(permis.MaQuyen)}>
-                    Xoá
+                    {t("Xoá")}
                   </Button>
                 </DialogFooter>
               </DialogContent>

@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -23,7 +24,6 @@ import { Label } from "@/components/ui/label";
 import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStore";
 import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
 
-// 🔥 thêm
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -32,6 +32,7 @@ import {
 } from "@/types/payRollTypes/baseSalaryTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 import React from "react";
 
 export function BaseSalaryActionCell({
@@ -39,19 +40,17 @@ export function BaseSalaryActionCell({
 }: {
   baseSalary: BaseSalary;
 }) {
+  const { t } = useTranslation();
   const { deleteBaseSalary, updateBaseSalary } = useBaseSalaryStore();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
-
-  if (!canWrite(permissions)) return null;
-
-  // 🔥 react-hook-form
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<BaseSalaryInput>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(BaseSalaryInputSchema) as any,
     defaultValues: {
       MaLCB: baseSalary.MaLCB,
@@ -59,7 +58,8 @@ export function BaseSalaryActionCell({
     },
   });
 
-  // reset khi mở dialog
+  if (!canWrite(permissions)) return null;
+
   const handleOpenEdit = () => {
     reset({
       MaLCB: baseSalary.MaLCB,
@@ -84,7 +84,7 @@ export function BaseSalaryActionCell({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-32">
-        {/* ===== UPDATE ===== */}
+        {/* UPDATE */}
         {canUpdate(permissions) && (
           <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
@@ -94,7 +94,7 @@ export function BaseSalaryActionCell({
                   handleOpenEdit();
                   setEditOpen(true);
                 }}>
-                Sửa
+                {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
 
@@ -102,22 +102,22 @@ export function BaseSalaryActionCell({
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
-                    Sửa Lương Cơ Bản
+                    {t("Sửa Lương Cơ Bản")}
                   </DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Nhập thông tin chi tiết để cập nhật.")}
+                    </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="LuongCB">Lương Cơ Bản</Label>
-
+                    <Label htmlFor="LuongCB">{t("Lương Cơ Bản")}</Label>
                     <Input
                       id="LuongCB"
                       type="number"
                       className="h-10"
                       {...register("LuongCB")}
                     />
-
-                    {/* 🔥 ERROR */}
                     {errors.LuongCB && (
                       <p className="text-red-500 text-sm">
                         {errors.LuongCB.message}
@@ -129,12 +129,11 @@ export function BaseSalaryActionCell({
                 <DialogFooter className="gap-2">
                   <DialogClose asChild>
                     <Button type="button" variant="outline">
-                      Huỷ
+                      {t("Huỷ")}
                     </Button>
                   </DialogClose>
-
                   <Button type="submit" disabled={isSubmitting}>
-                    Lưu thay đổi
+                    {t("Lưu thay đổi")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -146,44 +145,45 @@ export function BaseSalaryActionCell({
           <DropdownMenuSeparator />
         )}
 
-        {/* ===== DELETE ===== */}
+        {/* DELETE */}
         {canDelete(permissions) && (
           <Dialog>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
                 onSelect={(e) => e.preventDefault()}>
-                Xoá
+                {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
-                <DialogTitle>Xoá Lương Cơ Bản</DialogTitle>
+                <DialogTitle>{t("Xoá Lương Cơ Bản")}</DialogTitle>
+                    <DialogDescription className="text-sm text-muted-foreground">
+                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                    </DialogDescription>
               </DialogHeader>
 
               <div className="text-sm space-y-1 text-muted-foreground">
-                <p>Bạn có chắc muốn xoá không?</p>
+                <p>{t("Bạn có chắc muốn xoá không?")}</p>
                 <ul>
                   <li>
-                    <b>Mã:</b> {baseSalary.MaLCB}
+                    <b>{t("Mã")}:</b> {baseSalary.MaLCB}
                   </li>
                   <li>
-                    <b>Lương:</b> {Number(baseSalary.LuongCB).toLocaleString()}{" "}
-                    VNĐ
+                    <b>{t("Lương")}:</b> {Number(baseSalary.LuongCB).toLocaleString()} VNĐ
                   </li>
                 </ul>
               </div>
 
               <DialogFooter>
                 <DialogClose asChild>
-                  <Button variant="outline">Huỷ</Button>
+                  <Button variant="outline">{t("Huỷ")}</Button>
                 </DialogClose>
-
                 <Button
                   variant="destructive"
                   onClick={() => deleteBaseSalary(baseSalary.MaLCB)}>
-                  Xoá
+                  {t("Xoá")}
                 </Button>
               </DialogFooter>
             </DialogContent>
