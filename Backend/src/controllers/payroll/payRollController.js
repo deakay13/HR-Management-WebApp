@@ -46,14 +46,10 @@ export const calculatePayroll = async (req, res) => {
 
       const STANDARD_HOURS = 208 // 26 * 8
 
-      // Lương theo giờ làm
       const salaryByHours = (baseSalary / STANDARD_HOURS) * hours
-
-      // Tiền bị trừ
-      const deductionAmount = salaryByHours * (deductionPercent / 100)
-
-      // Lương cuối cùng
-      const totalSalary = salaryByHours + allowance - deductionAmount
+      const grossSalary = salaryByHours + allowance
+      const deductionAmount = grossSalary * (deductionPercent / 100)
+      const totalSalary = grossSalary - deductionAmount
 
       const payroll = await BangLuong.create({
         MaBL,

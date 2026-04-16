@@ -34,9 +34,14 @@ router.delete("/hours/:ID",authorize(["Xoá"]),  deleteHour);
 // Payroll calculation routes
 router.post("/payrolls",authorize(["Tạo"]),  calculatePayroll);
 router.get("/payrolls",authorize(["Đọc"]),  getPayrolls);
-router.get("/payrolls/:ID",authorize(["Đọc"]),  getPayrollById);
-router.delete("/payrolls/:ID", authorize(["Xoá"]), deletePayroll);
+// Specific string routes MUST come before :ID param route
+router.get("/payrolls/search",authorize(["Đọc"]),  searchPayroll);
+router.get("/payrolls/export",authorize(["Đọc"]),  exportPayrollToExcel);
 router.get("/payrolls/month/:month",authorize(["Đọc"]),  getPayrollByMonth);
 router.get("/payrolls/employee/:ID",authorize(["Đọc"]),  getPayrollByEmployee);
+// Param route last
+router.get("/payrolls/:ID",authorize(["Đọc"]),  getPayrollById);
+router.put("/payrolls/:ID",authorize(["Sửa"]),  updatePayroll);
+router.delete("/payrolls/:ID", authorize(["Xoá"]), deletePayroll);
 
 export default router;

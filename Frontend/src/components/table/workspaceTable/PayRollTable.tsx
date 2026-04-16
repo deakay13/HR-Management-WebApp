@@ -76,21 +76,15 @@ export function PayRollTable({
   const { permissions } = useAuthorizeStore();
   const isFirstRender = React.useRef(true);
 
-  const handleFilterChange = (key: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [key]: value }));
+  const handleSearch = () => {
+    searchPayRolls(filters);
   };
 
-  React.useEffect(() => {
-    // Only skip the very first render
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSearch();
     }
-    const delayDebounceFn = setTimeout(() => {
-      searchPayRolls(filters);
-    }, 500);
-    return () => clearTimeout(delayDebounceFn);
-  }, [filters, searchPayRolls]);
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -132,24 +126,29 @@ export function PayRollTable({
 
         {/* Toolbar */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Keyword search */}
-          <div className="relative">
-            <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+          <div className="relative flex items-center gap-2">
+            <div className="relative">
+              <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("Mã NV, Mã BL...")}
+                className="h-9 w-[160px] pl-9"
+                value={filters.keyword}
+                onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
+            {/* Month filter */}
             <Input
-              placeholder={t("Mã NV, Mã BL...")}
-              className="h-9 w-[160px] pl-9"
-              value={filters.keyword}
-              onChange={(e) => handleFilterChange("keyword", e.target.value)}
+              type="month"
+              className="h-9 w-[150px]"
+              value={filters.Thang}
+              onChange={(e) => setFilters((prev) => ({ ...prev, Thang: e.target.value }))}
+              onKeyDown={handleKeyDown}
             />
+            <Button variant="default" size="sm" onClick={handleSearch} className="h-9">
+              {t("Tìm kiếm")}
+            </Button>
           </div>
-
-          {/* Month filter */}
-          <Input
-            type="month"
-            className="h-9 w-[150px]"
-            value={filters.Thang}
-            onChange={(e) => handleFilterChange("Thang", e.target.value)}
-          />
 
           <TableColumnFilter table={table} />
 
@@ -250,8 +249,7 @@ export function PayRollTable({
                       <Label htmlFor="Thang">{t("Tháng")}</Label>
                       <Input
                         id="Thang"
-                        type="number"
-                        placeholder={t("1 - 12")}
+                        type="month"
                         className="h-10"
                         value={formData.Thang}
                         onChange={(e) => setFormData({ ...formData, Thang: e.target.value })}
