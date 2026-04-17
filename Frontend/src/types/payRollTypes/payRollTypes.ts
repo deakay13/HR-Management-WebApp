@@ -34,10 +34,23 @@ export const PayRollInputSchema = z.object({
 
 export const PayRollSchema = PayRollInputSchema.extend({
   NgayTinhLuong: z.string(),
-  TongLuong: z.number(),
+  TongLuong: z.number().or(z.string()),
   TrangThai: z.string(),
   NhanVien: z.object({
     HoVaTen: z.string(),
+  }).optional(),
+  KhauTru: z.object({
+    LoaiKT: z.string(),
+  }).optional(),
+  PhuCapThuong: z.object({
+    LoaiPC: z.string(),
+    SoTien: z.number().or(z.string()),
+  }).optional(),
+  LuongCoBan: z.object({
+    LuongCB: z.number().or(z.string()),
+  }).optional(),
+  TongGioLam: z.object({
+    SoGioLam: z.number().or(z.string()),
   }).optional(),
 });
 

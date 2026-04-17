@@ -80,12 +80,20 @@ export const readAllAccount = async ( req, res) => {
             options.offset = offset;
         }
 
-        const { count, rows } = await TaiKhoan.findAndCountAll(options);
+        const { count, rows } = await TaiKhoan.findAndCountAll({
+            ...options,
+            include: [
+                { model: NhanVien, as: 'NhanVien', attributes: ['HoVaTen'] },
+                { model: VaiTro, as: 'VaiTro', attributes: ['TenVaiTro'] }
+            ]
+        });
 
         const formattedRows = rows.map((acc) => ({
             MaTK: acc.MaTK,
             MaNV: acc.MaNV,
+            HoVaTen: acc.NhanVien?.HoVaTen || "N/A",
             MaVT: acc.MaVT,
+            TenVaiTro: acc.VaiTro?.TenVaiTro || "N/A",
             TenTaiKhoan: acc.TenTaiKhoan,
             MatKhau: acc.MatKhau,
             createdAt: formatVNDateTime(acc.createdAt),

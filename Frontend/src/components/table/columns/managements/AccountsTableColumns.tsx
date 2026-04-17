@@ -21,14 +21,18 @@ export const columns: ColumnDef<Account>[] = [
     accessorKey: "MaNV",
     header: () => <H k="Mã Nhân Viên" />,
     cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaNV}</div>
+      <div className="w-40 text-center h-8">
+        {row.original.HoVaTen ? `${row.original.HoVaTen} (${row.original.MaNV})` : row.original.MaNV}
+      </div>
     ),
   },
   {
     accessorKey: "MaVT",
     header: () => <H k="Mã Vai Trò" />,
     cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaVT}</div>
+      <div className="w-40 text-center h-8">
+        {row.original.TenVaiTro ? `${row.original.TenVaiTro} (${row.original.MaVT})` : row.original.MaVT}
+      </div>
     ),
   },
   {
