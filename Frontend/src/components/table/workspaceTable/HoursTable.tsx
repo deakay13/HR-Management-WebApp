@@ -58,7 +58,7 @@ export function HoursTable({
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [formData, setFormData] = React.useState({ MaGL: "", SoGioLam: 0 });
+  const [formData, setFormData] = React.useState({ MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 });
   const { createHours } = useHoursStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
@@ -68,7 +68,7 @@ export function HoursTable({
     try {
       await createHours(formData);
       setCreateOpen(false);
-      setFormData({ MaGL: "", SoGioLam: 0 });
+      setFormData({ MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 });
     } catch {
       // store handles toast
     }
@@ -118,7 +118,7 @@ export function HoursTable({
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setFormData({ MaGL: "", SoGioLam: 0 });
+                    setFormData({ MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 });
                     setCreateOpen(true);
                   }}>
                   <IconPlus />
@@ -130,7 +130,7 @@ export function HoursTable({
                 <form onSubmit={handleCreate} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
-                      {t("Tạo giờ làm")}
+                      {t("Tạo ca làm việc")}
                     </DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
                       {t("Nhập thông tin chi tiết để tạo mới.")}
@@ -138,7 +138,7 @@ export function HoursTable({
                   </DialogHeader>
                   <FieldGroup className="space-y-4">
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaGL">{t("Mã Giờ Làm")}</Label>
+                      <Label htmlFor="MaGL">{t("Mã Ca Làm")}</Label>
                       <Input
                         id="MaGL"
                         placeholder={t("VD: GL001")}
@@ -149,16 +149,51 @@ export function HoursTable({
                     </Field>
 
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="SoGioLam">{t("Số Giờ Làm")}</Label>
+                      <Label htmlFor="SoGioLam">{t("Số Giờ/Ngày")}</Label>
                       <Input
                         id="SoGioLam"
                         type="number"
                         placeholder={t("VD: 8")}
                         className="h-10"
                         value={formData.SoGioLam}
-                        onChange={(e) =>
-                          setFormData({ ...formData, SoGioLam: Number(e.target.value) })
-                        }
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setFormData({ 
+                            ...formData, 
+                            SoGioLam: val,
+                            TongSoGio: val * formData.SoNgayLam
+                          });
+                        }}
+                      />
+                    </Field>
+
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="SoNgayLam">{t("Số Ngày Công Chuẩn")}</Label>
+                      <Input
+                        id="SoNgayLam"
+                        type="number"
+                        placeholder="26"
+                        className="h-10"
+                        value={formData.SoNgayLam}
+                        onChange={(e) => {
+                          const val = Number(e.target.value);
+                          setFormData({ 
+                            ...formData, 
+                            SoNgayLam: val,
+                            TongSoGio: formData.SoGioLam * val
+                          });
+                        }}
+                      />
+                    </Field>
+
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="TongSoGio">{t("Tổng Giờ Chuẩn/Tháng")}</Label>
+                      <Input
+                        id="TongSoGio"
+                        type="number"
+                        className="h-10 bg-muted"
+                        value={formData.TongSoGio}
+                        readOnly
                       />
                     </Field>
                   </FieldGroup>

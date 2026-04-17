@@ -26,7 +26,9 @@ export const columns: ColumnDef<BaseSalary>[] = [
     accessorKey: "LuongCB",
     header: () => <HeaderLuongCB />,
     cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.LuongCB}</div>
+      <div className="w-30 text-center h-8">
+        {Number(row.original.LuongCB || 0).toLocaleString("vi-VN")} VND
+      </div>
     ),
   },
   {

@@ -9,6 +9,7 @@ const BangLuong = sequelize.define("BangLuong", {
   MaKT:{type:DataTypes.STRING,allowNull:false},
   MaGL:{type:DataTypes.STRING,allowNull:false},
   Thang:{type:DataTypes.STRING,allowNull:false},
+  SoNgayLam:{type:DataTypes.INTEGER,allowNull:false,defaultValue:26},
   TongLuong:{type:DataTypes.DECIMAL(12,2),allowNull:false},
   NgayTinhLuong:{type:DataTypes.DATEONLY,allowNull:false,defaultValue:DataTypes.NOW},
   TrangThai:{type:DataTypes.STRING,allowNull:false,defaultValue:"DA_TINH"}

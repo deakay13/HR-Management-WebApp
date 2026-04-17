@@ -30,11 +30,13 @@ export const PayRollInputSchema = z.object({
   Thang: z
     .string()
     .min(1, "Tháng không được để trống"),
+  SoNgayLam: z.number().int().min(1, "Số ngày làm phải ít nhất là 1").or(z.string()),
 });
 
 export const PayRollSchema = PayRollInputSchema.extend({
   NgayTinhLuong: z.string(),
   TongLuong: z.number().or(z.string()),
+  SoNgayLam: z.number().or(z.string()),
   TrangThai: z.string(),
   NhanVien: z.object({
     HoVaTen: z.string(),

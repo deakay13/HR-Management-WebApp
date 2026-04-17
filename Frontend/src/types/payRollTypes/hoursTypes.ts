@@ -10,6 +10,8 @@ export const HoursInputSchema = z.object({
   SoGioLam: z.coerce
     .number() // 🔥 convert string -> number (fix lỗi react-hook-form)
     .min(1, "Số giờ phải lớn hơn 0"),
+  SoNgayLam: z.coerce.number().min(1, "Số ngày công phải lớn hơn 0"),
+  TongSoGio: z.coerce.number(),
 });
 
 /* OUTPUT (DATA FROM API) */

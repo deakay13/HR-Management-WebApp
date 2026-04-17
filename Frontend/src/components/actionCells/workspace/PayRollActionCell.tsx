@@ -55,6 +55,7 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
       MaKT: payRoll.MaKT,
       MaGL: payRoll.MaGL,
       Thang: payRoll.Thang,
+      SoNgayLam: Number(payRoll.SoNgayLam || 26),
     },
   });
 
@@ -69,6 +70,7 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
       MaKT: payRoll.MaKT,
       MaGL: payRoll.MaGL,
       Thang: payRoll.Thang,
+      SoNgayLam: Number(payRoll.SoNgayLam || 26),
     });
   };
 
@@ -152,6 +154,16 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                     <Input type="month" {...register("Thang")} />
                     {errors.Thang && (
                       <p className="text-red-500 text-sm">{errors.Thang.message}</p>
+                    )}
+                  </Field>
+                  <Field className="flex flex-col gap-2">
+                    <Label>{t("Số ngày công")}</Label>
+                    <Input 
+                      type="number" 
+                      {...register("SoNgayLam", { valueAsNumber: true })} 
+                    />
+                    {errors.SoNgayLam && (
+                      <p className="text-red-500 text-sm">{errors.SoNgayLam.message}</p>
                     )}
                   </Field>
                 </FieldGroup>
