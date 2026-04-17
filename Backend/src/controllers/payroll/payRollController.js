@@ -354,7 +354,7 @@ export const exportPayrollToExcel = async (req, res) => {
         Thang: p.Thang,
         LuongCB: p.LuongCoBan?.LuongCB || 0,
         SoGioLam: p.TongGioLam?.SoGioLam || 0,
-        PhuCap: p.PhuCapThuong ? `${p.PhuCapThuong.LoaiPC} (${Number(p.PhuCapThuong.SoTien).toLocaleString()})` : 0,
+        PhuCap: p.PhuCapThuong ? `${p.PhuCapThuong.LoaiPC} (${Number(p.PhuCapThuong.SoTien).toLocaleString("vi-VN")} VND)` : 0,
         KhauTru: p.KhauTru ? `${p.KhauTru.LoaiKT} (${p.KhauTru.PhanTram}%)` : 0,
         TongLuong: p.TongLuong
       })

@@ -73,7 +73,7 @@ export const columns: ColumnDef<PayRoll>[] = [
     cell: ({ row }) => (
       <div className="w-40 text-center h-8">
         {row.original.LuongCoBan 
-          ? `${Number(row.original.LuongCoBan.LuongCB || 0).toLocaleString("vi-VN")}vnd (${row.original.MaLCB})` 
+          ? `${Number(row.original.LuongCoBan.LuongCB || 0).toLocaleString("vi-VN")} VND (${row.original.MaLCB})` 
           : row.original.MaLCB}
       </div>
     ),
@@ -99,7 +99,7 @@ export const columns: ColumnDef<PayRoll>[] = [
       const amount = Number(row.original.TongLuong || 0);
       return (
         <div className="w-30 text-center h-8 font-medium">
-          {amount.toLocaleString("vi-VN")}vnd
+          {amount.toLocaleString("vi-VN")} VND
         </div>
       );
     },

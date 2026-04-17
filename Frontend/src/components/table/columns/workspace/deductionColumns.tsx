@@ -38,7 +38,7 @@ export const columns: ColumnDef<Deduction>[] = [
     accessorKey: "PhanTram",
     header: () => <HeaderPhanTram />,
     cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.PhanTram}</div>
+      <div className="w-20 text-center h-8">{row.original.PhanTram}%</div>
     ),
   },
   {
