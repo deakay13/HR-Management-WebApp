@@ -9,7 +9,10 @@ export const AccountSchema = z.object({
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
-export type Account = z.infer<typeof AccountSchema>;
+export type Account = z.infer<typeof AccountSchema> & {
+  HoVaTen?: string;
+  TenVaiTro?: string;
+};
 
 export interface AccountTypes {
   accounts: Account[];

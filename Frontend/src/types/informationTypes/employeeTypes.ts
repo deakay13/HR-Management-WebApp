@@ -42,7 +42,12 @@ export const getEmployeeValidationSchema = (existingCodes: string[], isEdit: boo
     path: ["MaNV"], 
   });
 
-export type Employee = z.infer<typeof EmployeeSchema>;
+export type Employee = z.infer<typeof EmployeeSchema> & {
+  PhongBan?: {
+    MaPB: string;
+    TenPB: string;
+  };
+};
 
 export interface EmployeeTypes {
   employees: Employee[];

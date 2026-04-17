@@ -25,8 +25,9 @@ export const columns: ColumnDef<PayRoll>[] = [
     ),
   },
   {
-    accessorKey: "HoVaTen",
+    id: "HoVaTen",
     header: () => <H k="Họ và Tên" />,
+    accessorFn: (row) => row.NhanVien?.HoVaTen,
     cell: ({ row }) => (
       <div className="w-30 text-center h-8">
         {row.original.NhanVien?.HoVaTen || "N/A"}
@@ -37,28 +38,44 @@ export const columns: ColumnDef<PayRoll>[] = [
     accessorKey: "MaKT",
     header: () => <H k="Mã Khấu Trừ" />,
     cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaKT}</div>
+      <div className="w-40 text-center h-8">
+        {row.original.KhauTru 
+          ? `${row.original.KhauTru.LoaiKT} (${row.original.MaKT})` 
+          : row.original.MaKT}
+      </div>
     ),
   },
   {
     accessorKey: "MaPC",
     header: () => <H k="Mã Phụ Cấp" />,
     cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaPC}</div>
+      <div className="w-40 text-center h-8">
+        {row.original.PhuCapThuong 
+          ? `${row.original.PhuCapThuong.LoaiPC} (${row.original.MaPC})` 
+          : row.original.MaPC}
+      </div>
     ),
   },
   {
     accessorKey: "MaGL",
     header: () => <H k="Mã Giờ Làm" />,
     cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaGL}</div>
+      <div className="w-40 text-center h-8">
+        {row.original.TongGioLam 
+          ? `${row.original.TongGioLam.SoGioLam}h (${row.original.MaGL})` 
+          : row.original.MaGL}
+      </div>
     ),
   },
   {
     accessorKey: "MaLCB",
     header: () => <H k="Mã Lương Cơ Bản" />,
     cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaLCB}</div>
+      <div className="w-40 text-center h-8">
+        {row.original.LuongCoBan 
+          ? `${Number(row.original.LuongCoBan.LuongCB || 0).toLocaleString()} (${row.original.MaLCB})` 
+          : row.original.MaLCB}
+      </div>
     ),
   },
   {
