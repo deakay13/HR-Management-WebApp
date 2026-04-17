@@ -7,6 +7,8 @@ import Session from "../../models/auth/Session.js";
 
 const ACCESS_TOKEN_TTL= '30m';
 const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
+// Only use secure cookies in production (HTTPS). In local dev (HTTP), secure must be false.
+const isProduction = process.env.NODE_ENV === 'production';
 
 const signInSchema = z.object({
     TenTaiKhoan: z.string().min(1, "Thiếu tài khoản"),
@@ -68,8 +70,8 @@ export const signIn = async (req, res) => {
         //refreshtoken in cookie
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
-            secure: true,
-            sameSite: 'none',
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
             maxAge: REFRESH_TOKEN_TTL,
         })
 
@@ -100,8 +102,8 @@ export const signOut = async (req, res) => {
                 "refreshToken",
                 {
                     httpOnly: true,
-                    secure: true,
-                    sameSite: 'none',
+                    secure: isProduction,
+                    sameSite: isProduction ? 'none' : 'lax',
                 }
             );
         }
