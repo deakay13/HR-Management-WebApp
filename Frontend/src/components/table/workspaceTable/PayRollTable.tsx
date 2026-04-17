@@ -76,7 +76,6 @@ export function PayRollTable({
   });
   const { createPayRolls, searchPayRolls } = usePayRollStore();
   const { permissions } = useAuthorizeStore();
-  const isFirstRender = React.useRef(true);
 
   const handleSearch = () => {
     searchPayRolls(filters);

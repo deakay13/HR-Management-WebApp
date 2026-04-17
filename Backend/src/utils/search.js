@@ -1,13 +1,23 @@
-import { Op } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 
 export const buildWhereClause = (query, config) => {
   const where = {};
 
   //  keyword search nhiều field
   if (query.keyword && config.searchFields) {
-    where[Op.or] = config.searchFields.map(field => ({
-      [field]: { [Op.like]: `%${query.keyword}%` }
-    }));
+    where[Op.or] = config.searchFields.map(field => {
+      // Nếu field nằm trong danh sách cần cast (VD: số)
+      if (config.numericFields?.includes(field)) {
+        return {
+          [Op.and]: [
+            Sequelize.where(Sequelize.cast(Sequelize.col(field), "VARCHAR"), {
+              [Op.like]: `%${query.keyword}%`
+            })
+          ]
+        };
+      }
+      return { [field]: { [Op.like]: `%${query.keyword}%` } };
+    });
   }
 
   //  filter chính xác (equal)
