@@ -20,6 +20,7 @@ export interface AccountTypes {
   clearState: () => void;
   createAccount: (data: Account) => Promise<void>;
   updateAccount: (ID: string, data: Partial<Account>) => Promise<void>;
-  getAccounts: () => Promise<void>;
+  getAccounts: (search?: string) => Promise<void>;
+  exportAccounts: () => Promise<void>;
   deleteAccount: (ID: string) => Promise<void>;
 }

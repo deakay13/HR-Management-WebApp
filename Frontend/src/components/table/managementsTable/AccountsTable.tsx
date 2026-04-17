@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useEffect } from "react";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconDownload, IconSearch } from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,
@@ -75,8 +75,17 @@ export function AccountsTable({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
   const { permissions } = useAuthorizeStore();
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const { createAccount, exportAccounts, getAccounts } = useAccountsStore();
 
-  // eslint-disable-next-line react-hooks/incompatible-library
+  // Debounce search
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      getAccounts(searchTerm);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm, getAccounts]);
   const table = useReactTable<Account>({
     data,
     columns,
@@ -97,7 +106,6 @@ export function AccountsTable({
   });
 
   const { Roles, getRoles } = useRolesStore();
-  const { createAccount } = useAccountsStore();
   const [createOpen, setCreateOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({
     MaTK: "",
@@ -137,8 +145,28 @@ export function AccountsTable({
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Phân Quyền")} page={t("Tài Khoản")} />
         
-        <div className="flex items-center gap-2">
-          <TableColumnFilter table={table} />
+          <div className="flex items-center gap-2">
+            <div className="relative w-64">
+              <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("Search...")}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8 h-9"
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => exportAccounts()}
+              className="size-9"
+              title={t("Xuất Excel")}>
+              <IconDownload className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <TableColumnFilter table={table} />
 
           {/* Button create */}
           {canCreate(permissions) && (

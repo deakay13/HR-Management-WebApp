@@ -24,16 +24,24 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
     }
   },
 
-  getAccounts: async () => {
-    set({ initializing: true });
+  getAccounts: async (search?: string) => {
     try {
-      const data = await accountsServices.getAccounts();
+      const data = await accountsServices.getAccounts(search);
       set({ accounts: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách tài khoản", error);
       toast.error("Không thể lấy danh sách tài khoản");
     } finally {
       set({ initializing: false });
+    }
+  },
+  exportAccounts: async () => {
+    try {
+      await accountsServices.exportAccounts();
+      toast.success("Xuất file Excel thành công");
+    } catch (error) {
+      console.error("Lỗi khi xuất file Excel", error);
+      toast.error("Không thể xuất file Excel");
     }
   },
   updateAccount: async (ID: string, data: Partial<Account>) => {
