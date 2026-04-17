@@ -58,6 +58,12 @@ export default {
         allowNull: false,
       },
 
+      SoNgayLam: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 26,
+      },
+
       TongLuong: {
         type: Sequelize.DECIMAL(12,2),
         allowNull: false,

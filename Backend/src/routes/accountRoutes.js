@@ -5,11 +5,13 @@ import {
     readAllAccount,
     readAccountById,
     updateAccountById,
+    exportAccountToExcel
 } from "../controllers/users/accountControllers.js";
 import { authorize } from '../middlewares/authorize.js';
 const router = express.Router();
 
 router.post("/Accounts",authorize(["Tạo"]), createAccount);
+router.get("/Accounts/export", authorize(["Đọc"]), exportAccountToExcel);
 router.get("/Accounts",authorize(["Đọc"]), readAllAccount);
 router.get("/Accounts/:ID",authorize(["Đọc"]),  readAccountById);
 router.put("/Accounts/:ID",authorize(["Sửa"]),  updateAccountById)

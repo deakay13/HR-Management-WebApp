@@ -39,7 +39,7 @@ export const columns: ColumnDef<Allowance>[] = [
     header: () => <HeaderSoTien />,
     cell: ({ row }) => (
       <div className="w-30 text-center h-8">
-        {row.original.SoTien.toLocaleString()}
+        {Number(row.original.SoTien || 0).toLocaleString("vi-VN")} VND
       </div>
     ),
   },

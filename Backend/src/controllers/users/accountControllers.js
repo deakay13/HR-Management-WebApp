@@ -1,4 +1,5 @@
-import bcrypt from 'bcrypt';
+import { Op } from 'sequelize';
+import ExcelJS from 'exceljs';
 import TaiKhoan from '../../models/auth/TaiKhoan.js';
 import NhanVien from '../../models/information/NhanVien.js';
 import { Pagination } from '../../utils/paginations.js';
@@ -6,6 +7,7 @@ import { formatVNDateTime } from '../../utils/dateFormat.js';
 import VaiTro from '../../models/auth/VaiTro.js';
 import Session from '../../models/auth/Session.js';
 import { accountSchema } from '../../utils/validationSchemas.js';
+import z from 'zod';
 
 export const createAccount = async (req, res) => {
     try {
@@ -74,11 +76,21 @@ export const createAccount = async (req, res) => {
 export const readAllAccount = async ( req, res) => {
     try {
         const { offset, limit, page, finalSize } = Pagination(req.query);
+        const { search } = req.query;
 
         const options = {};
         if (limit !== null) {
             options.limit = limit;
             options.offset = offset;
+        }
+
+        if (search) {
+            options.where = {
+                [Op.or]: [
+                    { TenTaiKhoan: { [Op.like]: `%${search}%` } },
+                    { '$NhanVien.HoVaTen$': { [Op.like]: `%${search}%` } }
+                ]
+            };
         }
 
         const { count, rows } = await TaiKhoan.findAndCountAll({
@@ -243,3 +255,88 @@ export const deleteAccount = async (req, res) => {
     
 }
 
+export const exportAccountToExcel = async (req, res) => {
+  try {
+    const accounts = await TaiKhoan.findAll({
+      include: [
+        { model: NhanVien, as: 'NhanVien', attributes: ['HoVaTen'] },
+        { model: VaiTro, as: 'VaiTro', attributes: ['TenVaiTro'] }
+      ]
+    })
+
+    const workbook = new ExcelJS.Workbook()
+    const worksheet = workbook.addWorksheet("Accounts")
+
+    // ===== TITLE ROW =====
+    worksheet.mergeCells("A1:E1")
+    const titleRow = worksheet.getRow(1)
+    titleRow.getCell(1).value = "DANH SÁCH TÀI KHOẢN HỆ THỐNG"
+    titleRow.getCell(1).font = { name: "Arial", size: 16, bold: true }
+    titleRow.getCell(1).alignment = { vertical: "middle", horizontal: "center" }
+    titleRow.height = 30
+
+    // ===== HEADER ROW (Row 3) =====
+    const headerRow = ["Mã TK", "Họ và Tên", "Tên Đăng Nhập", "Vai Trò", "Ngày Tạo"]
+    worksheet.getRow(3).values = headerRow
+    worksheet.columns = [
+      { key: "MaTK", width: 15 },
+      { key: "HoVaTen", width: 30 },
+      { key: "TenTaiKhoan", width: 25 },
+      { key: "TenVaiTro", width: 20 },
+      { key: "CreatedAt", width: 25 }
+    ]
+
+    // Style Header
+    worksheet.getRow(3).eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFFFFF" } }
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "4F81BD" } }
+      cell.alignment = { vertical: "middle", horizontal: "center" }
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" }
+      }
+    })
+
+    // ===== DATA ROWS =====
+    for (const acc of accounts) {
+      const row = worksheet.addRow({
+        MaTK: acc.MaTK,
+        HoVaTen: acc.NhanVien?.HoVaTen || "N/A",
+        TenTaiKhoan: acc.TenTaiKhoan,
+        TenVaiTro: acc.VaiTro?.TenVaiTro || "N/A",
+        CreatedAt: formatVNDateTime(acc.createdAt)
+      })
+
+      // Style Data Row
+      row.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", horizontal: "center" }
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" }
+        }
+      })
+    }
+
+    // ===== DOWNLOAD =====
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=danh_sach_tai_khoan.xlsx"
+    )
+
+    await workbook.xlsx.write(res)
+    res.end()
+
+  } catch (error) {
+    console.error("Lỗi export tài khoản:", error)
+    res.status(500).json({ message: "Lỗi xuất file" })
+  }
+}

@@ -8,12 +8,25 @@ export const accountsServices = {
     });
     return res.data;
   },
-  getAccounts: async () => {
+  getAccounts: async (search?: string) => {
     const res = await api.get("/api/account/Accounts", {
-      params: { size: 0 },
+      params: { size: 0, search },
       withCredentials: true,
     });
     return res.data.data;
+  },
+  exportAccounts: async () => {
+    const res = await api.get("/api/account/Accounts/export", {
+      responseType: "blob",
+      withCredentials: true,
+    });
+    const url = window.URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "danh_sach_tai_khoan.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   },
   updateAccount: async (ID: string, data: Partial<Account>) => {
     const res = await api.put(`/api/account/Accounts/${ID}`, data, {
