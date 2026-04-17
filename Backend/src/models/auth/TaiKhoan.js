@@ -7,6 +7,7 @@ const TaiKhoan = sequelize.define('TaiKhoan', {
     MaVT: { type: DataTypes.STRING, allowNull: false },
     TenTaiKhoan:{ type: DataTypes.STRING, allowNull: false },
     MatKhau: { type: DataTypes.STRING, allowNull: false },
+    TrangThai: { type: DataTypes.STRING, allowNull: false, defaultValue: 'Offline' },
 }, {
     tableName: 'TaiKhoan',
     timestamps: true

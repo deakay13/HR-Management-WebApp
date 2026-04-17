@@ -18,6 +18,11 @@ export default {
       },
       TenTaiKhoan:{ type: Sequelize.STRING, allowNull: false },
       MatKhau: { type: Sequelize.STRING, allowNull: false },
+      TrangThai: { 
+        type: Sequelize.STRING, 
+        allowNull: false,
+        defaultValue: 'Offline' 
+      },
             createdAt: { 
         type: Sequelize.DATE, 
         allowNull: false, 

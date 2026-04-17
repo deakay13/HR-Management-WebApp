@@ -6,6 +6,7 @@ export const AccountSchema = z.object({
   MaVT: z.string(),
   TenTaiKhoan: z.string(),
   MatKhau: z.string(),
+  TrangThai: z.string().optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });

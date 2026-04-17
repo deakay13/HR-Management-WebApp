@@ -4,6 +4,7 @@ import NhanVien from '../../models/information/NhanVien.js';
 import { Pagination } from '../../utils/paginations.js';
 import { formatVNDateTime } from '../../utils/dateFormat.js';
 import VaiTro from '../../models/auth/VaiTro.js';
+import Session from '../../models/auth/Session.js';
 import { accountSchema } from '../../utils/validationSchemas.js';
 
 export const createAccount = async (req, res) => {
@@ -88,6 +89,10 @@ export const readAllAccount = async ( req, res) => {
             ]
         });
 
+        // Tự động kiểm tra trạng thái Online/Offline qua Session
+        const activeSessions = await Session.findAll();
+        const activeMaTKs = new Set(activeSessions.map(s => s.MaTK));
+
         const formattedRows = rows.map((acc) => ({
             MaTK: acc.MaTK,
             MaNV: acc.MaNV,
@@ -96,6 +101,7 @@ export const readAllAccount = async ( req, res) => {
             TenVaiTro: acc.VaiTro?.TenVaiTro || "N/A",
             TenTaiKhoan: acc.TenTaiKhoan,
             MatKhau: acc.MatKhau,
+            TrangThai: activeMaTKs.has(acc.MaTK) ? "Online" : "Offline",
             createdAt: formatVNDateTime(acc.createdAt),
             updatedAt: formatVNDateTime(acc.updatedAt),
         }));
