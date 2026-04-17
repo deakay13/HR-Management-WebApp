@@ -150,7 +150,13 @@ export const getPayrolls = async (req, res) => {
 
     const { count, rows } = await BangLuong.findAndCountAll({
       ...options,
-      include: [{ model: NhanVien, as: 'NhanVien', attributes: ['HoVaTen'] }]
+      include: [
+        { model: NhanVien, as: 'NhanVien', attributes: ['HoVaTen'] },
+        { model: KhauTru, as: 'KhauTru', attributes: ['LoaiKT'] },
+        { model: PhuCap, as: 'PhuCapThuong', attributes: ['LoaiPC', 'SoTien'] },
+        { model: LuongCoBan, as: 'LuongCoBan', attributes: ['LuongCB'] },
+        { model: GioLam, as: 'TongGioLam', attributes: ['SoGioLam'] }
+      ]
     });
 
     return res.status(200).json({
@@ -294,7 +300,13 @@ export const searchPayroll = async (req, res) => {
         rangeFields: ["TongLuong"],
 
         order: [["NgayTinhLuong", "DESC"]],
-        include: [{ model: NhanVien, as: "NhanVien", attributes: ["HoVaTen"] }],
+        include: [
+          { model: NhanVien, as: "NhanVien", attributes: ["HoVaTen"] },
+          { model: KhauTru, as: "KhauTru", attributes: ["LoaiKT"] },
+          { model: PhuCap, as: "PhuCapThuong", attributes: ["LoaiPC", "SoTien"] },
+          { model: LuongCoBan, as: "LuongCoBan", attributes: ["LuongCB"] },
+          { model: GioLam, as: "TongGioLam", attributes: ["SoGioLam"] }
+        ],
         subQuery: false
       }
     );
@@ -307,7 +319,15 @@ export const searchPayroll = async (req, res) => {
 };
 export const exportPayrollToExcel = async (req, res) => {
   try {
-    const payrolls = await BangLuong.findAll()
+    const payrolls = await BangLuong.findAll({
+      include: [
+        { model: NhanVien, as: 'NhanVien', attributes: ['HoVaTen'] },
+        { model: KhauTru, as: 'KhauTru', attributes: ['LoaiKT', 'PhanTram'] },
+        { model: PhuCap, as: 'PhuCapThuong', attributes: ['LoaiPC', 'SoTien'] },
+        { model: LuongCoBan, as: 'LuongCoBan', attributes: ['LuongCB'] },
+        { model: GioLam, as: 'TongGioLam', attributes: ['SoGioLam'] }
+      ]
+    })
 
     const workbook = new ExcelJS.Workbook()
     const worksheet = workbook.addWorksheet("BangLuong")
@@ -320,29 +340,22 @@ export const exportPayrollToExcel = async (req, res) => {
       { header: "Tháng", key: "Thang", width: 15 },
       { header: "Lương cơ bản", key: "LuongCB", width: 18 },
       { header: "Giờ làm", key: "SoGioLam", width: 12 },
-      { header: "Phụ cấp", key: "PhuCap", width: 15 },
-      { header: "Khấu trừ (%)", key: "KhauTru", width: 15 },
+      { header: "Phụ cấp", key: "PhuCap", width: 20 },
+      { header: "Khấu trừ (%)", key: "KhauTru", width: 20 },
       { header: "Tổng lương", key: "TongLuong", width: 20 }
     ]
 
     // ===== DATA =====
     for (const p of payrolls) {
-
-      const nv = await NhanVien.findByPk(p.MaNV)
-      const luong = await LuongCoBan.findByPk(p.MaLCB)
-      const gio = await GioLam.findByPk(p.MaGL)
-      const pc = await PhuCap.findByPk(p.MaPC)
-      const kt = await KhauTru.findByPk(p.MaKT)
-
       worksheet.addRow({
         MaBL: p.MaBL,
         MaNV: p.MaNV,
-        HoVaTen: nv?.HoVaTen || "N/A",
+        HoVaTen: p.NhanVien?.HoVaTen || "N/A",
         Thang: p.Thang,
-        LuongCB: luong?.LuongCB || 0,
-        SoGioLam: gio?.SoGioLam || 0,
-        PhuCap: pc?.SoTien || 0,
-        KhauTru: kt?.PhanTram || 0,
+        LuongCB: p.LuongCoBan?.LuongCB || 0,
+        SoGioLam: p.TongGioLam?.SoGioLam || 0,
+        PhuCap: p.PhuCapThuong ? `${p.PhuCapThuong.LoaiPC} (${Number(p.PhuCapThuong.SoTien).toLocaleString()})` : 0,
+        KhauTru: p.KhauTru ? `${p.KhauTru.LoaiKT} (${p.KhauTru.PhanTram}%)` : 0,
         TongLuong: p.TongLuong
       })
     }
@@ -356,7 +369,6 @@ export const exportPayrollToExcel = async (req, res) => {
 
     // Format tiền
     worksheet.getColumn("LuongCB").numFmt = "#,##0"
-    worksheet.getColumn("PhuCap").numFmt = "#,##0"
     worksheet.getColumn("TongLuong").numFmt = "#,##0"
 
     // ===== TỔNG =====

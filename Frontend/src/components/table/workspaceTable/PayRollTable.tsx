@@ -148,7 +148,7 @@ export function PayRollTable({
             <div className="relative">
               <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t("Mã NV, Mã BL...")}
+                placeholder={t("Search...")}
                 className="h-9 w-[160px] pl-9"
                 value={filters.keyword}
                 onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
