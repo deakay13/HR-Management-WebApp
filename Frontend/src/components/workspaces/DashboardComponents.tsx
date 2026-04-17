@@ -6,6 +6,7 @@ import { useContractStore } from "@/stores/informationStores/contractStore";
 import { useDepartmentStore } from "@/stores/informationStores/departmentStore";
 import { usePayRollStore } from "@/stores/payRollStores/payRollStore";
 import { useHoursStore } from "@/stores/payRollStores/hoursStore";
+import { useAccountsStore } from "@/stores/authStores/accountStore";
 
 const DashboardComponents = () => {
   const { getEmployees } = useEmployeeStore();
@@ -13,6 +14,7 @@ const DashboardComponents = () => {
   const { getDepartments } = useDepartmentStore();
   const { getPayRolls } = usePayRollStore();
   const { getHours } = useHoursStore();
+  const { getAccounts } = useAccountsStore();
 
   // Fetch all data needed for the dashboard on mount
   React.useEffect(() => {
@@ -21,7 +23,8 @@ const DashboardComponents = () => {
     getDepartments();
     getPayRolls();
     getHours();
-  }, [getEmployees, getContracts, getDepartments, getPayRolls, getHours]);
+    getAccounts();
+  }, [getEmployees, getContracts, getDepartments, getPayRolls, getHours, getAccounts]);
 
   return (
     <div className="@container/main flex flex-1 flex-col gap-2">

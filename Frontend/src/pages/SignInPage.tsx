@@ -7,11 +7,14 @@ const SignInPage = () => {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    // Tạm thời ép giao diện bằng sáng cho form đăng nhập
-    root.classList.remove("dark", "light");
-    root.classList.add("light");
+    // Sử dụng setTimeout để đảm bảo đoạn code này chạy SAU useEffect của ThemeProvider (Parent component)
+    const timeout = setTimeout(() => {
+      root.classList.remove("dark", "light");
+      root.classList.add("light");
+    }, 10);
 
     return () => {
+      clearTimeout(timeout);
       // Khôi phục lại theme cũ khi rời khỏi trang đăng nhập (sau khi login thành công)
       root.classList.remove("light", "dark");
       if (theme === "system") {

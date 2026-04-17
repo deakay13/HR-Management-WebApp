@@ -42,6 +42,7 @@ export default {
           MaVT: row.MaVT,
           TenTaiKhoan: row.TenTaiKhoan, 
           MatKhau: hashedPassword,
+          TrangThai: row.TrangThai,
           createdAt: new Date(),
           updatedAt: new Date(),
         };

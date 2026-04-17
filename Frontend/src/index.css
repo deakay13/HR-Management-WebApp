@@ -272,6 +272,12 @@
     font-weight: 400;
   }
 
+  @media (max-width: 768px) {
+    body {
+      background: #f8fafc; /* Màu slate-50 (xám slay/slate nhạt) dành cho mobile light mode */
+    }
+  }
+
   /* ─── Typography System ─────────────────────────────────── */
   h1 {
     font-family: 'Roboto', 'IBM Plex Sans', Helvetica, Arial, sans-serif;

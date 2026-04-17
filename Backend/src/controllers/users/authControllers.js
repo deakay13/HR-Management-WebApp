@@ -74,6 +74,9 @@ export const signIn = async (req, res) => {
         })
 
         //respon accesssToken
+        // Cập nhật trạng thái Online
+        await TaiKhoan.update({ TrangThai: 'Online' }, { where: { MaTK: account.MaTK } });
+
         return res.status(200).json({ message: `Tai khoản ${account.TenTaiKhoan} đã đăng nhập`, accessToken });
 
     } catch (error) {
@@ -88,7 +91,11 @@ export const signOut = async (req, res) => {
         
         //check token exists and clear token in cookie
         if (delToken) {
-            await Session.destroy({ where: { refreshToken: delToken } });
+            const session = await Session.findOne({ where: { refreshToken: delToken } });
+            if (session) {
+                await TaiKhoan.update({ TrangThai: 'Offline' }, { where: { MaTK: session.MaTK } });
+                await session.destroy();
+            }
             res.clearCookie(
                 "refreshToken",
                 {
