@@ -43,6 +43,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<HoursInput>({
@@ -51,6 +53,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
     defaultValues: {
       MaGL: hours.MaGL,
       SoGioLam: hours.SoGioLam,
+      SoNgayLam: hours.SoNgayLam || 26,
+      TongSoGio: hours.TongSoGio || (Number(hours.SoGioLam) * 26),
     },
   });
 
@@ -60,6 +64,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
     reset({
       MaGL: hours.MaGL,
       SoGioLam: hours.SoGioLam,
+      SoNgayLam: hours.SoNgayLam,
+      TongSoGio: hours.TongSoGio,
     });
   };
 
@@ -98,7 +104,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
-                    {t("Sửa Giờ Làm")}
+                    {t("Sửa ca làm việc")}
                   </DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
                       {t("Nhập thông tin chi tiết để cập nhật.")}
@@ -107,19 +113,52 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
 
                 <FieldGroup className="space-y-4">
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="SoGioLam">{t("Số Giờ Làm")}</Label>
+                    <Label htmlFor="SoGioLam">{t("Số Giờ/Ngày")}</Label>
                     <Input
                       id="SoGioLam"
                       type="number"
                       className="h-10"
                       placeholder={t("VD: 8")}
                       {...register("SoGioLam")}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setValue("SoGioLam", val);
+                        setValue("TongSoGio", val * Number(watch("SoNgayLam")));
+                      }}
                     />
                     {errors.SoGioLam && (
-                      <p className="text-red-500 text-sm">
-                        {errors.SoGioLam.message}
-                      </p>
+                      <p className="text-red-500 text-sm">{errors.SoGioLam.message}</p>
                     )}
+                  </Field>
+
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="SoNgayLam">{t("Số Ngày Công Chuẩn")}</Label>
+                    <Input
+                      id="SoNgayLam"
+                      type="number"
+                      placeholder="26"
+                      className="h-10"
+                      {...register("SoNgayLam")}
+                      onChange={(e) => {
+                        const val = Number(e.target.value);
+                        setValue("SoNgayLam", val);
+                        setValue("TongSoGio", Number(watch("SoGioLam")) * val);
+                      }}
+                    />
+                    {errors.SoNgayLam && (
+                      <p className="text-red-500 text-sm">{errors.SoNgayLam.message}</p>
+                    )}
+                  </Field>
+
+                  <Field className="flex flex-col gap-2">
+                    <Label htmlFor="TongSoGio">{t("Tổng Giờ Chuẩn/Tháng")}</Label>
+                    <Input
+                      id="TongSoGio"
+                      type="number"
+                      className="h-10 bg-muted"
+                      readOnly
+                      {...register("TongSoGio")}
+                    />
                   </Field>
                 </FieldGroup>
 
@@ -155,7 +194,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
 
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
-                <DialogTitle>{t("Xoá Giờ Làm")}</DialogTitle>
+                <DialogTitle>{t("Xoá ca làm việc")}</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
                       {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
                     </DialogDescription>
@@ -164,7 +203,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                 <p>{t("Bạn có chắc muốn xoá không?")}</p>
                 <ul>
                   <li>
-                    <b>{t("Mã Giờ Làm")}:</b> {hours.MaGL}
+                    <b>{t("Mã Ca Làm")}:</b> {hours.MaGL}
                   </li>
                   <li>
                     <b>{t("Số giờ")}:</b>{" "}

@@ -68,6 +68,7 @@ export function PayRollTable({
     MaLCB: "",
     MaGL: "",
     Thang: "",
+    SoNgayLam: 26,
   });
   const [filters, setFilters] = React.useState({
     keyword: "",
@@ -175,7 +176,7 @@ export function PayRollTable({
                   variant="outline"
                   size="sm"
                   onClick={() =>
-                    setFormData({ MaBL: "", MaNV: "", MaKT: "", MaPC: "", MaLCB: "", MaGL: "", Thang: "" })
+                    setFormData({ MaBL: "", MaNV: "", MaKT: "", MaPC: "", MaLCB: "", MaGL: "", Thang: "", SoNgayLam: 26 })
                   }>
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
@@ -260,7 +261,7 @@ export function PayRollTable({
                       />
                     </Field>
 
-                    <Field className="flex flex-col gap-2 md:col-span-2">
+                    <Field className="flex flex-col gap-2">
                       <Label htmlFor="Thang">{t("Tháng")}</Label>
                       <Input
                         id="Thang"
@@ -268,6 +269,17 @@ export function PayRollTable({
                         className="h-10"
                         value={formData.Thang}
                         onChange={(e) => setFormData({ ...formData, Thang: e.target.value })}
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="SoNgayLam">{t("Số ngày công")}</Label>
+                      <Input
+                        id="SoNgayLam"
+                        type="number"
+                        placeholder="26"
+                        className="h-10"
+                        value={formData.SoNgayLam}
+                        onChange={(e) => setFormData({ ...formData, SoNgayLam: Number(e.target.value) })}
                       />
                     </Field>
                   </FieldGroup>
@@ -282,7 +294,7 @@ export function PayRollTable({
                       type="submit"
                       disabled={
                         !formData.MaBL || !formData.MaNV || !formData.MaKT ||
-                        !formData.MaPC || !formData.MaLCB || !formData.MaGL || !formData.Thang
+                        !formData.MaPC || !formData.MaLCB || !formData.MaGL || !formData.Thang || !formData.SoNgayLam
                       }>
                       {t("Tạo mới")}
                     </Button>

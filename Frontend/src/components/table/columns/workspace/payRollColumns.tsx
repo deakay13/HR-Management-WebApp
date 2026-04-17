@@ -56,16 +56,19 @@ export const columns: ColumnDef<PayRoll>[] = [
       </div>
     ),
   },
+
   {
-    accessorKey: "MaGL",
-    header: () => <H k="Mã Giờ Làm" />,
-    cell: ({ row }) => (
-      <div className="w-40 text-center h-8">
-        {row.original.TongGioLam 
-          ? `${row.original.TongGioLam.SoGioLam}h (${row.original.MaGL})` 
-          : row.original.MaGL}
-      </div>
-    ),
+    id: "TongGioCong",
+    header: () => <H k="Tổng Giờ Công" />,
+    cell: ({ row }) => {
+      const dailyHours = Number(row.original.TongGioLam?.SoGioLam || 0);
+      const days = Number(row.original.SoNgayLam || 0);
+      return (
+        <div className="w-40 text-center h-8">
+          {dailyHours * days}h
+        </div>
+      );
+    },
   },
   {
     accessorKey: "MaLCB",

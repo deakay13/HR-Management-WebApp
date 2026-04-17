@@ -14,7 +14,7 @@ export const calculatePayroll = async (req, res) => {
 
   try {
 
-    const { MaBL, MaNV, MaLCB, MaPC, MaKT, MaGL, Thang } = req.body
+    const { MaBL, MaNV, MaLCB, MaPC, MaKT, MaGL, Thang, SoNgayLam } = req.body
     if (!MaBL || !MaNV || !MaLCB || !MaPC || !MaKT || !MaGL || !Thang) {
       return res.status(400).json({
         message: "Thiếu dữ liệu tính lương"
@@ -40,17 +40,22 @@ export const calculatePayroll = async (req, res) => {
       })
     }
 
-    const baseSalary = Number(luongCoBan.LuongCB)
-    const allowance = Number(phuCap.SoTien)
-    const deductionPercent = Number(khauTru.PhanTram)
-    const hours = Number(gioLam.SoGioLam)
+    // TÍNH LƯƠNG
+    const baseSalary = Number(luongCoBan.LuongCB || 0)
+    const allowance = Number(phuCap.SoTien || 0)
+    const deductionPercent = Number(khauTru.PhanTram || 0)
+    
+    // Tính tổng giờ trong tháng = giờ ca * số ngày đi làm
+    const shiftHours = Number(gioLam.SoGioLam || 0)
+    const daysWorked = Number(SoNgayLam || gioLam.SoNgayLam || 26)
+    const totalWorkingHours = shiftHours * daysWorked
 
-    const STANDARD_HOURS = 208 // 26 * 8
+    const STANDARD_HOURS = 208 // 26 ngày * 8 giờ
 
-    const salaryByHours = (baseSalary / STANDARD_HOURS) * hours
+    const salaryByHours = (baseSalary / STANDARD_HOURS) * totalWorkingHours
     const grossSalary = salaryByHours + allowance
     const deductionAmount = grossSalary * (deductionPercent / 100)
-    const totalSalary = grossSalary - deductionAmount
+    const totalSalary = Math.round(grossSalary - deductionAmount)
 
     const payroll = await BangLuong.create({
       MaBL,
@@ -60,6 +65,7 @@ export const calculatePayroll = async (req, res) => {
       MaKT,
       MaGL,
       Thang,
+      SoNgayLam: daysWorked,
       TongLuong: totalSalary
     })
 
@@ -77,7 +83,7 @@ export const calculatePayroll = async (req, res) => {
 export const updatePayroll = async (req, res) => {
   try {
     const { ID } = req.params
-    const { MaLCB, MaPC, MaKT, MaGL, Thang } = req.body
+    const { MaLCB, MaPC, MaKT, MaGL, Thang, SoNgayLam } = req.body
 
     const payroll = await BangLuong.findByPk(ID)
 
@@ -91,7 +97,7 @@ export const updatePayroll = async (req, res) => {
     const newMaKT = MaKT || payroll.MaKT
     const newMaGL = MaGL || payroll.MaGL
     const newThang = Thang || payroll.Thang
-
+    
     // Lấy data liên quan
     const [luongCoBan, phuCap, khauTru, gioLam] = await Promise.all([
       LuongCoBan.findByPk(newMaLCB),
@@ -104,18 +110,22 @@ export const updatePayroll = async (req, res) => {
       return res.status(404).json({ message: "Thiếu dữ liệu tính lương" })
     }
 
-    // ===== TÍNH LƯƠNG =====
-    const baseSalary = Number(luongCoBan.LuongCB)
-    const totalHours = Number(gioLam.SoGioLam)
-    const allowance = Number(phuCap.SoTien)
-    const deductionPercent = Number(khauTru.PhanTram)
+    const newSoNgayLam = SoNgayLam || payroll.SoNgayLam || gioLam.SoNgayLam || 26
+
+    // TÍNH LẠI GIỜ CÔNG
+    const baseSalary = Number(luongCoBan.LuongCB || 0)
+    const allowance = Number(phuCap.SoTien || 0)
+    const deductionPercent = Number(khauTru.PhanTram || 0)
+
+    const shiftHours = Number(gioLam.SoGioLam || 0)
+    const totalWorkingHours = shiftHours * Number(newSoNgayLam)
 
     const STANDARD_HOURS = 208
 
-    const salaryByHours = (baseSalary / STANDARD_HOURS) * totalHours
+    const salaryByHours = (baseSalary / STANDARD_HOURS) * totalWorkingHours
     const grossSalary = salaryByHours + allowance
     const deductionAmount = grossSalary * (deductionPercent / 100)
-    const totalSalary = grossSalary - deductionAmount
+    const totalSalary = Math.round(grossSalary - deductionAmount)
 
     // ===== UPDATE =====
     await payroll.update({
@@ -124,6 +134,7 @@ export const updatePayroll = async (req, res) => {
       MaKT: newMaKT,
       MaGL: newMaGL,
       Thang: newThang,
+      SoNgayLam: newSoNgayLam,
       TongLuong: totalSalary
     })
 
@@ -332,53 +343,101 @@ export const exportPayrollToExcel = async (req, res) => {
     const workbook = new ExcelJS.Workbook()
     const worksheet = workbook.addWorksheet("BangLuong")
 
-    // ===== HEADER =====
+    // ===== TITLE ROW =====
+    worksheet.mergeCells("A1:K1")
+    const titleRow = worksheet.getRow(1)
+    titleRow.getCell(1).value = "DANH SÁCH BẢNG LƯƠNG"
+    titleRow.getCell(1).font = { name: "Arial", size: 16, bold: true }
+    titleRow.getCell(1).alignment = { vertical: "middle", horizontal: "center" }
+    titleRow.height = 30
+
+    // ===== HEADER ROW (Row 3) =====
+    const headerRow = ["Mã BL", "Mã NV", "Họ và Tên", "Tháng", "Lương cơ bản", "Giờ theo ca", "Số ngày công", "Tổng giờ tháng", "Phụ cấp", "Khấu trừ (%)", "Tổng lương"]
+    worksheet.getRow(3).values = headerRow
     worksheet.columns = [
-      { header: "Mã BL", key: "MaBL", width: 15 },
-      { header: "Mã NV", key: "MaNV", width: 15 },
-      { header: "Họ và Tên", key: "HoVaTen", width: 25 },
-      { header: "Tháng", key: "Thang", width: 15 },
-      { header: "Lương cơ bản", key: "LuongCB", width: 18 },
-      { header: "Giờ làm", key: "SoGioLam", width: 12 },
-      { header: "Phụ cấp", key: "PhuCap", width: 20 },
-      { header: "Khấu trừ (%)", key: "KhauTru", width: 20 },
-      { header: "Tổng lương", key: "TongLuong", width: 20 }
+      { key: "MaBL", width: 15 },
+      { key: "MaNV", width: 15 },
+      { key: "HoVaTen", width: 25 },
+      { key: "Thang", width: 15 },
+      { key: "LuongCB", width: 18 },
+      { key: "ShiftHours", width: 15 },
+      { key: "SoNgayLam", width: 15 },
+      { key: "TotalHours", width: 15 },
+      { key: "PhuCap", width: 25 },
+      { key: "KhauTru", width: 25 },
+      { key: "TongLuong", width: 20 }
     ]
 
-    // ===== DATA =====
+    // Style Header
+    worksheet.getRow(3).eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFFFFF" } }
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "4F81BD" } }
+      cell.alignment = { vertical: "middle", horizontal: "center" }
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" }
+      }
+    })
+
+    // ===== DATA ROWS =====
     for (const p of payrolls) {
-      worksheet.addRow({
+      const shiftHours = Number(p.TongGioLam?.SoGioLam || 0)
+      const days = Number(p.SoNgayLam || 26)
+      
+      const row = worksheet.addRow({
         MaBL: p.MaBL,
         MaNV: p.MaNV,
         HoVaTen: p.NhanVien?.HoVaTen || "N/A",
         Thang: p.Thang,
         LuongCB: p.LuongCoBan?.LuongCB || 0,
-        SoGioLam: p.TongGioLam?.SoGioLam || 0,
-        PhuCap: p.PhuCapThuong ? `${p.PhuCapThuong.LoaiPC} (${Number(p.PhuCapThuong.SoTien).toLocaleString("vi-VN")} VND)` : 0,
-        KhauTru: p.KhauTru ? `${p.KhauTru.LoaiKT} (${p.KhauTru.PhanTram}%)` : 0,
-        TongLuong: p.TongLuong
+        ShiftHours: `${shiftHours}h/ngày`,
+        SoNgayLam: `${days} ngày`,
+        TotalHours: `${shiftHours * days}h`,
+        PhuCap: p.PhuCapThuong ? `${p.PhuCapThuong.LoaiPC} (${Number(p.PhuCapThuong.SoTien).toLocaleString("vi-VN")} VND)` : "0",
+        KhauTru: p.KhauTru ? `${p.KhauTru.LoaiKT} (${p.KhauTru.PhanTram}%)` : "0",
+        TongLuong: Number(p.TongLuong)
+      })
+
+      // Style Data Row
+      row.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", horizontal: "center" }
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" }
+        }
       })
     }
 
-    // ===== STYLE =====
-    worksheet.getRow(1).font = { bold: true }
-
-    worksheet.columns.forEach(col => {
-      col.alignment = { vertical: "middle", horizontal: "center" }
-    })
-
-    // Format tiền
+    // Format Number Columns
     worksheet.getColumn("LuongCB").numFmt = "#,##0"
-    worksheet.getColumn("TongLuong").numFmt = "#,##0"
+    worksheet.getColumn("TongLuong").numFmt = "#,##0 \"VND\""
 
-    // ===== TỔNG =====
+    // ===== GRAND TOTAL ROW =====
     const total = payrolls.reduce((sum, p) => sum + Number(p.TongLuong), 0)
-
-    worksheet.addRow({})
-    worksheet.addRow({
-      MaNV: "TỔNG",
-      TongLuong: total
+    const lastRowIndex = worksheet.lastRow.number + 1
+    
+    worksheet.mergeCells(`A${lastRowIndex}:J${lastRowIndex}`)
+    const totalRow = worksheet.getRow(lastRowIndex)
+    
+    totalRow.getCell(1).value = "TỔNG CỘNG"
+    totalRow.getCell(11).value = total
+    
+    totalRow.eachCell((cell) => {
+      cell.font = { bold: true }
+      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "D9D9D9" } }
+      cell.alignment = { vertical: "middle", horizontal: "center" }
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" }
+      }
     })
+    totalRow.getCell(11).numFmt = "#,##0 \"VND\""
 
     // ===== DOWNLOAD =====
     res.setHeader(
