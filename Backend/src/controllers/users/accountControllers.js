@@ -87,8 +87,12 @@ export const readAllAccount = async ( req, res) => {
         if (search) {
             options.where = {
                 [Op.or]: [
+                    { MaTK: { [Op.like]: `%${search}%` } },
+                    { MaNV: { [Op.like]: `%${search}%` } },
+                    { MaVT: { [Op.like]: `%${search}%` } },
                     { TenTaiKhoan: { [Op.like]: `%${search}%` } },
-                    { '$NhanVien.HoVaTen$': { [Op.like]: `%${search}%` } }
+                    { '$NhanVien.HoVaTen$': { [Op.like]: `%${search}%` } },
+                    { '$VaiTro.TenVaiTro$': { [Op.like]: `%${search}%` } }
                 ]
             };
         }
@@ -268,7 +272,7 @@ export const exportAccountToExcel = async (req, res) => {
     const worksheet = workbook.addWorksheet("Accounts")
 
     // ===== TITLE ROW =====
-    worksheet.mergeCells("A1:E1")
+    worksheet.mergeCells("A1:F1")
     const titleRow = worksheet.getRow(1)
     titleRow.getCell(1).value = "DANH SÁCH TÀI KHOẢN HỆ THỐNG"
     titleRow.getCell(1).font = { name: "Arial", size: 16, bold: true }
@@ -276,14 +280,15 @@ export const exportAccountToExcel = async (req, res) => {
     titleRow.height = 30
 
     // ===== HEADER ROW (Row 3) =====
-    const headerRow = ["Mã TK", "Họ và Tên", "Tên Đăng Nhập", "Vai Trò", "Ngày Tạo"]
+    const headerRow = ["Mã TK", "Họ và Tên", "Tên Đăng Nhập", "Vai Trò", "Ngày Tạo", "Ngày Cập Nhật"]
     worksheet.getRow(3).values = headerRow
     worksheet.columns = [
       { key: "MaTK", width: 15 },
       { key: "HoVaTen", width: 30 },
       { key: "TenTaiKhoan", width: 25 },
       { key: "TenVaiTro", width: 20 },
-      { key: "CreatedAt", width: 25 }
+      { key: "CreatedAt", width: 25 },
+      { key: "UpdatedAt", width: 25 }
     ]
 
     // Style Header
@@ -306,7 +311,8 @@ export const exportAccountToExcel = async (req, res) => {
         HoVaTen: acc.NhanVien?.HoVaTen || "N/A",
         TenTaiKhoan: acc.TenTaiKhoan,
         TenVaiTro: acc.VaiTro?.TenVaiTro || "N/A",
-        CreatedAt: formatVNDateTime(acc.createdAt)
+        CreatedAt: formatVNDateTime(acc.createdAt),
+        UpdatedAt: formatVNDateTime(acc.updatedAt)
       })
 
       // Style Data Row
