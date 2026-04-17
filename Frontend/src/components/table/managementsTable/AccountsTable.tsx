@@ -145,28 +145,27 @@ export function AccountsTable({
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Phân Quyền")} page={t("Tài Khoản")} />
         
-          <div className="flex items-center gap-2">
-            <div className="relative w-64">
-              <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={t("Search...")}
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 h-9"
-              />
-            </div>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => exportAccounts()}
-              className="size-9"
-              title={t("Xuất Excel")}>
-              <IconDownload className="h-4 w-4" />
-            </Button>
+        <div className="flex items-center gap-2">
+          <div className="relative w-64">
+            <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder={t("Search...")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8 h-9"
+            />
           </div>
 
-          <div className="flex items-center gap-2">
-            <TableColumnFilter table={table} />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => exportAccounts()}
+            className="size-9"
+            title={t("Xuất Excel")}>
+            <IconDownload className="h-4 w-4" />
+          </Button>
+
+          <TableColumnFilter table={table} />
 
           {/* Button create */}
           {canCreate(permissions) && (
