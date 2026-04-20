@@ -58,17 +58,12 @@ const updateEmployee = async (req, res) => {
       return res.status(404).json({ message: 'Nhân viên không tồn tại' });
     }
 
-    const HinhAnh = req.file ? `/uploads/avatars/${req.file.filename}` : employee.HinhAnh;
-
-    const { MaPB } = req.body;
-    if (MaPB) {
-      const department = await Department.findByPk(MaPB);
-      if (!department) {
-        return res.status(400).json({ message: 'Mã phòng ban không tồn tại' });
-      }
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.HinhAnh = `/uploads/avatars/${req.file.filename}`;
     }
 
-    await employee.update({ ...req.body, HinhAnh });
+    await employee.update(updateData);
     res.status(200).json(employee);
   } catch (error) {
     res.status(400).json({ message: 'Lỗi khi cập nhật nhân viên: ' + error.message });

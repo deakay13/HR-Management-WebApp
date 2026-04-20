@@ -24,7 +24,7 @@ export const EmployeeServices = {
     return res.data;       
   },
 
-  updateEmployee: async (ID: string, data: Employee): Promise<Employee> => {
+  updateEmployee: async (ID: string, data: Employee | FormData): Promise<Employee> => {
     const res = await api.put(`/api/information/employees/${ID}`, data, {
       withCredentials: true,
     });

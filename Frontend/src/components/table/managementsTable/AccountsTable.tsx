@@ -145,14 +145,14 @@ export function AccountsTable({
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Phân Quyền")} page={t("Tài Khoản")} />
         
-        <div className="flex items-center gap-2">
-          <div className="relative w-64">
-            <IconSearch className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative flex items-center gap-2">
+            <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t("Search...")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 h-9"
+              className="h-9 w-[160px] pl-9"
             />
           </div>
 
