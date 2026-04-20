@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   IconPlus,
+  IconSearch,
+  IconFileSpreadsheet,
 } from "@tabler/icons-react";
 import {
   flexRender,
@@ -60,6 +62,8 @@ import { z } from "zod";
 import { getEmployeeValidationSchema } from "@/types/informationTypes/employeeTypes";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canCreate } from "@/utils/authorizeUtils";
+import { EmployeeServices } from "@/services/informationServices/employeeServices";
+import { toast } from "sonner";
 
 export function EmployeeTable({
   data = [],
@@ -84,7 +88,36 @@ export function EmployeeTable({
   const [selectedDept, setSelectedDept] = React.useState("");
   const [selectedGender, setSelectedGender] = React.useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [filters, setFilters] = React.useState({ keyword: "", MaPB: "" });
   const { permissions } = useAuthorizeStore();
+
+  const { departments, getDepartments } = useDepartmentStore();
+  const { createEmployee, searchEmployees } = useEmployeeStore();
+
+  // Debounce auto-search — same logic as AccountsTable
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      searchEmployees(filters);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [filters, searchEmployees]);
+
+  const handleExport = async () => {
+    try {
+      const blob = await EmployeeServices.exportEmployees();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `danh_sach_nhan_vien.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success("Xuất file excel thành công");
+    } catch (error) {
+      console.error("Lỗi export excel:", error);
+      toast.error("Không thể xuất file excel");
+    }
+  };
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Employee>({
@@ -111,9 +144,6 @@ export function EmployeeTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
-
-  const { departments, getDepartments } = useDepartmentStore();
-  const { createEmployee } = useEmployeeStore();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -168,7 +198,27 @@ export function EmployeeTable({
         <TableBreadcrumb section="Danh Mục" page="Nhân Viên" />
 
         {/* ================== ACTIONS (FILTER) ================== */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative flex items-center gap-2">
+            <div className="relative">
+              <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("Search...")}
+                className="h-9 w-[160px] pl-9"
+                value={filters.keyword}
+                onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              className="h-9 w-9 p-0"
+              title={t("Xuất Excel")}>
+              <IconFileSpreadsheet size={18} />
+            </Button>
+          </div>
+
           <TableColumnFilter table={table} />
 
           {/* ================== CREATE NEW EMPLOYEE DIALOG ================== */}

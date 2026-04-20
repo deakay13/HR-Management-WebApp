@@ -36,4 +36,20 @@ export const EmployeeServices = {
       withCredentials: true,
     });
   },
+
+  searchEmployees: async (filters: { keyword?: string; MaPB?: string }) => {
+    const res = await api.get("/api/information/employees/search", {
+      params: filters,
+      withCredentials: true,
+    });
+    return res.data;
+  },
+
+  exportEmployees: async () => {
+    const res = await api.get("/api/information/employees/export", {
+      responseType: "blob",
+      withCredentials: true,
+    });
+    return res.data;
+  },
 };

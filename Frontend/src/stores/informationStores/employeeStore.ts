@@ -31,13 +31,26 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
   },
 
   getEmployees: async () => {
-    set({ initializing: true });
     try {
       const data = await EmployeeServices.getEmployees();
       set({ employees: Array.isArray(data) ? data : [] });
     } catch (error: unknown) {
       console.error("Lỗi khi lấy danh sách nhân viên:", error);
       toast.error("Không thể tải danh sách nhân viên");
+      set({ employees: [] });
+    } finally {
+      set({ initializing: false });
+    }
+  },
+
+  searchEmployees: async (filters: { keyword?: string; MaPB?: string }) => {
+    try {
+      const response = await EmployeeServices.searchEmployees(filters);
+      // Backend returns { data: [...], ... }
+      set({ employees: Array.isArray(response.data) ? response.data : [] });
+    } catch (error: unknown) {
+      console.error("Lỗi khi tìm kiếm nhân viên:", error);
+      toast.error("Không thể tìm kiếm nhân viên");
       set({ employees: [] });
     } finally {
       set({ initializing: false });

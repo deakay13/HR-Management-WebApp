@@ -68,7 +68,8 @@ export const searchService = async (model, query, pagination, config = {}) => {
     limit: limit !== null ? limit : undefined,
     offset: limit !== null ? offset : undefined,
     order: config.order || [["createdAt", "DESC"]],
-    include: config.include || []
+    include: config.include || [],
+    ...(config.subQuery !== undefined && { subQuery: config.subQuery })
   });
 
   return {

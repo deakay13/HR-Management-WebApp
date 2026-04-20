@@ -1,7 +1,7 @@
 import express from 'express';
 import { authorize } from '../middlewares/authorize.js';
 import { getAllDepartments, getDepartmentById, createDepartment, updateDepartment, deleteDepartment  } from '../controllers/information/departmentsControllers.js';
-import { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee } from '../controllers/information/employeeControllers.js';
+import { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee, searchEmployees, exportEmployeesToExcel } from '../controllers/information/employeeControllers.js';
 import { getAllContracts, getContractById, createContract, updateContract, deleteContract } from '../controllers/information/contractControllers.js';
 import upload from '../config/multerConfig.js';
 
@@ -15,6 +15,8 @@ router.put('/departments/:id', authorize(["Sửa"]),updateDepartment);
 router.delete('/departments/:id',authorize(["Xoá"]), deleteDepartment);
 
 // Routes for NhanVien
+router.get('/employees/search', authorize(["Đọc"]), searchEmployees);
+router.get('/employees/export', authorize(["Đọc"]), exportEmployeesToExcel);
 router.get('/employees', authorize(["Đọc"]),getAllEmployees);
 router.get('/employees/:id', authorize(["Đọc"]),getEmployeeById);
 router.post('/employees',authorize(["Tạo"]), upload.single('HinhAnh'), createEmployee);      
@@ -23,6 +25,7 @@ router.delete('/employees/:id',authorize(["Xoá"]), deleteEmployee);
 
 // Routes for HopDong 
 router.get('/contracts',authorize(["Đọc"]), getAllContracts);
+
 router.get('/contracts/:id',authorize(["Đọc"]), getContractById);
 router.post('/contracts',authorize(["Tạo"]), upload.single('HinhAnhHopDong'), createContract);
 router.put('/contracts/:id',authorize(["Sửa"]), upload.single('HinhAnhHopDong'), updateContract);

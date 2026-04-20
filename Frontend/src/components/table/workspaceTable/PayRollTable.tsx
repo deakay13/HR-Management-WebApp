@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useEffect } from "react";
 import { IconPlus, IconSearch, IconFileSpreadsheet } from "@tabler/icons-react";
 import {
   flexRender,
@@ -78,15 +79,13 @@ export function PayRollTable({
   const { createPayRolls, searchPayRolls } = usePayRollStore();
   const { permissions } = useAuthorizeStore();
 
-  const handleSearch = () => {
-    searchPayRolls(filters);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleSearch();
-    }
-  };
+  // Debounce auto-search — same logic as AccountsTable
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      searchPayRolls(filters);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [filters, searchPayRolls]);
 
   const handleExport = async () => {
     try {
@@ -153,7 +152,6 @@ export function PayRollTable({
                 className="h-9 w-[160px] pl-9"
                 value={filters.keyword}
                 onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
-                onKeyDown={handleKeyDown}
               />
             </div>
             <Button
