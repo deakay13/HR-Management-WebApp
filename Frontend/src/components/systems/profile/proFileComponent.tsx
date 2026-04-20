@@ -48,7 +48,7 @@ import { useRef } from "react";
 import { toast } from "sonner";
 
 const ProfileComponent = () => {
-    const { account } = useAuthStore();
+    const { account, avatarUrl, setAvatarUrl } = useAuthStore();
     const { role } = useAuthorizeStore();
     const { t } = useTranslation();
     const { updateEmployee } = useEmployeeStore();
@@ -70,6 +70,11 @@ const ProfileComponent = () => {
                 try {
                     const data = await EmployeeServices.getEmployee(account.MaNV);
                     setEmployee(data);
+                    // Initialize global avatar URL
+                    if (data?.HinhAnh) {
+                        const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+                        setAvatarUrl(`${baseUrl}${data.HinhAnh}?t=${Date.now()}`);
+                    }
                 } catch (error) {
                     console.error("Failed to fetch employee details:", error);
                 } finally {
@@ -120,6 +125,14 @@ const ProfileComponent = () => {
             // Refresh employee data
             const updatedData = await EmployeeServices.getEmployee(account.MaNV);
             setEmployee(updatedData);
+
+            // Sync avatar to global store so NavUserMini updates instantly
+            if (updatedData?.HinhAnh) {
+                const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+                // Add cache-buster so browser doesn't serve the old cached image
+                setAvatarUrl(`${baseUrl}${updatedData.HinhAnh}?t=${Date.now()}`);
+            }
+
             toast.success(t("Cập nhật ảnh đại diện thành công!"));
             handleClosePreview();
         } catch (error) {
@@ -257,7 +270,7 @@ const ProfileComponent = () => {
                         <div className="absolute -inset-1 rounded-full bg-white/20 blur group-hover:bg-white/40 transition-smooth" />
                         <Avatar className="h-32 w-32 border-4 border-white/20 shadow-2xl relative overflow-hidden">
                             <AvatarImage 
-                                src={employee?.HinhAnh ? `${(import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "")}${employee.HinhAnh}` : ""} 
+                                src={avatarUrl ?? (employee?.HinhAnh ? `${(import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "")}${employee.HinhAnh}` : "")} 
                                 alt={account?.TenTaiKhoan} 
                                 className="object-cover" 
                             />
