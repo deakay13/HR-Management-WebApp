@@ -116,10 +116,18 @@ export function ChartAreaInteractive() {
     return map;
   }, [Hours]);
 
-  // If no real data from stores, generate illustrative data for current year
+  // Anchor to the latest available month in real data (or system date as fallback)
+  const anchorDate = React.useMemo(() => {
+    const sourceMap = mode === "salary" ? salaryByMonth : hoursByMonth;
+    const dates = Object.keys(sourceMap);
+    if (dates.length === 0) return new Date();
+    const latestKey = [...dates].sort().pop()!;
+    const [year, month] = latestKey.split("-").map(Number);
+    return new Date(year, month - 1, 1);
+  }, [salaryByMonth, hoursByMonth, mode]);
+
+  // Build chart data anchored to the latest available data month
   const chartData = React.useMemo(() => {
-    const now = new Date();
-    const currentYear = now.getFullYear();
     const monthsBack = range === "3m" ? 3 : range === "6m" ? 6 : 12;
     const months: {
       month: string;
@@ -129,31 +137,26 @@ export function ChartAreaInteractive() {
     }[] = [];
 
     for (let i = monthsBack - 1; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const d = new Date(anchorDate.getFullYear(), anchorDate.getMonth() - i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       const monthIdx = d.getMonth();
-      // Use real data if available, or generate seed data
       const salaryReal = salaryByMonth[key];
       const hoursReal = hoursByMonth[key];
 
-      // Deterministic seed for nice-looking illustration
+      // Deterministic seed for placeholder when no real data
       const seed = (d.getFullYear() * 12 + d.getMonth()) % 17;
       const baseSalary = 80_000_000 + seed * 5_000_000;
       const baseHours = 160 + seed * 4;
 
       months.push({
         month: key,
-        label:
-          `${MONTH_LABELS[monthIdx]}/${d.getFullYear() !== currentYear ? d.getFullYear() : ""}`.replace(
-            /\/$/,
-            "",
-          ),
+        label: `${MONTH_LABELS[monthIdx]}/${d.getFullYear()}`,
         luong: salaryReal !== undefined ? salaryReal : baseSalary,
         gioLam: hoursReal !== undefined ? hoursReal : baseHours,
       });
     }
     return months;
-  }, [range, salaryByMonth, hoursByMonth]);
+  }, [range, salaryByMonth, hoursByMonth, anchorDate]);
 
   const hasRealSalaryData = Object.keys(salaryByMonth).length > 0;
   const hasRealHoursData = Object.keys(hoursByMonth).length > 0;
