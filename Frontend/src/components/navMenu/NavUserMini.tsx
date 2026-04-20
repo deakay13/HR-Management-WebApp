@@ -92,7 +92,7 @@ export function NavUserMini() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/PortalPage/Profile")}>
                 <IconId />
                 {t("Hồ Sơ")}
               </DropdownMenuItem>

@@ -25,6 +25,7 @@ import Permissions from "./components/managements/PermissionsComponents";
 {/*import systems*/}
 import GetHelp from "./components/systems/GetHelpComponents";
 import Settings from "./components/systems/SettingsComponents";
+import Profile from "./components/systems/profile/proFileComponent";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
               {/* System routes */}
               <Route path="Settings" element={<Settings />} />
               <Route path="GetHelp" element={<GetHelp />} />
+              <Route path="Profile" element={<Profile />} />
             </Route>
           </Route>
         </Routes>

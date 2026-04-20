@@ -44,7 +44,7 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
     }
   },
 
-  updateEmployee: async (ID: string, data: Employee) => {
+  updateEmployee: async (ID: string, data: Employee | FormData) => {
     try {
       set({ initializing: true });
       const updated = await EmployeeServices.updateEmployee(ID, data);

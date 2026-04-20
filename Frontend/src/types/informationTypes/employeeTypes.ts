@@ -55,6 +55,6 @@ export interface EmployeeTypes {
   clearState: () => void;
   createEmployee: (data: Employee) => Promise<void>;
   getEmployees: () => Promise<void>;
-  updateEmployee: (ID: string, data: Employee) => Promise<void>;
+  updateEmployee: (ID: string, data: Employee | FormData) => Promise<void>;
   deleteEmployee: (ID: string) => Promise<void>;
 }
