@@ -38,8 +38,7 @@ import {
     IconGenderMale,
     IconGenderFemale,
     IconUserCircle,
-    IconEdit,
-    IconCheck
+    IconEdit
 } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
