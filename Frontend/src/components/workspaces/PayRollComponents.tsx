@@ -4,8 +4,10 @@ import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { useEffect } from "react";
 import { PayRollTable } from "@/components/table/workspaceTable/PayRollTable";
 import { hasRole, ROLE_EMPLOYEE } from "@/utils/authorizeUtils";
+import { useTranslation } from "react-i18next";
 
 const PayRollComponents = () => {
+  const { t } = useTranslation();
   const { PayRolls, initializing, getPayRolls, getMyPayrolls } = usePayRollStore();
   const accessToken = useAuthStore((state) => state.accessToken);
   const account = useAuthStore((state) => state.account);
@@ -31,7 +33,7 @@ const PayRollComponents = () => {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="flex flex-col items-center gap-2">
-          <span>Đang tải trang...</span>
+          <span>{t("Đang tải trang...")}</span>
         </div>
       </div>
     );

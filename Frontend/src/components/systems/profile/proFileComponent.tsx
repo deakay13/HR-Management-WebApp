@@ -40,7 +40,6 @@ import {
     IconUserCircle,
     IconEdit
 } from "@tabler/icons-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useTranslation } from "react-i18next";
 import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
 import { IconCamera, IconLoader2 } from "@tabler/icons-react";
@@ -245,11 +244,9 @@ const ProfileComponent = () => {
 
     if (loading) {
         return (
-            <div className="p-8 space-y-6 animate-pulse">
-                <Skeleton className="h-48 w-full rounded-2xl" />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Skeleton className="h-64 rounded-2xl" />
-                    <Skeleton className="h-64 rounded-2xl" />
+            <div className="flex h-screen items-center justify-center">
+                <div className="flex flex-col items-center gap-2">
+                    <span>{t("Đang tải trang...")}</span>
                 </div>
             </div>
         );
