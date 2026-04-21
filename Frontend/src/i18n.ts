@@ -65,6 +65,7 @@ const resources = {
       "Lương": "Salary",
       "Loại": "Type",
       "Tháng": "Month",
+      "Tháng Trong Năm": "Month of Year",
       "Số giờ": "Hours",
       "giờ": "hours",
       // ─── Employees columns & form ────────────────────────────────
@@ -391,6 +392,7 @@ const resources = {
       "Lương": "Lương",
       "Loại": "Loại",
       "Tháng": "Tháng",
+      "Tháng Trong Năm": "Tháng Trong Năm",
       "Số giờ": "Số giờ",
       "giờ": "giờ",
       "Mã NV": "Mã NV",

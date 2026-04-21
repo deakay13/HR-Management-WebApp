@@ -214,7 +214,7 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                   <li><b>{t("Mã Khấu Trừ")}:</b> {payRoll.MaKT}</li>
                   <li><b>{t("Mã Giờ Làm")}:</b> {payRoll.MaGL}</li>
                   <li>
-                    <b>{t("Tháng")}:</b>{" "}
+                    <b>{t("Tháng Trong Năm")}:</b>{" "}
                     <span className="font-semibold text-red-500">{payRoll.Thang}</span>
                   </li>
                 </ul>

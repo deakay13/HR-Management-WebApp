@@ -96,7 +96,7 @@ export const columns: ColumnDef<PayRoll>[] = [
   },
   {
     accessorKey: "Thang",
-    header: () => <H k="Tháng" />,
+    header: () => <H k="Tháng Trong Năm" />,
     cell: ({ row }) => (
       <div className="w-30 text-center h-8">{row.original.Thang}</div>
     ),
