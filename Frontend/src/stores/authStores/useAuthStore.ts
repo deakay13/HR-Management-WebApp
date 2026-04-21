@@ -62,6 +62,11 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
       const currentAccount = await authServices.getCurrentAccount();
       set({ account: currentAccount });
 
+      // Cập nhật Avatar từ DB (Base64)
+      if (currentAccount?.NhanVien?.HinhAnh) {
+        set({ avatarUrl: currentAccount.NhanVien.HinhAnh });
+      }
+
       const tenVaiTro = currentAccount?.VaiTro?.TenVaiTro;
       const role = tenVaiTro
         ? { MaVT: currentAccount.MaVT, TenVaiTro: tenVaiTro }

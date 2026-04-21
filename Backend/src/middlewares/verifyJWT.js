@@ -1,7 +1,5 @@
 import jwt from 'jsonwebtoken';
-import TaiKhoan from '../models/auth/TaiKhoan.js';
-import VaiTro from '../models/auth/VaiTro.js';
-import Quyen from '../models/auth/Quyen.js';
+import { TaiKhoan, VaiTro, Quyen, NhanVien } from '../models/index.js';
 
 //verify Account
 export const protectedRoute = async (req, res, next) => {
@@ -22,20 +20,27 @@ export const protectedRoute = async (req, res, next) => {
             });
         });
 
-        // 1 query duy nhất: Account + VaiTro + Quyen (thay vì 3 queries)
+        // 1 query duy nhất: Account + VaiTro + Quyen + NhanVien (thay vì nhiều queries)
         const account = await TaiKhoan.findOne({
             where: { MaTK: decodedAccount.MaTK },
             attributes: { exclude: ["MatKhau"] },
-            include: [{
-                model: VaiTro,
-                as: 'VaiTro',
-                attributes: ['TenVaiTro'],
-                include: [{
-                    model: Quyen,
-                    attributes: ['TenQuyen'],
-                    through: { attributes: [] }
-                }]
-            }]
+            include: [
+                {
+                    model: VaiTro,
+                    as: 'VaiTro',
+                    attributes: ['TenVaiTro'],
+                    include: [{
+                        model: Quyen,
+                        attributes: ['TenQuyen'],
+                        through: { attributes: [] }
+                    }]
+                },
+                {
+                    model: NhanVien,
+                    as: 'NhanVien',
+                    attributes: ['HoVaTen', 'HinhAnh']
+                }
+            ]
         });
 
         if (!account) {
