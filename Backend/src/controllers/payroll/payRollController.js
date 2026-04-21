@@ -149,7 +149,9 @@ export const getPayrolls = async (req, res) => {
 
     // Role-based filter: Employee only sees their own payroll
     const isEmployee = req.account?.VaiTro?.TenVaiTro === "Nhân Viên";
-    const whereClause = isEmployee ? { MaNV: req.account.MaNV } : {};
+    
+    // Defensive check: if it's an employee but MaNV is missing, filter by an empty string to avoid "undefined" in SQL
+    const whereClause = isEmployee ? { MaNV: req.account?.MaNV || "" } : {};
 
     const options = { where: whereClause };
     if (limit !== null) {
@@ -165,20 +167,24 @@ export const getPayrolls = async (req, res) => {
         { model: PhuCap, as: 'PhuCapThuong', attributes: ['LoaiPC', 'SoTien'] },
         { model: LuongCoBan, as: 'LuongCoBan', attributes: ['LuongCB'] },
         { model: GioLam, as: 'TongGioLam', attributes: ['SoGioLam'] }
-      ]
+      ],
+      subQuery: false // Prevent issues with "LIMIT" and "Include" mapping
     });
 
     return res.status(200).json({
       totalItems: count,
-      totalPages: limit ? Math.ceil(count / finalSize) : 1,
+      totalPages: (limit && finalSize > 0) ? Math.ceil(count / finalSize) : 1,
       currentPage: page,
       pageSize: finalSize,
       data: rows,
     });
 
   } catch (error) {
-    console.error("Lỗi không tìm thấy danh sách", error);
-    return res.status(500).json({ message: "Lỗi hệ thống" });
+    console.error("DEBUG - getPayrolls Error:", error); // Log the actual error for debugging
+    return res.status(500).json({ 
+      message: "Lỗi hệ thống", 
+      details: error.message // Temporarily provide more info to debug 500
+    });
   }
 };
 export const getPayrollById = async (req, res) => {
@@ -304,7 +310,9 @@ export const searchPayroll = async (req, res) => {
 
     // Role-based filter: Employee only searches their own payroll
     const isEmployee = req.account?.VaiTro?.TenVaiTro === "Nhân Viên";
-    const forcedWhere = isEmployee ? { MaNV: req.account.MaNV } : {};
+    
+    // Defensive check: ensure MaNV is not undefined for forcedWhere
+    const forcedWhere = isEmployee ? { MaNV: req.account?.MaNV || "" } : {};
 
     const result = await searchService(
       BangLuong,
@@ -331,8 +339,11 @@ export const searchPayroll = async (req, res) => {
 
     return res.status(200).json(result);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Lỗi hệ thống" });
+    console.error("DEBUG - searchPayroll Error:", error); // Log the actual error for debugging
+    return res.status(500).json({ 
+      message: "Lỗi hệ thống",
+      details: error.message // Provide more info to debug 500
+    });
   }
 };
 export const exportPayrollToExcel = async (req, res) => {
