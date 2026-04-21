@@ -20,7 +20,7 @@ router.get('/employees/export', authorize(["Đọc"]), exportEmployeesToExcel);
 router.get('/employees', authorize(["Đọc"]),getAllEmployees);
 router.get('/employees/:id', authorize(["Đọc"]),getEmployeeById);
 router.post('/employees',authorize(["Tạo"]), upload.single('HinhAnh'), createEmployee);      
-router.put('/employees/:id',authorize(["Sửa"]), upload.single('HinhAnh'), updateEmployee);  
+router.put('/employees/:id', authorize(["Sửa"], { allowSelf: true }), upload.single('HinhAnh'), updateEmployee);  
 router.delete('/employees/:id',authorize(["Xoá"]), deleteEmployee);
 
 // Routes for HopDong 

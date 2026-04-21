@@ -38,7 +38,7 @@ export const protectedRoute = async (req, res, next) => {
                 {
                     model: NhanVien,
                     as: 'NhanVien',
-                    attributes: ['HoVaTen', 'HinhAnh']
+                    attributes: ['MaNV', 'HoVaTen', 'HinhAnh']
                 }
             ]
         });
@@ -49,6 +49,7 @@ export const protectedRoute = async (req, res, next) => {
 
         const accountData = account.toJSON();
         accountData.permissions = accountData.VaiTro?.Quyens?.map((p) => p.TenQuyen) || [];
+        accountData.MaNV = accountData.NhanVien?.MaNV; // Flatten for easier access
 
         req.account = accountData;
         next();
