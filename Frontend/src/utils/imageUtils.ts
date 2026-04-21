@@ -27,7 +27,7 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
  */
 export const openBase64InNewTab = (base64Data: string) => {
   fetch(base64Data)
-    .then((res) => res.blob())
+    .then((res) => res.blob())  
     .then((blob) => {
       const url = URL.createObjectURL(blob);
       const win = window.open(url, "_blank");
