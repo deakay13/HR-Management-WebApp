@@ -9,9 +9,6 @@ RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
 # Copy source code
 COPY . .
 
-# Tạo thư mục uploads
-RUN mkdir -p uploads/avatars uploads/hopdong
-
 EXPOSE 5000
 
 # Script khởi động: chạy migration + seed rồi start server
