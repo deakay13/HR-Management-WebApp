@@ -79,4 +79,7 @@ export interface PayRollTypes {
 
   //  thêm search
   searchPayRolls: (params: Record<string, unknown>) => Promise<void>;
+
+  // Employee self-service: fetch own payroll by MaNV
+  getMyPayrolls: (MaNV: string) => Promise<void>;
 }

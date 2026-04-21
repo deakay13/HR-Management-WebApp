@@ -120,23 +120,41 @@ const data = {
   ],
 };
 
+// Items hidden from Employee role in navWorkspaces
+const EMPLOYEE_HIDDEN_WORKSPACE_ITEMS = [
+  "Nhân Viên",
+  "Phòng Ban",
+  "Giờ Làm",
+  "Lương Cơ Bản",
+  "Phụ Cấp",
+  "Khấu Trừ",
+];
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const role = useAuthorizeStore((state) => state.role);
 
   const isEmployee = hasRole(role, ROLE_EMPLOYEE);
+
+  // Filter workspace items — Employee only sees Dashboard, Contract, Payroll
+  const workspaceItems = data.navWorkspaces.filter((item) => {
+    if (isEmployee && EMPLOYEE_HIDDEN_WORKSPACE_ITEMS.includes(item.name)) {
+      return false;
+    }
+    return true;
+  });
+
   const isHR = hasRole(role, ROLE_HR);
 
-  const managementItems: SidebarItem[] = data.NavManagements.map((item) => {
-    if (isEmployee) {
-      return { ...item, disabled: true };
-    }
-
-    if (isHR && item.name === "Quyền") {
-      return { ...item, disabled: true };
-    }
-
-    return item;
-  });
+  // Management section rules:
+  // - Employee: hide entire section
+  // - HR: hide "Quyền" (Permissions) item only
+  // - Admin: see everything
+  const managementItems: SidebarItem[] = isEmployee
+    ? []
+    : data.NavManagements.filter((item) => {
+        if (isHR && item.name === "Quyền") return false;
+        return true;
+      });
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
@@ -155,8 +173,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navWorkspaces} />
-        <NavDocuments items={managementItems} />
+        <NavMain items={workspaceItems} />
+        {managementItems.length > 0 && (
+          <NavDocuments items={managementItems} />
+        )}
         <NavSecondary items={data.navSystems} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
@@ -165,3 +185,4 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
+

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import i18n from "../../i18n";
 
 type Theme = "dark" | "light" | "system";
-type Language = "en" | "vi" | "fr" | "ru";
+type Language = "en" | "vi";
 
 type ThemeProviderProps = {
   children: React.ReactNode;

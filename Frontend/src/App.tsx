@@ -27,6 +27,8 @@ import GetHelp from "./components/systems/GetHelpComponents";
 import Settings from "./components/systems/SettingsComponents";
 import Profile from "./components/systems/profile/proFileComponent";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import RoleProtectedRoute from "./components/auth/RoleProtectedRoute";
+import ForbiddenPage from "./components/auth/ForbiddenPage";
 
 function App() {
   return (
@@ -43,23 +45,27 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/Signin" element={<SignInPage />} />
+          {/* 403 page accessible to anyone (no auth required) */}
+          <Route path="/403" element={<ForbiddenPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<PortalPage />} />
             <Route path="/PortalPage" element={<PortalPage />}>
-              {/* Workspace routes */}
+              {/* Routes accessible to all logged-in users */}
               <Route path="DashBoard" element={<DashBoard />} />
               <Route path="Contract" element={<Contract />} />
-              <Route path="Employee" element={<Employee />} />
-              <Route path="Department" element={<Department />} />
-              <Route path="WorkingHours" element={<WorkingHours />} />
               <Route path="Payroll" element={<Payroll />} />
-              <Route path="BasicSalary" element={<BasicSalary />} />
-              <Route path="Allowances" element={<Allowances />} />
-              <Route path="Deductions" element={<Deductions />} />
-              {/* Management routes */}
-              <Route path="Accounts" element={<Accounts />} />
-              <Route path="Roles" element={<Roles />} />
-              <Route path="Permissions" element={<Permissions />} />
+              {/* Routes restricted to Admin & HR only */}
+              <Route element={<RoleProtectedRoute allowedRoles={["Quản Trị Viên", "Nhân Sự"]} />}>
+                <Route path="Employee" element={<Employee />} />
+                <Route path="Department" element={<Department />} />
+                <Route path="WorkingHours" element={<WorkingHours />} />
+                <Route path="BasicSalary" element={<BasicSalary />} />
+                <Route path="Allowances" element={<Allowances />} />
+                <Route path="Deductions" element={<Deductions />} />
+                <Route path="Accounts" element={<Accounts />} />
+                <Route path="Roles" element={<Roles />} />
+                <Route path="Permissions" element={<Permissions />} />
+              </Route>
               {/* System routes */}
               <Route path="Settings" element={<Settings />} />
               <Route path="GetHelp" element={<GetHelp />} />

@@ -35,8 +35,6 @@ export default function AppearanceChilds() {
           <SelectContent>
             <SelectItem value="vi">Vietnamese</SelectItem>
             <SelectItem value="en">English</SelectItem>
-            <SelectItem value="fr">French</SelectItem>
-            <SelectItem value="ru">Russian</SelectItem>
           </SelectContent>
         </Select>
       </div>
