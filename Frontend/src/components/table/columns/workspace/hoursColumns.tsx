@@ -36,7 +36,7 @@ function CellSoNgayLam({ count }: { count: number }) {
 
 function CellTongSoGio({ count }: { count: number }) {
   const { t } = useTranslation();
-  return <div className="w-30 text-center h-8 font-semibold">{t("{{count}} giờ/tháng", { count })}</div>;
+  return <div className="w-30 text-center h-8">{t("{{count}} giờ/tháng", { count })}</div>;
 }
 
 export const columns: ColumnDef<Hours>[] = [
