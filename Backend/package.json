@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "seed": "sequelize-cli db:seed:all --config config/config.js",
+    "migrate": "sequelize-cli db:migrate --config config/config.js",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
