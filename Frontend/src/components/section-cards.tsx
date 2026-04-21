@@ -234,7 +234,7 @@ export function SectionCards() {
 
       {/* Card 3: Departments */}
       <Card
-        style={{ backgroundColor: "#F3797E" }}
+        style={{ backgroundColor: "#6261CB" }}
         className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]">
         <CardHeader className="pb-0 pt-4 px-4 flex-none min-h-[64px]">
           <div className="flex flex-wrap items-start justify-between gap-2.5 w-full min-w-0">
