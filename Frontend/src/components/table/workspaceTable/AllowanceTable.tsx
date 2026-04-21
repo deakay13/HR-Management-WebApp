@@ -48,6 +48,10 @@ import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AllowanceInputSchema, type AllowanceInput } from "@/types/payRollTypes/allowanceTypes";
+
 export function AllowanceTable({
   data,
   loading,
@@ -64,14 +68,26 @@ export function AllowanceTable({
   const { createAllowance } = useAllowanceStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState({ MaPC: "", LoaiPC: "", SoTien: 0 });
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<AllowanceInput>({
+    resolver: zodResolver(AllowanceInputSchema) as any,
+    defaultValues: {
+      MaPC: "",
+      LoaiPC: "",
+      SoTien: 0,
+    },
+  });
+
+  const onSubmit = async (data: AllowanceInput) => {
     try {
-      await createAllowance(formData);
+      await createAllowance(data);
       setCreateOpen(false);
-      setFormData({ MaPC: "", LoaiPC: "", SoTien: 0 });
+      reset();
     } catch {
       // store handles toast
     }
@@ -113,13 +129,16 @@ export function AllowanceTable({
 
           {/* Create button */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <Dialog open={createOpen} onOpenChange={(open) => {
+              setCreateOpen(open);
+              if (!open) reset();
+            }}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setFormData({ MaPC: "", LoaiPC: "", SoTien: 0 });
+                    reset({ MaPC: "", LoaiPC: "", SoTien: 0 });
                     setCreateOpen(true);
                   }}>
                   <IconPlus />
@@ -128,7 +147,7 @@ export function AllowanceTable({
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-md">
-                <form onSubmit={handleCreate} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
                       {t("Tạo phụ cấp")}
@@ -143,10 +162,12 @@ export function AllowanceTable({
                       <Input
                         id="MaPC"
                         placeholder={t("VD: PC001")}
-                        className="h-10"
-                        value={formData.MaPC}
-                        onChange={(e) => setFormData({ ...formData, MaPC: e.target.value })}
+                        className={`h-10 ${errors.MaPC ? "border-red-500" : ""}`}
+                        {...register("MaPC")}
                       />
+                      {errors.MaPC && (
+                        <p className="text-xs text-red-500">{errors.MaPC.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -154,10 +175,12 @@ export function AllowanceTable({
                       <Input
                         id="LoaiPC"
                         placeholder={t("VD: Phụ cấp ăn trưa")}
-                        className="h-10"
-                        value={formData.LoaiPC}
-                        onChange={(e) => setFormData({ ...formData, LoaiPC: e.target.value })}
+                        className={`h-10 ${errors.LoaiPC ? "border-red-500" : ""}`}
+                        {...register("LoaiPC")}
                       />
+                      {errors.LoaiPC && (
+                        <p className="text-xs text-red-500">{errors.LoaiPC.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -166,12 +189,12 @@ export function AllowanceTable({
                         id="SoTien"
                         type="number"
                         placeholder={t("VD: 500000")}
-                        className="h-10"
-                        value={formData.SoTien}
-                        onChange={(e) =>
-                          setFormData({ ...formData, SoTien: Number(e.target.value) })
-                        }
+                        className={`h-10 ${errors.SoTien ? "border-red-500" : ""}`}
+                        {...register("SoTien", { valueAsNumber: true })}
                       />
+                      {errors.SoTien && (
+                        <p className="text-xs text-red-500">{errors.SoTien.message}</p>
+                      )}
                     </Field>
                   </FieldGroup>
 
@@ -183,7 +206,7 @@ export function AllowanceTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaPC || !formData.LoaiPC || formData.SoTien <= 0}>
+                      disabled={isSubmitting}>
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>

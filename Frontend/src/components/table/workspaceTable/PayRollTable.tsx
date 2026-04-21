@@ -50,6 +50,9 @@ import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 import { PayRollServices } from "@/services/payRollServices/payRollServices";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PayRollInputSchema } from "@/types/payRollTypes/payRollTypes";
 
 export function PayRollTable({
   data,
@@ -63,16 +66,7 @@ export function PayRollTable({
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [formData, setFormData] = React.useState<PayRollInput>({
-    MaBL: "",
-    MaNV: "",
-    MaKT: "",
-    MaPC: "",
-    MaLCB: "",
-    MaGL: "",
-    Thang: "",
-    SoNgayLam: 26,
-  });
+  
   const [filters, setFilters] = React.useState({
     keyword: "",
     Thang: "",
@@ -80,6 +74,27 @@ export function PayRollTable({
   });
   const { createPayRolls, searchPayRolls } = usePayRollStore();
   const { permissions } = useAuthorizeStore();
+  const [createOpen, setCreateOpen] = React.useState(false);
+
+  // Form for creation
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<PayRollInput>({
+    resolver: zodResolver(PayRollInputSchema) as any,
+    defaultValues: {
+      MaBL: "",
+      MaNV: "",
+      MaKT: "",
+      MaPC: "",
+      MaLCB: "",
+      MaGL: "",
+      Thang: "",
+      SoNgayLam: 0,
+    },
+  });
 
   // Debounce auto-search — same logic as AccountsTable
   useEffect(() => {
@@ -106,9 +121,14 @@ export function PayRollTable({
     }
   };
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await createPayRolls(formData);
+  const onSubmit = async (data: PayRollInput) => {
+    try {
+      await createPayRolls(data);
+      setCreateOpen(false);
+      reset();
+    } catch {
+      // store handles toast
+    }
   };
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -156,38 +176,42 @@ export function PayRollTable({
                 onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
               />
             </div>
-              {/* Export only visible for Admin/HR */}
-              {!isEmployee && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleExport}
-                  className="h-9 w-9 p-0"
-                  title={t("Xuất Excel")}>
-                  <IconFileSpreadsheet size={18} />
-                </Button>
-              )}
-            </div>
+            {/* Export only visible for Admin/HR */}
+            {!isEmployee && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExport}
+                className="h-9 w-9 p-0"
+                title={t("Xuất Excel")}>
+                <IconFileSpreadsheet size={18} />
+              </Button>
+            )}
+          </div>
 
           <TableColumnFilter table={table} />
 
           {/* Create button — only for Admin/HR */}
           {!isEmployee && canCreate(permissions) && (
-            <Dialog>
+            <Dialog open={createOpen} onOpenChange={(open) => {
+              setCreateOpen(open);
+              if (!open) reset();
+            }}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() =>
-                    setFormData({ MaBL: "", MaNV: "", MaKT: "", MaPC: "", MaLCB: "", MaGL: "", Thang: "", SoNgayLam: 26 })
-                  }>
+                  onClick={() => {
+                    reset({ MaBL: "", MaNV: "", MaKT: "", MaPC: "", MaLCB: "", MaGL: "", Thang: "", SoNgayLam: 0 });
+                    setCreateOpen(true);
+                  }}>
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
-                <form onSubmit={handleCreate} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
                       {t("Tạo bảng lương")}
@@ -203,10 +227,12 @@ export function PayRollTable({
                       <Input
                         id="MaBL"
                         placeholder={t("BLxxx")}
-                        className="h-10"
-                        value={formData.MaBL}
-                        onChange={(e) => setFormData({ ...formData, MaBL: e.target.value })}
+                        className={`h-10 ${errors.MaBL ? "border-red-500" : ""}`}
+                        {...register("MaBL")}
                       />
+                      {errors.MaBL && (
+                        <p className="text-xs text-red-500">{errors.MaBL.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -214,10 +240,12 @@ export function PayRollTable({
                       <Input
                         id="MaNV"
                         placeholder={t("NVxxx")}
-                        className="h-10"
-                        value={formData.MaNV}
-                        onChange={(e) => setFormData({ ...formData, MaNV: e.target.value })}
+                        className={`h-10 ${errors.MaNV ? "border-red-500" : ""}`}
+                        {...register("MaNV")}
                       />
+                      {errors.MaNV && (
+                        <p className="text-xs text-red-500">{errors.MaNV.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -225,10 +253,12 @@ export function PayRollTable({
                       <Input
                         id="MaKT"
                         placeholder={t("KTxxx")}
-                        className="h-10"
-                        value={formData.MaKT}
-                        onChange={(e) => setFormData({ ...formData, MaKT: e.target.value })}
+                        className={`h-10 ${errors.MaKT ? "border-red-500" : ""}`}
+                        {...register("MaKT")}
                       />
+                      {errors.MaKT && (
+                        <p className="text-xs text-red-500">{errors.MaKT.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -236,10 +266,12 @@ export function PayRollTable({
                       <Input
                         id="MaPC"
                         placeholder={t("PCxxx")}
-                        className="h-10"
-                        value={formData.MaPC}
-                        onChange={(e) => setFormData({ ...formData, MaPC: e.target.value })}
+                        className={`h-10 ${errors.MaPC ? "border-red-500" : ""}`}
+                        {...register("MaPC")}
                       />
+                      {errors.MaPC && (
+                        <p className="text-xs text-red-500">{errors.MaPC.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -247,10 +279,12 @@ export function PayRollTable({
                       <Input
                         id="MaLCB"
                         placeholder={t("LCBxxx")}
-                        className="h-10"
-                        value={formData.MaLCB}
-                        onChange={(e) => setFormData({ ...formData, MaLCB: e.target.value })}
+                        className={`h-10 ${errors.MaLCB ? "border-red-500" : ""}`}
+                        {...register("MaLCB")}
                       />
+                      {errors.MaLCB && (
+                        <p className="text-xs text-red-500">{errors.MaLCB.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -258,10 +292,12 @@ export function PayRollTable({
                       <Input
                         id="MaGL"
                         placeholder={t("GLxxx")}
-                        className="h-10"
-                        value={formData.MaGL}
-                        onChange={(e) => setFormData({ ...formData, MaGL: e.target.value })}
+                        className={`h-10 ${errors.MaGL ? "border-red-500" : ""}`}
+                        {...register("MaGL")}
                       />
+                      {errors.MaGL && (
+                        <p className="text-xs text-red-500">{errors.MaGL.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -269,10 +305,12 @@ export function PayRollTable({
                       <Input
                         id="Thang"
                         type="month"
-                        className="h-10"
-                        value={formData.Thang}
-                        onChange={(e) => setFormData({ ...formData, Thang: e.target.value })}
+                        className={`h-10 ${errors.Thang ? "border-red-500" : ""}`}
+                        {...register("Thang")}
                       />
+                      {errors.Thang && (
+                        <p className="text-xs text-red-500">{errors.Thang.message}</p>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="SoNgayLam">{t("Số ngày công")}</Label>
@@ -280,10 +318,12 @@ export function PayRollTable({
                         id="SoNgayLam"
                         type="number"
                         placeholder="26"
-                        className="h-10"
-                        value={formData.SoNgayLam}
-                        onChange={(e) => setFormData({ ...formData, SoNgayLam: Number(e.target.value) })}
+                        className={`h-10 ${errors.SoNgayLam ? "border-red-500" : ""}`}
+                        {...register("SoNgayLam", { valueAsNumber: true })}
                       />
+                      {errors.SoNgayLam && (
+                        <p className="text-xs text-red-500">{errors.SoNgayLam.message}</p>
+                      )}
                     </Field>
                   </FieldGroup>
 
@@ -295,10 +335,7 @@ export function PayRollTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={
-                        !formData.MaBL || !formData.MaNV || !formData.MaKT ||
-                        !formData.MaPC || !formData.MaLCB || !formData.MaGL || !formData.Thang || !formData.SoNgayLam
-                      }>
+                      disabled={isSubmitting}>
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>

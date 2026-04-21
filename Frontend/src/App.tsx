@@ -17,12 +17,12 @@ import BasicSalary from "./components/workspaces/BasicSalaryComponents";
 import Allowances from "./components/workspaces/AllowancesComponents";
 import Deductions from "./components/workspaces/DeductionsComponents";
 
-{/*import managements*/}
+{/*import managements*/ }
 import Accounts from "./components/managements/AccountsComponents";
 import Roles from "./components/managements/RolesComponents";
 import Permissions from "./components/managements/PermissionsComponents";
 
-{/*import systems*/}
+{/*import systems*/ }
 import GetHelp from "./components/systems/GetHelpComponents";
 import Settings from "./components/systems/SettingsComponents";
 import Profile from "./components/systems/profile/proFileComponent";
@@ -33,8 +33,8 @@ import ForbiddenPage from "./components/auth/ForbiddenPage";
 function App() {
   return (
     <>
-      <Toaster 
-        richColors 
+      <Toaster
+        richColors
         toastOptions={{
           classNames: {
             error: 'bg-[#cd3536] text-white border-[#cd3536]',

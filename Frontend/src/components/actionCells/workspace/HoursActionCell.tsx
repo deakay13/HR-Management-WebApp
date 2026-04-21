@@ -117,7 +117,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                     <Input
                       id="SoGioLam"
                       type="number"
-                      className="h-10"
+                      className={`h-10 ${errors.SoGioLam ? "border-red-500" : ""}`}
                       placeholder={t("VD: 8")}
                       {...register("SoGioLam")}
                       onChange={(e) => {
@@ -127,7 +127,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       }}
                     />
                     {errors.SoGioLam && (
-                      <p className="text-red-500 text-sm">{errors.SoGioLam.message}</p>
+                      <p className="text-red-500 text-xs">{errors.SoGioLam.message}</p>
                     )}
                   </Field>
 
@@ -137,7 +137,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       id="SoNgayLam"
                       type="number"
                       placeholder="26"
-                      className="h-10"
+                      className={`h-10 ${errors.SoNgayLam ? "border-red-500" : ""}`}
                       {...register("SoNgayLam")}
                       onChange={(e) => {
                         const val = Number(e.target.value);
@@ -146,7 +146,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       }}
                     />
                     {errors.SoNgayLam && (
-                      <p className="text-red-500 text-sm">{errors.SoNgayLam.message}</p>
+                      <p className="text-red-500 text-xs">{errors.SoNgayLam.message}</p>
                     )}
                   </Field>
 

@@ -5,15 +5,15 @@ export const AllowanceInputSchema = z.object({
   MaPC: z
     .string()
     .min(1, "Mã phụ cấp không được để trống")
-    .regex(/^PC\d{3}$/, "Mã phải dạng PCxxx"),
+    .regex(/^PC\d{3,}$/, "Mã phải bắt đầu bằng PC và có ít nhất 3 chữ số"),
 
   LoaiPC: z
     .string()
     .min(1, "Loại phụ cấp không được để trống"),
 
   SoTien: z.coerce
-    .number() 
-    .min(10000, "Số tiền phải lớn hơn 0"),
+    .number({ message: "Số tiền phải là một con số" }) 
+    .min(10000, "Số tiền phải ít nhất là 10.000 VNĐ"),
 });
 
 /* OUTPUT (DATA TỪ API)*/

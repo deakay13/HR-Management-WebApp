@@ -48,6 +48,10 @@ import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { DeductionInputSchema, type DeductionInput } from "@/types/payRollTypes/deductionTypes";
+
 export function DeductionTable({
   data,
   loading,
@@ -60,18 +64,31 @@ export function DeductionTable({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [formData, setFormData] = React.useState({ MaKT: "", LoaiKT: "", PhanTram: 0 });
+  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+
   const { createDeduction } = useDeductionStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<DeductionInput>({
+    resolver: zodResolver(DeductionInputSchema) as any,
+    defaultValues: {
+      MaKT: "",
+      LoaiKT: "",
+      PhanTram: 0,
+    },
+  });
+
+  const onSubmit = async (data: DeductionInput) => {
     try {
-      await createDeduction(formData);
+      await createDeduction(data);
       setCreateOpen(false);
-      setFormData({ MaKT: "", LoaiKT: "", PhanTram: 0 });
+      reset();
     } catch {
       // store handles toast
     }
@@ -111,13 +128,16 @@ export function DeductionTable({
 
           {/* Create button */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+            <Dialog open={createOpen} onOpenChange={(open) => {
+              setCreateOpen(open);
+              if (!open) reset();
+            }}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setFormData({ MaKT: "", LoaiKT: "", PhanTram: 0 });
+                    reset({ MaKT: "", LoaiKT: "", PhanTram: 0 });
                     setCreateOpen(true);
                   }}>
                   <IconPlus />
@@ -126,7 +146,7 @@ export function DeductionTable({
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-md">
-                <form onSubmit={handleCreate} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
                       {t("Tạo khấu trừ")}
@@ -141,10 +161,12 @@ export function DeductionTable({
                       <Input
                         id="MaKT"
                         placeholder={t("VD: KT001")}
-                        className="h-10"
-                        value={formData.MaKT}
-                        onChange={(e) => setFormData({ ...formData, MaKT: e.target.value })}
+                        className={`h-10 ${errors.MaKT ? "border-red-500" : ""}`}
+                        {...register("MaKT")}
                       />
+                      {errors.MaKT && (
+                        <p className="text-xs text-red-500">{errors.MaKT.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -152,10 +174,12 @@ export function DeductionTable({
                       <Input
                         id="LoaiKT"
                         placeholder={t("VD: Thuế TNCN")}
-                        className="h-10"
-                        value={formData.LoaiKT}
-                        onChange={(e) => setFormData({ ...formData, LoaiKT: e.target.value })}
+                        className={`h-10 ${errors.LoaiKT ? "border-red-500" : ""}`}
+                        {...register("LoaiKT")}
                       />
+                      {errors.LoaiKT && (
+                        <p className="text-xs text-red-500">{errors.LoaiKT.message}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -164,12 +188,12 @@ export function DeductionTable({
                         id="PhanTram"
                         type="number"
                         placeholder={t("VD: 10")}
-                        className="h-10"
-                        value={formData.PhanTram}
-                        onChange={(e) =>
-                          setFormData({ ...formData, PhanTram: Number(e.target.value) })
-                        }
+                        className={`h-10 ${errors.PhanTram ? "border-red-500" : ""}`}
+                        {...register("PhanTram", { valueAsNumber: true })}
                       />
+                      {errors.PhanTram && (
+                        <p className="text-xs text-red-500">{errors.PhanTram.message}</p>
+                      )}
                     </Field>
                   </FieldGroup>
 
@@ -181,7 +205,7 @@ export function DeductionTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaKT || !formData.LoaiKT || formData.PhanTram <= 0}>
+                      disabled={isSubmitting}>
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
