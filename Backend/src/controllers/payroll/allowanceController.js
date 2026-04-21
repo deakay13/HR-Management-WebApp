@@ -81,20 +81,20 @@ export const getAllowances = async (req, res) => {
 
         const options = {};
         if (limit !== null) {
-        options.limit = limit;
-        options.offset = offset;
+            options.limit = limit;
+            options.offset = offset;
         }
 
         const { count, rows } = await PhuCap.findAndCountAll(options);
 
         return res.status(200).json({
-        totalItems: count,
-        totalPages: limit ? Math.ceil(count / finalSize) : 1,
-        currentPage: page,
-        pageSize: finalSize,
-        data: rows,
+            totalItems: count,
+            totalPages: limit ? Math.ceil(count / finalSize) : 1,
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows,
         });
-    
+
     } catch (error) {
         console.error("Lỗi không tìm thấy danh sách", error);
         return res.status(500).json({ message: "Lỗi hệ thống" });

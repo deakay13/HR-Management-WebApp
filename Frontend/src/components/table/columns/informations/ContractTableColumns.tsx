@@ -4,6 +4,8 @@ import type { Contract } from "@/types/informationTypes/contractTypes";
 import { ContractActionCell } from "@/components/actionCells/informations/ContractActionCell";
 import { useTranslation } from "react-i18next";
 
+import { getImageUrl, openBase64InNewTab } from "@/utils/imageUtils";
+
 function H({ k }: { k: string }) {
   const { t } = useTranslation();
   return <>{t(k)}</>;
@@ -34,16 +36,25 @@ export const contractColumns: ColumnDef<Contract>[] = [
     id: "HinhAnhHopDong",
     header: () => <H k="Hình Ảnh" />,
     cell: ({ row }) => {
-      const imgPath = row.original.HinhAnhHopDong;
-      if (!imgPath) return "—";
+      const imgData = row.original.HinhAnhHopDong;
+      if (!imgData) return "—";
+
+      const handleView = (e: React.MouseEvent) => {
+        e.preventDefault();
+        if (imgData.startsWith("data:")) {
+          openBase64InNewTab(imgData);
+        } else {
+          // Legacy path
+          window.open(getImageUrl(imgData), "_blank");
+        }
+      };
+
       return (
-        <a
-          href={`http://localhost:3000${imgPath}`}
-          target="_blank"
-          rel="noreferrer"
-          className="text-blue-500 hover:underline">
+        <button
+          onClick={handleView}
+          className="text-blue-500 hover:underline cursor-pointer border-none bg-transparent p-0 font-medium">
           <H k="Xem ảnh" />
-        </a>
+        </button>
       );
     },
   },

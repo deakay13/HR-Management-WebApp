@@ -56,7 +56,7 @@ export const createDeduction = async (req, res) => {
         if (existType) {
             return res.status(400).json({ message: "Loại khấu trừ đã tồn tại" });
         }
-        
+
 
         const deduction = await KhauTru.create({ MaKT, LoaiKT, PhanTram });
 
@@ -77,18 +77,18 @@ export const getDeductions = async (req, res) => {
 
         const options = {};
         if (limit !== null) {
-        options.limit = limit;
-        options.offset = offset;
+            options.limit = limit;
+            options.offset = offset;
         }
 
         const { count, rows } = await KhauTru.findAndCountAll(options);
 
         return res.status(200).json({
-        totalItems: count,
-        totalPages: limit ? Math.ceil(count / finalSize) : 1,
-        currentPage: page,
-        pageSize: finalSize,
-        data: rows,
+            totalItems: count,
+            totalPages: limit ? Math.ceil(count / finalSize) : 1,
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows,
         });
 
     } catch (error) {
@@ -136,7 +136,7 @@ export const updateDeduction = async (req, res) => {
             return res.status(400).json({ errors: errorMessages });
         }
         const { ID } = req.params;
-        
+
         if (!ID) {
             return res.status(400).json({ message: "Thiếu ID để cập nhật khấu trừ" });
         }

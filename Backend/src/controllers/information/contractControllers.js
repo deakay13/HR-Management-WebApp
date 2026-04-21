@@ -34,7 +34,7 @@ const getContractById = async (req, res) => {
 const createContract = async (req, res) => {
     try {
         const { MaHopDong, MaNV, LoaiHD, NgayBatDau, NgayKetThuc } = req.body;
-        const HinhAnhHopDong = req.file ? `/uploads/hopdong/${req.file.filename}` : null;
+        const HinhAnhHopDong = req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : null;
 
         const Employee = await Employees.findByPk(MaNV);
         if (!Employee) return res.status(400).json({ message: 'Mã nhân viên không tồn tại' });
@@ -52,7 +52,7 @@ const updateContract = async (req, res) => {
         const contract = await Contract.findByPk(req.params.id);
         if (!contract) return res.status(404).json({ message: 'Hợp đồng không tồn tại' });
 
-        const HinhAnhHopDong = req.file ? `/uploads/hopdong/${req.file.filename}` : contract.HinhAnhHopDong;
+        const HinhAnhHopDong = req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : contract.HinhAnhHopDong;
 
         const { MaNV } = req.body;
         if (MaNV) {

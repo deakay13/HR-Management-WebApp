@@ -3,7 +3,7 @@ import { Pagination } from '../../utils/paginations.js';
 import { z } from "zod";
 
 const createBaseSalarySchema = z.object({
-    MaLCB: z    
+    MaLCB: z
         .string()
         .min(1, "Mã lương cơ bản không được để trống")
         .regex(/^LCB\d{3}$/, "Mã lương cơ bản phải có dạng LCBxxx"),
@@ -15,7 +15,7 @@ const createBaseSalarySchema = z.object({
 });
 // const updateLuongCoBanSchema
 const updateBaseSalarySchema = z.object({
-    LuongCB:z.coerce
+    LuongCB: z.coerce
         .number("Lương cơ bản phải là số")
         .min(1000000, "Lương cơ bản phải lớn hơn 1.000.000")
         .max(1000000000, "Lương cơ bản không được vượt quá 1.000.000.000"),
@@ -118,18 +118,18 @@ export const getBaseSalaries = async (req, res) => {
 
         const options = {};
         if (limit !== null) {
-        options.limit = limit;
-        options.offset = offset;
+            options.limit = limit;
+            options.offset = offset;
         }
 
         const { count, rows } = await LuongCoBan.findAndCountAll(options);
 
         return res.status(200).json({
-        totalItems: count,
-        totalPages: limit ? Math.ceil(count / finalSize) : 1,
-        currentPage: page,
-        pageSize: finalSize,
-        data: rows,
+            totalItems: count,
+            totalPages: limit ? Math.ceil(count / finalSize) : 1,
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows,
         });
 
     } catch (error) {

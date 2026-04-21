@@ -46,6 +46,7 @@ import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
 import { IconCamera, IconLoader2 } from "@tabler/icons-react";
 import { useRef } from "react";
 import { toast } from "sonner";
+import { getImageUrl } from "@/utils/imageUtils";
 
 const ProfileComponent = () => {
     const { account, avatarUrl, setAvatarUrl } = useAuthStore();
@@ -72,8 +73,7 @@ const ProfileComponent = () => {
                     setEmployee(data);
                     // Initialize global avatar URL
                     if (data?.HinhAnh) {
-                        const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
-                        setAvatarUrl(`${baseUrl}${data.HinhAnh}?t=${Date.now()}`);
+                        setAvatarUrl(getImageUrl(data.HinhAnh));
                     }
                 } catch (error) {
                     console.error("Failed to fetch employee details:", error);
@@ -128,16 +128,15 @@ const ProfileComponent = () => {
 
             // Sync avatar to global store so NavUserMini updates instantly
             if (updatedData?.HinhAnh) {
-                const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
-                // Add cache-buster so browser doesn't serve the old cached image
-                setAvatarUrl(`${baseUrl}${updatedData.HinhAnh}?t=${Date.now()}`);
+                setAvatarUrl(getImageUrl(updatedData.HinhAnh));
             }
 
             toast.success(t("Cập nhật ảnh đại diện thành công!"));
             handleClosePreview();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Failed to upload avatar:", error);
-            toast.error(t("Không thể tải ảnh lên. Vui lòng thử lại."));
+            const message = error.response?.data?.message || error.message || t("Không thể tải ảnh lên. Vui lòng thử lại.");
+            toast.error(message);
         } finally {
             setIsUploading(false);
         }
@@ -270,7 +269,7 @@ const ProfileComponent = () => {
                         <div className="absolute -inset-1 rounded-full bg-white/20 blur group-hover:bg-white/40 transition-smooth" />
                         <Avatar className="h-32 w-32 border-4 border-white/20 shadow-2xl relative overflow-hidden">
                             <AvatarImage 
-                                src={avatarUrl ?? (employee?.HinhAnh ? `${(import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "")}${employee.HinhAnh}` : "")} 
+                                src={avatarUrl || getImageUrl(employee?.HinhAnh)} 
                                 alt={account?.TenTaiKhoan} 
                                 className="object-cover" 
                             />
@@ -417,7 +416,7 @@ const ProfileComponent = () => {
                                 <IconId className="size-4" />
                                 <span className="text-sm">{t("Mã nhân viên")}</span>
                             </div>
-                            <span className="font-mono text-sm text-foreground">
+                            <span className="font-semibold text-foreground">
                                 {employee?.MaNV || (employee as any)?.maNV}
                             </span>
                         </div>
@@ -463,7 +462,7 @@ const ProfileComponent = () => {
                             onClick={() => fileInputRef.current?.click()}
                         >
                             <img 
-                                src={previewUrl || (employee?.HinhAnh ? `${(import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "")}${employee.HinhAnh}` : "")} 
+                                src={previewUrl || getImageUrl(employee?.HinhAnh)} 
                                 alt="Preview" 
                                 className="h-full w-full object-cover"
                             />
@@ -524,38 +523,36 @@ const ProfileComponent = () => {
                                     {errors.HoVaTen && <p className="text-xs text-red-500">{errors.HoVaTen}</p>}
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {/* Gender */}
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="GioiTinh">{t("Giới Tính")}</Label>
-                                        <Select 
-                                            value={editFormData?.GioiTinh} 
-                                            onValueChange={(val) => setEditFormData(prev => prev ? {...prev, GioiTinh: val as any} : null)}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder={t("Chọn giới tính")} />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="Nam">{t("Nam")}</SelectItem>
-                                                <SelectItem value="Nữ">{t("Nữ")}</SelectItem>
-                                                <SelectItem value="Khác">{t("Khác")}</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        {errors.GioiTinh && <p className="text-xs text-red-500">{errors.GioiTinh}</p>}
-                                    </div>
+                                 {/* Gender */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="GioiTinh">{t("Giới Tính")}</Label>
+                                    <Select 
+                                        value={editFormData?.GioiTinh} 
+                                        onValueChange={(val) => setEditFormData(prev => prev ? {...prev, GioiTinh: val as any} : null)}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder={t("Chọn giới tính")} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="Nam">{t("Nam")}</SelectItem>
+                                            <SelectItem value="Nữ">{t("Nữ")}</SelectItem>
+                                            <SelectItem value="Khác">{t("Khác")}</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.GioiTinh && <p className="text-xs text-red-500">{errors.GioiTinh}</p>}
+                                </div>
 
-                                    {/* Date of Birth */}
-                                    <div className="grid gap-2">
-                                        <Label htmlFor="NgaySinh">{t("Ngày Sinh")}</Label>
-                                        <Input 
-                                            id="NgaySinh" 
-                                            type="date"
-                                            value={editFormData?.NgaySinh || ""} 
-                                            onChange={(e) => setEditFormData(prev => prev ? {...prev, NgaySinh: e.target.value} : null)}
-                                            className={errors.NgaySinh ? "border-red-500" : ""}
-                                        />
-                                        {errors.NgaySinh && <p className="text-xs text-red-500">{errors.NgaySinh}</p>}
-                                    </div>
+                                {/* Date of Birth */}
+                                <div className="grid gap-2">
+                                    <Label htmlFor="NgaySinh">{t("Ngày Sinh")}</Label>
+                                    <Input 
+                                        id="NgaySinh" 
+                                        type="date"
+                                        value={editFormData?.NgaySinh || ""} 
+                                        onChange={(e) => setEditFormData(prev => prev ? {...prev, NgaySinh: e.target.value} : null)}
+                                        className={errors.NgaySinh ? "border-red-500" : ""}
+                                    />
+                                    {errors.NgaySinh && <p className="text-xs text-red-500">{errors.NgaySinh}</p>}
                                 </div>
                             </>
                         )}

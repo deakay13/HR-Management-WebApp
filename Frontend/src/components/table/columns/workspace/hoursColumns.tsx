@@ -24,6 +24,21 @@ function HeaderTongSoGio() {
   return <div className="w-30 text-center">{t("Tổng Giờ Chuẩn")}</div>;
 }
 
+function CellSoGioLam({ count }: { count: number }) {
+  const { t } = useTranslation();
+  return <div className="w-30 text-center h-8">{t("{{count}}h/ngày", { count })}</div>;
+}
+
+function CellSoNgayLam({ count }: { count: number }) {
+  const { t } = useTranslation();
+  return <div className="w-30 text-center h-8">{t("{{count}} ngày", { count })}</div>;
+}
+
+function CellTongSoGio({ count }: { count: number }) {
+  const { t } = useTranslation();
+  return <div className="w-30 text-center h-8 font-semibold">{t("{{count}}h/tháng", { count })}</div>;
+}
+
 export const columns: ColumnDef<Hours>[] = [
   {
     accessorKey: "MaGL",
@@ -35,23 +50,17 @@ export const columns: ColumnDef<Hours>[] = [
   {
     accessorKey: "SoGioLam",
     header: () => <HeaderSoGioLam />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.SoGioLam}h/ngày</div>
-    ),
+    cell: ({ row }) => <CellSoGioLam count={row.original.SoGioLam} />,
   },
   {
     accessorKey: "SoNgayLam",
     header: () => <HeaderSoNgayLam />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.SoNgayLam} ngày</div>
-    ),
+    cell: ({ row }) => <CellSoNgayLam count={row.original.SoNgayLam} />,
   },
   {
     accessorKey: "TongSoGio",
     header: () => <HeaderTongSoGio />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8 font-semibold">{row.original.TongSoGio}h/tháng</div>
-    ),
+    cell: ({ row }) => <CellTongSoGio count={row.original.TongSoGio} />,
   },
   {
     id: "actions",

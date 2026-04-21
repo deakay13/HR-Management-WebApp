@@ -6,12 +6,12 @@ import ExcelJS from 'exceljs';
 const getAllEmployees = async (req, res) => {
   try {
     const employees = await Employee.findAll({
-      include: [{ 
+      include: [{
         model: Department,
         as: 'PhongBan',
         required: false,
         attributes: ['MaPB', 'TenPB']
-      }] 
+      }]
     });
     res.status(200).json(employees);
   } catch (error) {
@@ -36,7 +36,7 @@ const searchEmployees = async (req, res) => {
       {
         searchFields: ["MaNV", "HoVaTen", "SDT", "DiaChi", "$PhongBan.TenPB$"],
         exactFields: ["MaPB", "GioiTinh"],
-        include: [{ 
+        include: [{
           model: Department,
           as: 'PhongBan',
           required: false,
@@ -57,12 +57,12 @@ const searchEmployees = async (req, res) => {
 const exportEmployeesToExcel = async (req, res) => {
   try {
     const employees = await Employee.findAll({
-      include: [{ 
+      include: [{
         model: Department,
         as: 'PhongBan',
         required: false,
         attributes: ['MaPB', 'TenPB']
-      }] 
+      }]
     });
 
     const workbook = new ExcelJS.Workbook();
@@ -151,7 +151,7 @@ const getEmployeeById = async (req, res) => {
         model: Department,
         as: 'PhongBan',
         required: false,
-        attributes: ['MaPB', 'TenPB'] 
+        attributes: ['MaPB', 'TenPB']
       }]
     });
     if (!employee) return res.status(404).json({ message: 'Nhân viên không tồn tại' });
@@ -163,22 +163,22 @@ const getEmployeeById = async (req, res) => {
 };
 
 const createEmployee = async (req, res) => {
-    try {
-        const { MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT } = req.body;
-        const HinhAnh = req.file ? `/uploads/avatars/${req.file.filename}` : null;
+  try {
+    const { MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT } = req.body;
+    const HinhAnh = req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : null;
 
-        const department = await Department.findByPk(MaPB);
-        if (!department) {
-          return res.status(400).json({ message: 'Mã phòng ban không tồn tại' });
-        }
-
-        const employee = await Employee.create({ 
-            MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT, HinhAnh 
-        });
-        res.status(201).json(employee);
-    } catch (error) {
-        res.status(400).json({ message: 'Lỗi khi tạo nhân viên: ' + error.message });
+    const department = await Department.findByPk(MaPB);
+    if (!department) {
+      return res.status(400).json({ message: 'Mã phòng ban không tồn tại' });
     }
+
+    const employee = await Employee.create({
+      MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT, HinhAnh
+    });
+    res.status(201).json(employee);
+  } catch (error) {
+    res.status(400).json({ message: 'Lỗi khi tạo nhân viên: ' + error.message });
+  }
 };
 
 const updateEmployee = async (req, res) => {
@@ -190,7 +190,7 @@ const updateEmployee = async (req, res) => {
 
     const updateData = { ...req.body };
     if (req.file) {
-      updateData.HinhAnh = `/uploads/avatars/${req.file.filename}`;
+      updateData.HinhAnh = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
     }
 
     await employee.update(updateData);
@@ -213,4 +213,4 @@ const deleteEmployee = async (req, res) => {
   }
 };
 
-export { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee, searchEmployees, exportEmployeesToExcel };
+export { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee, searchEmployees, exportEmployeesToExcel };

@@ -7,7 +7,7 @@ const HopDong = sequelize.define('HopDong', {
     LoaiHD: { type: DataTypes.STRING, allowNull: false },
     NgayBatDau: { type: DataTypes.DATEONLY, allowNull: false },
     NgayKetThuc: { type: DataTypes.DATEONLY, allowNull: false},
-    HinhAnhHopDong: { type: DataTypes.STRING, allowNull: true }, 
+    HinhAnhHopDong: { type: DataTypes.TEXT('long'), allowNull: true }, 
 }, {
     tableName: 'HopDong',
     timestamps: false

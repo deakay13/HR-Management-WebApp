@@ -19,6 +19,15 @@ function HeaderSoTien() {
   return <div className="w-30 text-center">{t("Số Tiền")}</div>;
 }
 
+function CellSoTien({ amount }: { amount: number }) {
+  const { t } = useTranslation();
+  return (
+    <div className="w-30 text-center h-8">
+      {t("{{count}} VND", { count: amount.toLocaleString("vi-VN") })}
+    </div>
+  );
+}
+
 export const columns: ColumnDef<Allowance>[] = [
   {
     accessorKey: "MaPC",
@@ -37,11 +46,7 @@ export const columns: ColumnDef<Allowance>[] = [
   {
     accessorKey: "SoTien",
     header: () => <HeaderSoTien />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">
-        {Number(row.original.SoTien || 0).toLocaleString("vi-VN")} VND
-      </div>
-    ),
+    cell: ({ row }) => <CellSoTien amount={Number(row.original.SoTien || 0)} />,
   },
   {
     id: "actions",

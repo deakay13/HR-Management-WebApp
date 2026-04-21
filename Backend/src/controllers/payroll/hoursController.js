@@ -78,18 +78,18 @@ export const getHours = async (req, res) => {
 
         const options = {};
         if (limit !== null) {
-        options.limit = limit;
-        options.offset = offset;
+            options.limit = limit;
+            options.offset = offset;
         }
 
         const { count, rows } = await GioLam.findAndCountAll(options);
 
         return res.status(200).json({
-        totalItems: count,
-        totalPages: limit ? Math.ceil(count / finalSize) : 1,
-        currentPage: page,
-        pageSize: finalSize,
-        data: rows,
+            totalItems: count,
+            totalPages: limit ? Math.ceil(count / finalSize) : 1,
+            currentPage: page,
+            pageSize: finalSize,
+            data: rows,
         });
 
     } catch (error) {

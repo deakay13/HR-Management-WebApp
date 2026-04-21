@@ -9,6 +9,33 @@ function H({ k }: { k: string }) {
   return <div className="w-30 text-center">{t(k)}</div>;
 }
 
+function CellTongGioCong({ dailyHours, days }: { dailyHours: number; days: number }) {
+  const { t } = useTranslation();
+  return (
+    <div className="w-40 text-center h-8">
+      {t("{{count}}h", { count: dailyHours * days })}
+    </div>
+  );
+}
+
+function CellLuongCB({ amount, code }: { amount: number; code: string }) {
+  const { t } = useTranslation();
+  return (
+    <div className="w-40 text-center h-8">
+      {t("{{count}} VND", { count: amount.toLocaleString("vi-VN") })} ({code})
+    </div>
+  );
+}
+
+function CellTongLuong({ amount }: { amount: number }) {
+  const { t } = useTranslation();
+  return (
+    <div className="w-40 text-center h-8 font-medium">
+      {t("{{count}} VND", { count: amount.toLocaleString("vi-VN") })}
+    </div>
+  );
+}
+
 export const columns: ColumnDef<PayRoll>[] = [
   {
     accessorKey: "MaBL",
@@ -60,26 +87,12 @@ export const columns: ColumnDef<PayRoll>[] = [
   {
     id: "TongGioCong",
     header: () => <H k="Tổng Giờ Công" />,
-    cell: ({ row }) => {
-      const dailyHours = Number(row.original.TongGioLam?.SoGioLam || 0);
-      const days = Number(row.original.SoNgayLam || 0);
-      return (
-        <div className="w-40 text-center h-8">
-          {dailyHours * days}h
-        </div>
-      );
-    },
+    cell: ({ row }) => <CellTongGioCong dailyHours={Number(row.original.TongGioLam?.SoGioLam || 0)} days={Number(row.original.SoNgayLam || 0)} />,
   },
   {
     accessorKey: "MaLCB",
     header: () => <H k="Mã Lương Cơ Bản" />,
-    cell: ({ row }) => (
-      <div className="w-40 text-center h-8">
-        {row.original.LuongCoBan 
-          ? `${Number(row.original.LuongCoBan.LuongCB || 0).toLocaleString("vi-VN")} VND (${row.original.MaLCB})` 
-          : row.original.MaLCB}
-      </div>
-    ),
+    cell: ({ row }) => <CellLuongCB amount={Number(row.original.LuongCoBan?.LuongCB || 0)} code={row.original.MaLCB} />,
   },
   {
     accessorKey: "Thang",
@@ -98,14 +111,7 @@ export const columns: ColumnDef<PayRoll>[] = [
   {
     accessorKey: "TongLuong",
     header: () => <H k="Tổng Lương" />,
-    cell: ({ row }) => {
-      const amount = Number(row.original.TongLuong || 0);
-      return (
-        <div className="w-30 text-center h-8 font-medium">
-          {amount.toLocaleString("vi-VN")} VND
-        </div>
-      );
-    },
+    cell: ({ row }) => <CellTongLuong amount={Number(row.original.TongLuong || 0)} />,
   },
   {
     id: "actions",
