@@ -65,10 +65,18 @@ const resources = {
       Xoá: "Delete",
       "Lưu thay đổi": "Save Changes",
       "Bạn có chắc muốn xoá không?": "Are you sure you want to delete?",
+<<<<<<< HEAD
+      "Mã": "Code",
+      "Lương": "Salary",
+      "Loại": "Type",
+      "Tháng": "Month",
+      "Tháng Trong Năm": "Month of Year",
+=======
       Mã: "Code",
       Lương: "Salary",
       Loại: "Type",
       Tháng: "Month",
+>>>>>>> b9c54ad0ffff0bc8133442008bc43eab6cbd8072
       "Số giờ": "Hours",
       giờ: "hours",
       // ─── Employees columns & form ────────────────────────────────
@@ -125,6 +133,14 @@ const resources = {
       "Mã GL": "Hours ID",
       "Số Giờ Làm": "Work Hours",
       "Mã Giờ Làm": "Hours ID",
+<<<<<<< HEAD
+      "Sửa Giờ Làm": "Edit Work Hours",
+      "Xoá Giờ Làm": "Delete Work Hours",
+      "{{count}}h/ngày": "{{count}}h/day",
+      "{{count}} ngày": "{{count}} days",
+      "{{count}}h/tháng": "{{count}}h/month",
+=======
+>>>>>>> b9c54ad0ffff0bc8133442008bc43eab6cbd8072
       // ─── Deductions ──────────────────────────────────────────────
       "Mã KT": "Deduct. ID",
       "Loại Khấu Trừ": "Deduction Type",
@@ -149,6 +165,8 @@ const resources = {
       "Tính lại lương": "Recalculate",
       "Sửa Bảng Lương": "Edit Payroll",
       "Xoá Bảng Lương": "Delete Payroll",
+      "{{count}} VND": "{{count}} VND",
+      "{{count}}h": "{{count}}h",
       // ─── Accounts columns & form ─────────────────────────────────
       "Mã Tài Khoản": "Account ID",
       "Mã Vai Trò": "Role ID",
@@ -398,10 +416,18 @@ const resources = {
       Xoá: "Xoá",
       "Lưu thay đổi": "Lưu thay đổi",
       "Bạn có chắc muốn xoá không?": "Bạn có chắc muốn xoá không?",
+<<<<<<< HEAD
+      "Mã": "Mã",
+      "Lương": "Lương",
+      "Loại": "Loại",
+      "Tháng": "Tháng",
+      "Tháng Trong Năm": "Tháng Trong Năm",
+=======
       Mã: "Mã",
       Lương: "Lương",
       Loại: "Loại",
       Tháng: "Tháng",
+>>>>>>> b9c54ad0ffff0bc8133442008bc43eab6cbd8072
       "Số giờ": "Số giờ",
       giờ: "giờ",
       "Mã NV": "Mã NV",
@@ -436,6 +462,14 @@ const resources = {
       "Mã GL": "Mã GL",
       "Số Giờ Làm": "Số Giờ Làm",
       "Mã Giờ Làm": "Mã Giờ Làm",
+<<<<<<< HEAD
+      "Sửa Giờ Làm": "Sửa Giờ Làm",
+      "Xoá Giờ Làm": "Xoá Giờ Làm",
+      "{{count}}h/ngày": "{{count}}h/ngày",
+      "{{count}} ngày": "{{count}} ngày",
+      "{{count}}h/tháng": "{{count}}h/tháng",
+=======
+>>>>>>> b9c54ad0ffff0bc8133442008bc43eab6cbd8072
       "Mã KT": "Mã KT",
       "Loại Khấu Trừ": "Loại Khấu Trừ",
       "Phần Trăm": "Phần Trăm",
@@ -456,6 +490,8 @@ const resources = {
       "Tính lại lương": "Tính lại lương",
       "Sửa Bảng Lương": "Sửa Bảng Lương",
       "Xoá Bảng Lương": "Xoá Bảng Lương",
+      "{{count}} VND": "{{count}} VND",
+      "{{count}}h": "{{count}}h",
       "Mã Tài Khoản": "Mã Tài Khoản",
       "Mã Vai Trò": "Mã Vai Trò",
       "Tên Tài Khoản": "Tên Tài Khoản",

@@ -14,6 +14,15 @@ function HeaderLuongCB() {
   return <div className="w-30 text-center">{t("Lương Cơ Bản")}</div>;
 }
 
+function CellLuongCB({ amount }: { amount: number }) {
+  const { t } = useTranslation();
+  return (
+    <div className="w-30 text-center h-8">
+      {t("{{count}} VND", { count: amount.toLocaleString("vi-VN") })}
+    </div>
+  );
+}
+
 export const columns: ColumnDef<BaseSalary>[] = [
   {
     accessorKey: "MaLCB",
@@ -25,11 +34,7 @@ export const columns: ColumnDef<BaseSalary>[] = [
   {
     accessorKey: "LuongCB",
     header: () => <HeaderLuongCB />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">
-        {Number(row.original.LuongCB || 0).toLocaleString("vi-VN")} VND
-      </div>
-    ),
+    cell: ({ row }) => <CellLuongCB amount={Number(row.original.LuongCB || 0)} />,
   },
   {
     id: "actions",

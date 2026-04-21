@@ -57,12 +57,12 @@ export function NavUserMini() {
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={avatarUrl ?? ""} alt={account.TenTaiKhoan} className="object-cover rounded-lg" />
                 <AvatarFallback className="rounded-lg">
-                  {account.TenTaiKhoan?.charAt(0).toUpperCase()}
+                  {(account.NhanVien?.HoVaTen || account.TenTaiKhoan)?.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">
-                  {account.TenTaiKhoan}
+                  {account.NhanVien?.HoVaTen || account.TenTaiKhoan}
                 </span>
                 <span className="opacity-80 truncate text-xs">{roleName}</span>
               </div>
@@ -79,12 +79,12 @@ export function NavUserMini() {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={avatarUrl ?? ""} alt={account.TenTaiKhoan} className="object-cover rounded-lg" />
                   <AvatarFallback className="rounded-lg">
-                    {account.TenTaiKhoan?.charAt(0).toUpperCase()}
+                    {(account.NhanVien?.HoVaTen || account.TenTaiKhoan)?.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {account.TenTaiKhoan}
+                    {account.NhanVien?.HoVaTen || account.TenTaiKhoan}
                   </span>
                   <span className="opacity-80 truncate text-xs">
                     {roleName}
@@ -104,9 +104,9 @@ export function NavUserMini() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onClick={handleSignOut} 
-              variant="destructive" 
+            <DropdownMenuItem
+              onClick={handleSignOut}
+              variant="destructive"
               className="text-red-500 hover:text-red-500 dark:text-red-500 focus:bg-red-500! focus:text-white!"
             >
               <IconLogout2 />

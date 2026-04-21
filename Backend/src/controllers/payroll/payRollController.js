@@ -1,9 +1,4 @@
-import BangLuong from "../../models/salary/BangLuong.js"
-import LuongCoBan from "../../models/salary/LuongCoBan.js"
-import PhuCap from "../../models/salary/PhuCap.js"
-import KhauTru from "../../models/salary/KhauTru.js"
-import GioLam from "../../models/salary/GioLam.js"
-import NhanVien from "../../models/information/NhanVien.js"
+import { BangLuong, LuongCoBan, PhuCap, KhauTru, GioLam, NhanVien } from '../../models/index.js';
 import { Pagination } from '../../utils/paginations.js';
 import { searchService } from "../../utils/search.js";
 import ExcelJS from "exceljs"

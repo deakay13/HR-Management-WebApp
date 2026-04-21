@@ -1,25 +1,7 @@
 import multer from 'multer';
 import path from 'path';
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (file.fieldname === 'HinhAnh') {
-      cb(null, 'uploads/avatars/');
-    } else if (file.fieldname === 'HinhAnhHopDong') {
-      cb(null, 'uploads/hopdong/');
-    }
-  },
-  filename: (req, file, cb) => {
-    const id = req.body.MaNV || req.body.MaHopDong || 'unknown';
-
-    const now = new Date();
-    const dateStr = `${now.getDate()}-${now.getMonth() + 1}-${now.getFullYear()}`;
-
-    const ext = path.extname(file.originalname).toLowerCase();
-
-    cb(null, `${id}-${dateStr}${ext}`);
-  }
-});
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   if (file.fieldname === 'HinhAnh') {
