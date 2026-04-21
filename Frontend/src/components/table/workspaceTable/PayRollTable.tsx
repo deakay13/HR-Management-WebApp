@@ -54,9 +54,11 @@ import { toast } from "sonner";
 export function PayRollTable({
   data,
   loading,
+  isEmployee = false,
 }: {
   data: PayRoll[];
   loading?: boolean;
+  isEmployee?: boolean;
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
@@ -154,20 +156,23 @@ export function PayRollTable({
                 onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
               />
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleExport}
-              className="h-9 w-9 p-0"
-              title={t("Xuất Excel")}>
-              <IconFileSpreadsheet size={18} />
-            </Button>
-          </div>
+              {/* Export only visible for Admin/HR */}
+              {!isEmployee && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExport}
+                  className="h-9 w-9 p-0"
+                  title={t("Xuất Excel")}>
+                  <IconFileSpreadsheet size={18} />
+                </Button>
+              )}
+            </div>
 
           <TableColumnFilter table={table} />
 
-          {/* Create button */}
-          {canCreate(permissions) && (
+          {/* Create button — only for Admin/HR */}
+          {!isEmployee && canCreate(permissions) && (
             <Dialog>
               <DialogTrigger asChild>
                 <Button
@@ -181,7 +186,7 @@ export function PayRollTable({
                 </Button>
               </DialogTrigger>
 
-              <DialogContent className="sm:max-w-2xl">
+              <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
                 <form onSubmit={handleCreate} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">

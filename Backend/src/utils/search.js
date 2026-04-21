@@ -63,8 +63,11 @@ export const searchService = async (model, query, pagination, config = {}) => {
 
   const where = buildWhereClause(query, config);
 
+  // Merge forcedWhere — cannot be overridden by user query (used for role-based filtering)
+  const finalWhere = config.forcedWhere ? { ...where, ...config.forcedWhere } : where;
+
   const { count, rows } = await model.findAndCountAll({
-    where,
+    where: finalWhere,
     limit: limit !== null ? limit : undefined,
     offset: limit !== null ? offset : undefined,
     order: config.order || [["createdAt", "DESC"]],

@@ -100,7 +100,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
               </DropdownMenuItem>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle className="text-lg font-semibold">
@@ -192,7 +192,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
               </DropdownMenuItem>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-sm">
+            <DialogContent className="sm:max-w-sm max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{t("Xoá ca làm việc")}</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">

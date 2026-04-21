@@ -38,4 +38,10 @@ export const PayRollServices = {
         });
         return res.data;
     },
+    getPayrollByEmployee: async (MaNV: string) => {
+        const res = await api.get(`/api/payroll/payrolls/employee/${MaNV}`, {
+            withCredentials: true,
+        });
+        return res.data;
+    },
 };

@@ -32,14 +32,14 @@ function formatVND(amount: number): string {
     return (
       (amount / 1_000_000_000).toLocaleString("vi-VN", {
         maximumSignificantDigits: 4,
-      }) + " Tỷ ₫"
+      }) + " Tỷ"
     );
   }
   if (amount >= 1_000_000) {
     return (
       (amount / 1_000_000).toLocaleString("vi-VN", {
         maximumSignificantDigits: 4,
-      }) + " Tr ₫"
+      }) + " Triệu"
     );
   }
   return new Intl.NumberFormat("vi-VN", {
@@ -125,7 +125,7 @@ export function SectionCards() {
   ).length;
 
   return (
-    <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 lg:grid-cols-3 @5xl/main:grid-cols-5">
+    <div className="grid grid-cols-2 gap-4 px-4 lg:px-6 lg:grid-cols-3 @5xl/main:grid-cols-5">
       {/* Card 1: Total Employees */}
       <Card
         style={{ backgroundColor: "#7DA0FA" }}
@@ -134,7 +134,7 @@ export function SectionCards() {
           <div className="flex flex-wrap items-start justify-between gap-2.5 w-full min-w-0">
             <CardDescription className="flex items-center gap-1.5 text-white/90 font-semibold mb-0 shrink-0 min-w-0 max-w-full">
               <IconUsers className="size-4 text-white shrink-0" />
-              <span className="truncate">Tổng Nhân Viên</span>
+              <span className="truncate">{t("Tổng Nhân Viên")}</span>
             </CardDescription>
             <div className="flex flex-wrap items-center gap-1.5 shrink min-w-0 w-full @[250px]/card:w-auto @[250px]/card:justify-end">
               <div className="group relative flex items-center justify-center">
@@ -207,7 +207,7 @@ export function SectionCards() {
                   </span>
                 </Badge>
                 <div className="absolute top-full mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-50 bg-insight-success-bg text-insight-success-text rounded-full px-3 py-1 text-xs shadow-md font-bold whitespace-nowrap border border-insight-success-text/20">
-                  {t("Tỷ lệ hợp đồng hiệu lực")}
+                  {t("Có hiệu lực")}
                 </div>
               </div>
             </div>
@@ -367,7 +367,7 @@ export function SectionCards() {
             </span>
           </div>
           <div className="truncate text-sm text-right ml-2 shrink min-w-0 text-white/80">
-            {t("Tổng từ")} {PayRolls.length} {t("bảng lương")}
+            {t("Từ")} {PayRolls.length} {t("bảng lương")}
           </div>
         </CardFooter>
       </Card>
