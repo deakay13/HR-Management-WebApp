@@ -2,8 +2,10 @@ import { useHoursStore } from "@/stores/payRollStores/hoursStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
 import { HoursTable } from "@/components/table/workspaceTable/HoursTable";
+import { useTranslation } from "react-i18next";
 
 const WorkingHoursComponents = () => {
+  const { t } = useTranslation();
   const { Hours, initializing, getHours } = useHoursStore();
   const { accessToken } = useAuthStore();
 
@@ -19,7 +21,7 @@ const WorkingHoursComponents = () => {
   if (initializing) {
     return (
       <div className="flex h-screen items-center justify-center">
-        Đang tải trang...
+        {t("Đang tải trang...")}
       </div>
     );
   }

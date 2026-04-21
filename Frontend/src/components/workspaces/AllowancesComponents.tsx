@@ -2,8 +2,10 @@ import { useAllowanceStore } from "@/stores/payRollStores/allowanceStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
 import { AllowanceTable } from "@/components/table/workspaceTable/AllowanceTable";
+import { useTranslation } from "react-i18next";
 
 const AllowanceComponents = () => {
+  const { t } = useTranslation();
   const { Allowances, initializing, getAllowances } = useAllowanceStore();
   const { accessToken } = useAuthStore();
 
@@ -19,7 +21,7 @@ const AllowanceComponents = () => {
   if (initializing) {
     return (
       <div className="flex h-screen items-center justify-center">
-        Đang tải trang...
+        {t("Đang tải trang...")}
       </div>
     );
   }

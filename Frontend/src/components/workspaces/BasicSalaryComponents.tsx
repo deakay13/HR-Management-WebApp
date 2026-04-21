@@ -2,8 +2,10 @@ import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
 import { BaseSalaryTable } from "@/components/table/workspaceTable/BaseSalaryTable";
+import { useTranslation } from "react-i18next";
 
 const BaseSalaryComponents = () => {
+  const { t } = useTranslation();
   const { BaseSalaries, initializing, getBaseSalaries } = useBaseSalaryStore();
   const { accessToken } = useAuthStore();
 
@@ -19,7 +21,7 @@ const BaseSalaryComponents = () => {
   if (initializing) {
     return (
       <div className="flex h-screen items-center justify-center">
-        Đang tải trang...
+        {t("Đang tải trang...")}
       </div>
     );
   }

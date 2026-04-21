@@ -13,7 +13,7 @@ function CellTongGioCong({ dailyHours, days }: { dailyHours: number; days: numbe
   const { t } = useTranslation();
   return (
     <div className="w-40 text-center h-8">
-      {t("{{count}}h", { count: dailyHours * days })}
+      {t("{{count}} giờ", { count: dailyHours * days })}
     </div>
   );
 }

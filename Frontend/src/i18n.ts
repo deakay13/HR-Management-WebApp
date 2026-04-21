@@ -57,6 +57,7 @@ const resources = {
       "số hàng trên mỗi trang": "rows per page",
       Trang: "Page",
       trên: "of",
+      "Đang tải trang...": "Loading page...",
       // ─── Table messages ──────────────────────────────────────────
       "Không có dữ liệu.": "No data.",
       "Đang tải dữ liệu...": "Loading data...",
@@ -150,7 +151,7 @@ const resources = {
       "Sửa Bảng Lương": "Edit Payroll",
       "Xoá Bảng Lương": "Delete Payroll",
       "{{count}} VND": "{{count}} VND",
-      "{{count}}h": "{{count}}h",
+      "{{count}} giờ": "{{count}} hours",
       // ─── Accounts columns & form ─────────────────────────────────
       "Mã Tài Khoản": "Account ID",
       "Mã Vai Trò": "Role ID",
@@ -394,6 +395,7 @@ const resources = {
       "số hàng trên mỗi trang": "số hàng trên mỗi trang",
       Trang: "Trang",
       trên: "trên",
+      "Đang tải trang...": "Đang tải trang...",
       "Không có dữ liệu.": "Không có dữ liệu.",
       "Đang tải dữ liệu...": "Đang tải dữ liệu...",
       Sửa: "Sửa",
@@ -459,7 +461,7 @@ const resources = {
       "Sửa Bảng Lương": "Sửa Bảng Lương",
       "Xoá Bảng Lương": "Xoá Bảng Lương",
       "{{count}} VND": "{{count}} VND",
-      "{{count}}h": "{{count}}h",
+      "{{count}} giờ": "{{count}} giờ",
       "Mã Tài Khoản": "Mã Tài Khoản",
       "Mã Vai Trò": "Mã Vai Trò",
       "Tên Tài Khoản": "Tên Tài Khoản",

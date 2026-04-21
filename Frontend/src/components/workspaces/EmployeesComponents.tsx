@@ -2,8 +2,10 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
 import { EmployeeTable } from "@/components/table/informationsTable/EmployeeTable";
+import { useTranslation } from "react-i18next";
 
 export default function EmployeeComponents() {
+  const { t } = useTranslation();
   const { employees, initializing, getEmployees } = useEmployeeStore();
   const { accessToken } = useAuthStore();
 
@@ -19,7 +21,7 @@ export default function EmployeeComponents() {
   if (initializing) {
     return (
       <div className="flex h-screen items-center justify-center">
-        Đang tải trang...
+        {t("Đang tải trang...")}
       </div>
     );
   }

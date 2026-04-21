@@ -2,8 +2,10 @@ import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useContractStore } from "@/stores/informationStores/contractStore"; 
 import { ContractTable } from "@/components/table/informationsTable/ContractTable";
+import { useTranslation } from "react-i18next";
 
 export default function ContractComponents() {
+  const { t } = useTranslation();
   const { contracts, initializing, getContracts } = useContractStore();
   const { accessToken } = useAuthStore();
 
@@ -19,7 +21,7 @@ export default function ContractComponents() {
   if (initializing) {
     return (
       <div className="flex h-screen items-center justify-center">
-        Đang tải trang...
+        {t("Đang tải trang...")}
       </div>
     );
   }

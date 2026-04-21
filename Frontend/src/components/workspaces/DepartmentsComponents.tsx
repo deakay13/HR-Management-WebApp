@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useDepartmentStore } from "@/stores/informationStores/departmentStore"; 
-import { DepartmentTable } from "@/components/table/informationsTable/DepartmentTable"; 
+import { DepartmentTable } from "@/components/table/informationsTable/DepartmentTable";
+import { useTranslation } from "react-i18next"; 
 
 export default function DepartmentComponents() {
+  const { t } = useTranslation();
   const { departments, initializing, getDepartments } = useDepartmentStore();
   const { accessToken } = useAuthStore();
 
@@ -19,7 +21,7 @@ export default function DepartmentComponents() {
   if (initializing) {
     return (
       <div className="flex h-screen items-center justify-center">
-        Đang tải trang...
+        {t("Đang tải trang...")}
       </div>
     );
   }

@@ -2,8 +2,10 @@ import { useDeductionStore } from "@/stores/payRollStores/deductionStore";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect } from "react";
 import { DeductionTable } from "@/components/table/workspaceTable/DeductionTable";
+import { useTranslation } from "react-i18next";
 
 const DeductionComponents = () => {
+  const { t } = useTranslation();
   const { Deductions, initializing, getDeductions } = useDeductionStore();
   const { accessToken } = useAuthStore();
 
@@ -19,7 +21,7 @@ const DeductionComponents = () => {
   if (initializing) {
     return (
       <div className="flex h-screen items-center justify-center">
-        Đang tải trang...
+        {t("Đang tải trang...")}
       </div>
     );
   }
