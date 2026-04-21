@@ -5,7 +5,7 @@ import {
   IconLogout2,
 } from "@tabler/icons-react";
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,7 +28,7 @@ import { useTranslation } from "react-i18next";
 
 export function NavUserMini() {
   const { isMobile } = useSidebar();
-  const { signOut, account } = useAuthStore();
+  const { signOut, account, avatarUrl } = useAuthStore();
   const { role } = useAuthorizeStore();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -54,7 +54,8 @@ export function NavUserMini() {
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground">
-              <Avatar className="h-8 w-8 rounded-lg grayscale">
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={avatarUrl ?? ""} alt={account.TenTaiKhoan} className="object-cover rounded-lg" />
                 <AvatarFallback className="rounded-lg">
                   {account.TenTaiKhoan?.charAt(0).toUpperCase()}
                 </AvatarFallback>
@@ -75,7 +76,8 @@ export function NavUserMini() {
             sideOffset={4}>
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg grayscale">
+                <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={avatarUrl ?? ""} alt={account.TenTaiKhoan} className="object-cover rounded-lg" />
                   <AvatarFallback className="rounded-lg">
                     {account.TenTaiKhoan?.charAt(0).toUpperCase()}
                   </AvatarFallback>

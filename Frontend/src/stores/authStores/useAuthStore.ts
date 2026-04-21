@@ -8,14 +8,19 @@ import { normalizePermissions, roleFromMaVT } from "@/utils/authorizeUtils";
 export const useAuthStore = create<AuthTypes>((set, get) => ({
   accessToken: null,
   account: null,
+  avatarUrl: null,
   initializing: true,
   setAccessToken: (accessToken) => {
     set({ accessToken });
+  },
+  setAvatarUrl: (url) => {
+    set({ avatarUrl: url });
   },
   clearState: () => {
     set({
       accessToken: null,
       account: null,
+      avatarUrl: null,
     });
     useAuthorizeStore.getState().clearState();
   },
