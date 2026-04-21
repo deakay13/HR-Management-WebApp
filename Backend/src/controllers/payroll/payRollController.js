@@ -145,10 +145,13 @@ export const updatePayroll = async (req, res) => {
 };
 export const getPayrolls = async (req, res) => {
   try {
-    //set page and size rows in papge
     const { offset, limit, page, finalSize } = Pagination(req.query);
 
-    const options = {};
+    // Role-based filter: Employee only sees their own payroll
+    const isEmployee = req.account?.VaiTro?.TenVaiTro === "Nhân Viên";
+    const whereClause = isEmployee ? { MaNV: req.account.MaNV } : {};
+
+    const options = { where: whereClause };
     if (limit !== null) {
       options.limit = limit;
       options.offset = offset;
@@ -261,8 +264,21 @@ export const getPayrollByEmployee = async (req, res) => {
 
     const { ID } = req.params;
 
+    // Security guard: Employee can only view their own payroll
+    const isEmployee = req.account?.VaiTro?.TenVaiTro === "Nhân Viên";
+    if (isEmployee && ID !== req.account.MaNV) {
+      return res.status(403).json({ message: "Không có quyền xem lương của nhân viên khác" });
+    }
+
     const payrolls = await BangLuong.findAll({
-      where: { MaNV: ID }
+      where: { MaNV: ID },
+      include: [
+        { model: NhanVien, as: 'NhanVien', attributes: ['HoVaTen'] },
+        { model: KhauTru, as: 'KhauTru', attributes: ['LoaiKT'] },
+        { model: PhuCap, as: 'PhuCapThuong', attributes: ['LoaiPC', 'SoTien'] },
+        { model: LuongCoBan, as: 'LuongCoBan', attributes: ['LuongCB'] },
+        { model: GioLam, as: 'TongGioLam', attributes: ['SoGioLam'] }
+      ]
     });
 
     return res.status(200).json(payrolls);
@@ -279,32 +295,28 @@ export const getPayrollByEmployee = async (req, res) => {
 };
 export const searchPayroll = async (req, res) => {
   try {
-    // Nếu không có keyword thì lấy hết (size = 0)
     const query = { ...req.query };
     if (!query.keyword) {
       query.size = 0;
     }
-    
+
     const pagination = Pagination(query);
+
+    // Role-based filter: Employee only searches their own payroll
+    const isEmployee = req.account?.VaiTro?.TenVaiTro === "Nhân Viên";
+    const forcedWhere = isEmployee ? { MaNV: req.account.MaNV } : {};
 
     const result = await searchService(
       BangLuong,
       req.query,
       pagination,
       {
-        // 1. Tìm kiếm theo các trường yêu cầu
         searchFields: ["MaNV", "MaBL", "MaKT", "MaPC", "MaLCB", "TongLuong", "$NhanVien.HoVaTen$"],
         numericFields: ["TongLuong"],
-
-        // 2. Lọc chính xác (Dropdown)
         exactFields: ["TrangThai", "MaNV"],
-
-        // 3. Lọc theo tháng (VD: "2024-03")
         likeFields: ["Thang"],
-
-        // 4. Lọc khoảng lương
         rangeFields: ["TongLuong"],
-
+        forcedWhere,
         order: [["NgayTinhLuong", "DESC"]],
         include: [
           { model: NhanVien, as: "NhanVien", attributes: ["HoVaTen"] },

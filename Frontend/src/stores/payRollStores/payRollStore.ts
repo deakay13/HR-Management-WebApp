@@ -85,4 +85,21 @@ export const usePayRollStore = create<PayRollTypes>((set,get) => ({
                 set({ initializing: false });
             }
         },
+        // Employee self-service: fetch only own payrolls
+        getMyPayrolls: async (MaNV: string) => {
+            set({ initializing: true });
+            try {
+                const data = await PayRollServices.getPayrollByEmployee(MaNV);
+                set({
+                    PayRolls: Array.isArray(data) ? data : [],
+                    totalItems: Array.isArray(data) ? data.length : 0,
+                    totalPages: 1,
+                });
+            } catch (error) {
+                console.error("Lỗi khi tải bảng lương cá nhân", error);
+                toast.error("Không thể tải bảng lương của bạn");
+            } finally {
+                set({ initializing: false });
+            }
+        },
 }));
