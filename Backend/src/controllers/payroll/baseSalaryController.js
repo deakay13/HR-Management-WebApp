@@ -5,8 +5,8 @@ import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
 export const createBaseSalary = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu" });
   try {
-    // validate input
     const parsed = baseSalarySchema.safeParse({
       MaLCB: req.body.MaLCB,
       LuongCB: req.body.LuongCB,
@@ -48,8 +48,8 @@ export const createBaseSalary = async (req, res) => {
   }
 };
 export const updateBaseSalary = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu" });
   try {
-    // Validate input
     const parsed = baseSalarySchema.omit({ MaLCB: true }).safeParse({
       LuongCB: req.body.LuongCB,
     });
@@ -74,7 +74,7 @@ export const updateBaseSalary = async (req, res) => {
       where: { LuongCB: parsed.data.LuongCB },
     });
 
-    if (existLuong && existLuong.MaLCB !== req.params.MaLCB) {
+    if (existLuong && existLuong.MaLCB !== ID) {
       return res.status(400).json({ message: "Mức lương cơ bản đã tồn tại" });
     }
 

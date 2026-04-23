@@ -5,6 +5,7 @@ import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
 export const createDeduction = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
     const parsed = deductionSchema.safeParse({
       MaKT: req.body.MaKT,
@@ -98,6 +99,7 @@ export const getDeductionById = async (req, res) => {
   }
 };
 export const updateDeduction = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
     const parsed = deductionSchema.omit({ MaKT: true }).safeParse({
       LoaiKT: req.body.LoaiKT,

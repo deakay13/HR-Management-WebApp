@@ -151,7 +151,7 @@ export const payRollSchema = z.object({
   MaBL: z
     .string()
     .min(1, "Mã bảng lương không được để trống")
-    .regex(/^BL\d{3}$/, "Mã phải dạng BLxxx"),
+    .regex(/^BL\d+$/, "Mã phải dạng BLxxx"),
   MaNV: z.string().min(1, "Mã nhân viên không được để trống"),
   MaLCB: z.string().min(1, "Mã lương cơ bản không được để trống"),
   MaPC: z.string().min(1, "Mã phụ cấp không được để trống"),
