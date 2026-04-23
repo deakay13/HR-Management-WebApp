@@ -117,7 +117,7 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                     />
                     {errors.LoaiKT && (
                       <p className="text-red-500 text-xs">
-                        {errors.LoaiKT.message}
+                        {t(errors.LoaiKT.message || "")}
                       </p>
                     )}
                   </Field>
@@ -133,7 +133,7 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                     />
                     {errors.PhanTram && (
                       <p className="text-red-500 text-xs">
-                        {errors.PhanTram.message}
+                        {t(errors.PhanTram.message || "")}
                       </p>
                     )}
                   </Field>

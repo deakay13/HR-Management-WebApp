@@ -166,7 +166,7 @@ export function BaseSalaryTable({
                         {...register("MaLCB")}
                       />
                       {errors.MaLCB && (
-                        <p className="text-xs text-red-500">{errors.MaLCB.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaLCB.message || "")}</p>
                       )}
                     </Field>
 
@@ -180,7 +180,7 @@ export function BaseSalaryTable({
                         {...register("LuongCB", { valueAsNumber: true })}
                       />
                       {errors.LuongCB && (
-                        <p className="text-xs text-red-500">{errors.LuongCB.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.LuongCB.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>

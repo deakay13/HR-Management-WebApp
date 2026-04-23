@@ -127,7 +127,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       }}
                     />
                     {errors.SoGioLam && (
-                      <p className="text-red-500 text-xs">{errors.SoGioLam.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.SoGioLam.message || "")}</p>
                     )}
                   </Field>
 
@@ -146,7 +146,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       }}
                     />
                     {errors.SoNgayLam && (
-                      <p className="text-red-500 text-xs">{errors.SoNgayLam.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.SoNgayLam.message || "")}</p>
                     )}
                   </Field>
 

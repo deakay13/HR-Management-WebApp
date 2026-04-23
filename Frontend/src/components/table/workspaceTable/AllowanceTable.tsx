@@ -166,7 +166,7 @@ export function AllowanceTable({
                         {...register("MaPC")}
                       />
                       {errors.MaPC && (
-                        <p className="text-xs text-red-500">{errors.MaPC.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaPC.message || "")}</p>
                       )}
                     </Field>
 
@@ -179,7 +179,7 @@ export function AllowanceTable({
                         {...register("LoaiPC")}
                       />
                       {errors.LoaiPC && (
-                        <p className="text-xs text-red-500">{errors.LoaiPC.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.LoaiPC.message || "")}</p>
                       )}
                     </Field>
 
@@ -193,7 +193,7 @@ export function AllowanceTable({
                         {...register("SoTien", { valueAsNumber: true })}
                       />
                       {errors.SoTien && (
-                        <p className="text-xs text-red-500">{errors.SoTien.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.SoTien.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>

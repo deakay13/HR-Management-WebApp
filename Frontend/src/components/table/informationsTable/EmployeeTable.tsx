@@ -254,7 +254,7 @@ export function EmployeeTable({
                       />
                       {errors.MaNV && (
                         <span className="text-xs text-red-500">
-                          {errors.MaNV}
+                          {t(errors.MaNV || "")}
                         </span>
                       )}
                     </Field>
@@ -276,7 +276,7 @@ export function EmployeeTable({
                       </Select>
                       {errors.MaPB && (
                         <span className="text-xs text-red-500">
-                          {errors.MaPB}
+                          {t(errors.MaPB || "")}
                         </span>
                       )}
                     </Field>
@@ -285,7 +285,7 @@ export function EmployeeTable({
                       <Input id="HoVaTen" name="HoVaTen" />
                       {errors.HoVaTen && (
                         <span className="text-xs text-red-500">
-                          {errors.HoVaTen}
+                          {t(errors.HoVaTen || "")}
                         </span>
                       )}
                     </Field>
@@ -305,7 +305,7 @@ export function EmployeeTable({
                       </Select>
                       {errors.GioiTinh && (
                         <span className="text-xs text-red-500">
-                          {errors.GioiTinh}
+                          {t(errors.GioiTinh || "")}
                         </span>
                       )}
                     </Field>
@@ -314,7 +314,7 @@ export function EmployeeTable({
                       <Input id="NgaySinh" name="NgaySinh" type="date" />
                       {errors.NgaySinh && (
                         <span className="text-xs text-red-500">
-                          {errors.NgaySinh}
+                          {t(errors.NgaySinh || "")}
                         </span>
                       )}
                     </Field>
@@ -323,7 +323,7 @@ export function EmployeeTable({
                       <Input id="SDT" name="SDT" />
                       {errors.SDT && (
                         <span className="text-xs text-red-500">
-                          {errors.SDT}
+                          {t(errors.SDT || "")}
                         </span>
                       )}
                     </Field>
@@ -332,7 +332,7 @@ export function EmployeeTable({
                       <Input id="NgayVaoLam" name="NgayVaoLam" type="date" />
                       {errors.NgayVaoLam && (
                         <span className="text-xs text-red-500">
-                          {errors.NgayVaoLam}
+                          {t(errors.NgayVaoLam || "")}
                         </span>
                       )}
                     </Field>
@@ -341,7 +341,7 @@ export function EmployeeTable({
                       <Input id="DiaChi" name="DiaChi" />
                       {errors.DiaChi && (
                         <span className="text-xs text-red-500">
-                          {errors.DiaChi}
+                          {t(errors.DiaChi || "")}
                         </span>
                       )}
                     </Field>

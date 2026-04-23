@@ -161,7 +161,7 @@ export function RolesTable({
                         {...register("MaVT")}
                       />
                       {errors.MaVT && (
-                        <p className="text-xs text-red-500">{errors.MaVT.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaVT.message || "")}</p>
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
@@ -173,7 +173,7 @@ export function RolesTable({
                         {...register("TenVaiTro")}
                       />
                       {errors.TenVaiTro && (
-                        <p className="text-xs text-red-500">{errors.TenVaiTro.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.TenVaiTro.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>

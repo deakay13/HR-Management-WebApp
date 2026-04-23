@@ -143,7 +143,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     </SelectContent>
                   </Select>
                   {errors.MaPB && (
-                    <span className="text-xs text-red-500">{errors.MaPB}</span>
+                    <span className="text-xs text-red-500">{t(errors.MaPB || "")}</span>
                   )}
                 </Field>
 
@@ -157,7 +157,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     }
                   />
                   {errors.HoVaTen && (
-                    <span className="text-xs text-red-500">{errors.HoVaTen}</span>
+                    <span className="text-xs text-red-500">{t(errors.HoVaTen || "")}</span>
                   )}
                 </Field>
 
@@ -180,7 +180,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     </SelectContent>
                   </Select>
                   {errors.GioiTinh && (
-                    <span className="text-xs text-red-500">{errors.GioiTinh}</span>
+                    <span className="text-xs text-red-500">{t(errors.GioiTinh || "")}</span>
                   )}
                 </Field>
 
@@ -195,7 +195,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     }
                   />
                   {errors.NgaySinh && (
-                    <span className="text-xs text-red-500">{errors.NgaySinh}</span>
+                    <span className="text-xs text-red-500">{t(errors.NgaySinh || "")}</span>
                   )}
                 </Field>
 
@@ -209,7 +209,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     }
                   />
                   {errors.SDT && (
-                    <span className="text-xs text-red-500">{errors.SDT}</span>
+                    <span className="text-xs text-red-500">{t(errors.SDT || "")}</span>
                   )}
                 </Field>
 
@@ -224,7 +224,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     }
                   />
                   {errors.NgayVaoLam && (
-                    <span className="text-xs text-red-500">{errors.NgayVaoLam}</span>
+                    <span className="text-xs text-red-500">{t(errors.NgayVaoLam || "")}</span>
                   )}
                 </Field>
 
@@ -238,7 +238,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     }
                   />
                   {errors.DiaChi && (
-                    <span className="text-xs text-red-500">{errors.DiaChi}</span>
+                    <span className="text-xs text-red-500">{t(errors.DiaChi || "")}</span>
                   )}
                 </Field>
               </FieldGroup>

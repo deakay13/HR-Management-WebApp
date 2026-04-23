@@ -169,7 +169,7 @@ export function HoursTable({
                         {...register("MaGL")}
                       />
                       {errors.MaGL && (
-                        <p className="text-xs text-red-500">{errors.MaGL.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaGL.message || "")}</p>
                       )}
                     </Field>
 
@@ -188,7 +188,7 @@ export function HoursTable({
                         }}
                       />
                       {errors.SoGioLam && (
-                        <p className="text-xs text-red-500">{errors.SoGioLam.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.SoGioLam.message || "")}</p>
                       )}
                     </Field>
 
@@ -207,7 +207,7 @@ export function HoursTable({
                         }}
                       />
                       {errors.SoNgayLam && (
-                        <p className="text-xs text-red-500">{errors.SoNgayLam.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.SoNgayLam.message || "")}</p>
                       )}
                     </Field>
 

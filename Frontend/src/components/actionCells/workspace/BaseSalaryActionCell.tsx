@@ -120,7 +120,7 @@ export function BaseSalaryActionCell({
                     />
                     {errors.LuongCB && (
                       <p className="text-red-500 text-xs">
-                        {errors.LuongCB.message}
+                        {t(errors.LuongCB.message || "")}
                       </p>
                     )}
                   </Field>

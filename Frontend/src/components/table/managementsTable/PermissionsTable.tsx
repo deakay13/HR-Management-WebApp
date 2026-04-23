@@ -159,7 +159,7 @@ export function PermissionsTable({
                         {...register("MaQuyen")}
                       />
                       {errors.MaQuyen && (
-                        <p className="text-xs text-red-500">{errors.MaQuyen.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaQuyen.message || "")}</p>
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
@@ -171,7 +171,7 @@ export function PermissionsTable({
                         {...register("TenQuyen")}
                       />
                       {errors.TenQuyen && (
-                        <p className="text-xs text-red-500">{errors.TenQuyen.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.TenQuyen.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>

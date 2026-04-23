@@ -215,7 +215,7 @@ export function AccountsTable({
                         {...register("MaTK")}
                       />
                       {errors.MaTK && (
-                        <p className="text-xs text-red-500">{errors.MaTK.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaTK.message || "")}</p>
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
@@ -227,7 +227,7 @@ export function AccountsTable({
                         {...register("MaNV")}
                       />
                       {errors.MaNV && (
-                        <p className="text-xs text-red-500">{errors.MaNV.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaNV.message || "")}</p>
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
@@ -256,7 +256,7 @@ export function AccountsTable({
                         )}
                       />
                       {errors.MaVT && (
-                        <p className="text-xs text-red-500">{errors.MaVT.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaVT.message || "")}</p>
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
@@ -268,7 +268,7 @@ export function AccountsTable({
                         {...register("TenTaiKhoan")}
                       />
                       {errors.TenTaiKhoan && (
-                        <p className="text-xs text-red-500">{errors.TenTaiKhoan.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.TenTaiKhoan.message || "")}</p>
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
@@ -281,7 +281,7 @@ export function AccountsTable({
                         {...register("MatKhau")}
                       />
                       {errors.MatKhau && (
-                        <p className="text-xs text-red-500">{errors.MatKhau.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MatKhau.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>

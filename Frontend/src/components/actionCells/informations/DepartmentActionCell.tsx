@@ -115,7 +115,7 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
                     }
                   />
                   {errors.TenPB && (
-                    <span className="text-xs text-red-500">{errors.TenPB}</span>
+                    <span className="text-xs text-red-500">{t(errors.TenPB || "")}</span>
                   )}
                 </Field>
               </FieldGroup>

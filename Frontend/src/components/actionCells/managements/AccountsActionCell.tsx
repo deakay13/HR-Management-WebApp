@@ -156,7 +156,7 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
                       )}
                     />
                     {errors.MaVT && (
-                      <p className="text-xs text-red-500">{errors.MaVT.message}</p>
+                      <p className="text-xs text-red-500">{t(errors.MaVT.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
@@ -167,7 +167,7 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
                       {...register("TenTaiKhoan")}
                     />
                     {errors.TenTaiKhoan && (
-                      <p className="text-xs text-red-500">{errors.TenTaiKhoan.message}</p>
+                      <p className="text-xs text-red-500">{t(errors.TenTaiKhoan.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
@@ -180,7 +180,7 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
                       {...register("MatKhau")}
                     />
                     {errors.MatKhau && (
-                      <p className="text-xs text-red-500">{errors.MatKhau.message}</p>
+                      <p className="text-xs text-red-500">{t(errors.MatKhau.message || "")}</p>
                     )}
                   </Field>
                 </FieldGroup>

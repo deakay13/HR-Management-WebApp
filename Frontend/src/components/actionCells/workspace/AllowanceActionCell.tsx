@@ -115,7 +115,7 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     />
                     {errors.LoaiPC && (
                       <p className="text-red-500 text-xs">
-                        {errors.LoaiPC.message}
+                        {t(errors.LoaiPC.message || "")}
                       </p>
                     )}
                   </Field>
@@ -130,7 +130,7 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     />
                     {errors.SoTien && (
                       <p className="text-red-500 text-xs">
-                        {errors.SoTien.message}
+                        {t(errors.SoTien.message || "")}
                       </p>
                     )}
                   </Field>

@@ -118,42 +118,42 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                     <Label>{t("Mã Lương Cơ Bản")}</Label>
                     <Input className={errors.MaLCB ? "border-red-500" : ""} {...register("MaLCB")} />
                     {errors.MaLCB && (
-                      <p className="text-red-500 text-xs">{errors.MaLCB.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.MaLCB.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Nhân Viên")}</Label>
                     <Input className={errors.MaNV ? "border-red-500" : ""} {...register("MaNV")} />
                     {errors.MaNV && (
-                      <p className="text-red-500 text-xs">{errors.MaNV.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.MaNV.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Khấu Trừ")}</Label>
                     <Input className={errors.MaKT ? "border-red-500" : ""} {...register("MaKT")} />
                     {errors.MaKT && (
-                      <p className="text-red-500 text-xs">{errors.MaKT.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.MaKT.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Phụ Cấp")}</Label>
                     <Input className={errors.MaPC ? "border-red-500" : ""} {...register("MaPC")} />
                     {errors.MaPC && (
-                      <p className="text-red-500 text-xs">{errors.MaPC.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.MaPC.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Giờ Làm")}</Label>
                     <Input className={errors.MaGL ? "border-red-500" : ""} {...register("MaGL")} />
                     {errors.MaGL && (
-                      <p className="text-red-500 text-xs">{errors.MaGL.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.MaGL.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Tháng")}</Label>
                     <Input type="month" className={errors.Thang ? "border-red-500" : ""} {...register("Thang")} />
                     {errors.Thang && (
-                      <p className="text-red-500 text-xs">{errors.Thang.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.Thang.message || "")}</p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
@@ -164,7 +164,7 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                       {...register("SoNgayLam", { valueAsNumber: true })}
                     />
                     {errors.SoNgayLam && (
-                      <p className="text-red-500 text-xs">{errors.SoNgayLam.message}</p>
+                      <p className="text-red-500 text-xs">{t(errors.SoNgayLam.message || "")}</p>
                     )}
                   </Field>
                 </FieldGroup>

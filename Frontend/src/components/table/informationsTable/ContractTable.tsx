@@ -180,7 +180,7 @@ export function ContractTable({
                       />
                       {errors.MaHopDong && (
                         <span className="text-xs text-red-500">
-                          {errors.MaHopDong}
+                          {t(errors.MaHopDong || "")}
                         </span>
                       )}
                     </Field>
@@ -189,7 +189,7 @@ export function ContractTable({
                       <Input id="MaNV" name="MaNV" placeholder={t("VD: NV001")} className="uppercase h-10" />
                       {errors.MaNV && (
                         <span className="text-xs text-red-500">
-                          {errors.MaNV}
+                          {t(errors.MaNV || "")}
                         </span>
                       )}
                     </Field>
@@ -198,7 +198,7 @@ export function ContractTable({
                       <Input id="LoaiHD" name="LoaiHD" placeholder={t("VD: Có thời hạn")} className="h-10" />
                       {errors.LoaiHD && (
                         <span className="text-xs text-red-500">
-                          {errors.LoaiHD}
+                          {t(errors.LoaiHD || "")}
                         </span>
                       )}
                     </Field>
@@ -207,7 +207,7 @@ export function ContractTable({
                       <Input id="NgayBatDau" name="NgayBatDau" type="date" className="h-10" />
                       {errors.NgayBatDau && (
                         <span className="text-xs text-red-500">
-                          {errors.NgayBatDau}
+                          {t(errors.NgayBatDau || "")}
                         </span>
                       )}
                     </Field>
@@ -216,7 +216,7 @@ export function ContractTable({
                       <Input id="NgayKetThuc" name="NgayKetThuc" type="date" className="h-10" />
                       {errors.NgayKetThuc && (
                         <span className="text-xs text-red-500">
-                          {errors.NgayKetThuc}
+                          {t(errors.NgayKetThuc || "")}
                         </span>
                       )}
                     </Field>
@@ -231,7 +231,7 @@ export function ContractTable({
                       />
                       {errors.HinhAnhHopDong && (
                         <span className="text-xs text-red-500">
-                          {errors.HinhAnhHopDong}
+                          {t(errors.HinhAnhHopDong || "")}
                         </span>
                       )}
                     </Field>

@@ -165,7 +165,7 @@ export function DeductionTable({
                         {...register("MaKT")}
                       />
                       {errors.MaKT && (
-                        <p className="text-xs text-red-500">{errors.MaKT.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaKT.message || "")}</p>
                       )}
                     </Field>
 
@@ -178,7 +178,7 @@ export function DeductionTable({
                         {...register("LoaiKT")}
                       />
                       {errors.LoaiKT && (
-                        <p className="text-xs text-red-500">{errors.LoaiKT.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.LoaiKT.message || "")}</p>
                       )}
                     </Field>
 
@@ -192,7 +192,7 @@ export function DeductionTable({
                         {...register("PhanTram", { valueAsNumber: true })}
                       />
                       {errors.PhanTram && (
-                        <p className="text-xs text-red-500">{errors.PhanTram.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.PhanTram.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>

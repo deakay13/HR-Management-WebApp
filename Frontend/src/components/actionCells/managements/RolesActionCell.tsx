@@ -254,7 +254,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                         )}
                       </div>
                       {assignForm.formState.errors.MaQuyen && (
-                        <p className="text-xs text-red-500">{assignForm.formState.errors.MaQuyen.message}</p>
+                        <p className="text-xs text-red-500">{t(assignForm.formState.errors.MaQuyen.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>
@@ -303,7 +303,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                           {...editForm.register("TenVaiTro")}
                         />
                         {editForm.formState.errors.TenVaiTro && (
-                          <p className="text-xs text-red-500">{editForm.formState.errors.TenVaiTro.message}</p>
+                          <p className="text-xs text-red-500">{t(editForm.formState.errors.TenVaiTro.message || "")}</p>
                         )}
                       </Field>
                     </FieldGroup>
@@ -359,7 +359,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                           </SelectContent>
                         </Select>
                         {changeForm.formState.errors.oldQuyen && (
-                          <p className="text-xs text-red-500">{changeForm.formState.errors.oldQuyen.message}</p>
+                          <p className="text-xs text-red-500">{t(changeForm.formState.errors.oldQuyen.message || "")}</p>
                         )}
                       </Field>
                       <Field className="flex flex-col gap-2">
@@ -382,7 +382,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                           </SelectContent>
                         </Select>
                         {changeForm.formState.errors.newQuyen && (
-                          <p className="text-xs text-red-500">{changeForm.formState.errors.newQuyen.message}</p>
+                          <p className="text-xs text-red-500">{t(changeForm.formState.errors.newQuyen.message || "")}</p>
                         )}
                       </Field>
                     </FieldGroup>
@@ -446,7 +446,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                         )}
                       </FieldGroup>
                       {removeForm.formState.errors.MaQuyen && (
-                        <p className="text-xs text-red-500">{removeForm.formState.errors.MaQuyen.message}</p>
+                        <p className="text-xs text-red-500">{t(removeForm.formState.errors.MaQuyen.message || "")}</p>
                       )}
                       <DialogFooter className="gap-2">
                         <DialogClose asChild>

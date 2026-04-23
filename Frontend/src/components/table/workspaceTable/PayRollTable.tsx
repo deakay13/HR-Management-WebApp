@@ -231,7 +231,7 @@ export function PayRollTable({
                         {...register("MaBL")}
                       />
                       {errors.MaBL && (
-                        <p className="text-xs text-red-500">{errors.MaBL.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaBL.message || "")}</p>
                       )}
                     </Field>
 
@@ -244,7 +244,7 @@ export function PayRollTable({
                         {...register("MaNV")}
                       />
                       {errors.MaNV && (
-                        <p className="text-xs text-red-500">{errors.MaNV.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaNV.message || "")}</p>
                       )}
                     </Field>
 
@@ -257,7 +257,7 @@ export function PayRollTable({
                         {...register("MaKT")}
                       />
                       {errors.MaKT && (
-                        <p className="text-xs text-red-500">{errors.MaKT.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaKT.message || "")}</p>
                       )}
                     </Field>
 
@@ -270,7 +270,7 @@ export function PayRollTable({
                         {...register("MaPC")}
                       />
                       {errors.MaPC && (
-                        <p className="text-xs text-red-500">{errors.MaPC.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaPC.message || "")}</p>
                       )}
                     </Field>
 
@@ -283,7 +283,7 @@ export function PayRollTable({
                         {...register("MaLCB")}
                       />
                       {errors.MaLCB && (
-                        <p className="text-xs text-red-500">{errors.MaLCB.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaLCB.message || "")}</p>
                       )}
                     </Field>
 
@@ -296,7 +296,7 @@ export function PayRollTable({
                         {...register("MaGL")}
                       />
                       {errors.MaGL && (
-                        <p className="text-xs text-red-500">{errors.MaGL.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.MaGL.message || "")}</p>
                       )}
                     </Field>
 
@@ -309,7 +309,7 @@ export function PayRollTable({
                         {...register("Thang")}
                       />
                       {errors.Thang && (
-                        <p className="text-xs text-red-500">{errors.Thang.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.Thang.message || "")}</p>
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
@@ -322,7 +322,7 @@ export function PayRollTable({
                         {...register("SoNgayLam", { valueAsNumber: true })}
                       />
                       {errors.SoNgayLam && (
-                        <p className="text-xs text-red-500">{errors.SoNgayLam.message}</p>
+                        <p className="text-xs text-red-500">{t(errors.SoNgayLam.message || "")}</p>
                       )}
                     </Field>
                   </FieldGroup>

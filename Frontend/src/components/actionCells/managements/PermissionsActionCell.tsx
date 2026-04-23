@@ -110,7 +110,7 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                       {...register("TenQuyen")}
                     />
                     {errors.TenQuyen && (
-                      <p className="text-xs text-red-500">{errors.TenQuyen.message}</p>
+                      <p className="text-xs text-red-500">{t(errors.TenQuyen.message || "")}</p>
                     )}
                   </Field>
                 </FieldGroup>

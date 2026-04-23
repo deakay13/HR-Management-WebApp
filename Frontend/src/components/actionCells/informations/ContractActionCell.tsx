@@ -140,7 +140,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     }
                   />
                   {errors.MaNV && (
-                    <span className="text-xs text-red-500">{errors.MaNV}</span>
+                    <span className="text-xs text-red-500">{t(errors.MaNV || "")}</span>
                   )}
                 </Field>
 
@@ -154,7 +154,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     }
                   />
                   {errors.LoaiHD && (
-                    <span className="text-xs text-red-500">{errors.LoaiHD}</span>
+                    <span className="text-xs text-red-500">{t(errors.LoaiHD || "")}</span>
                   )}
                 </Field>
 
@@ -169,7 +169,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     }
                   />
                   {errors.NgayBatDau && (
-                    <span className="text-xs text-red-500">{errors.NgayBatDau}</span>
+                    <span className="text-xs text-red-500">{t(errors.NgayBatDau || "")}</span>
                   )}
                 </Field>
 
@@ -184,7 +184,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     }
                   />
                   {errors.NgayKetThuc && (
-                    <span className="text-xs text-red-500">{errors.NgayKetThuc}</span>
+                    <span className="text-xs text-red-500">{t(errors.NgayKetThuc || "")}</span>
                   )}
                 </Field>
 
@@ -203,7 +203,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     }}
                   />
                   {errors.HinhAnhHopDong && (
-                    <span className="text-xs text-red-500">{errors.HinhAnhHopDong}</span>
+                    <span className="text-xs text-red-500">{t(errors.HinhAnhHopDong || "")}</span>
                   )}
                 </Field>
               </FieldGroup>
