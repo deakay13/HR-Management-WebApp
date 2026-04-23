@@ -7,13 +7,13 @@ export const HoursInputSchema = z.object({
     .min(1, "Mã giờ làm không được để trống")
     .regex(/^GL\d{3,}$/, "Mã phải bắt đầu bằng GL và có ít nhất 3 chữ số"),
 
-  SoGioLam: z.coerce
-    .number({ message: "Số giờ phải là một con số" }) 
+  SoGioLam: z
+    .number({ message: "Số giờ phải là một con số" })
     .min(1, "Số giờ phải lớn hơn 0"),
-  SoNgayLam: z.coerce
+  SoNgayLam: z
     .number({ message: "Số ngày phải là một con số" })
     .min(1, "Số ngày công phải lớn hơn 0"),
-  TongSoGio: z.coerce.number({ message: "Tổng số giờ phải là một con số" }),
+  TongSoGio: z.number({ message: "Tổng số giờ phải là một con số" }),
 });
 
 /* OUTPUT (DATA FROM API) */

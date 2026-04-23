@@ -9,7 +9,7 @@ export const AllowanceInputSchema = z.object({
 
   LoaiPC: z.string().min(1, "Loại phụ cấp không được để trống"),
 
-  SoTien: z.coerce.number().min(10000, "Số tiền phải lớn hơn 0"),
+  SoTien: z.number().min(10000, "Số tiền phải lớn hơn 0"),
 });
 
 /* OUTPUT (DATA TỪ API)*/

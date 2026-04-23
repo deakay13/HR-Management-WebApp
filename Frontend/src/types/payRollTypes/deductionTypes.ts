@@ -9,7 +9,7 @@ export const DeductionInputSchema = z.object({
 
   LoaiKT: z.string().min(1, "Loại khấu trừ không được để trống"),
 
-  PhanTram: z.coerce
+  PhanTram: z
     .number({ message: "Phần trăm phải là một con số" })
     .min(0, "Phần trăm phải >= 0")
     .max(100, "Phần trăm không được vượt quá 100"),

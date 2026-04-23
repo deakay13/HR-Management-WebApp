@@ -7,7 +7,7 @@ export const BaseSalaryInputSchema = z.object({
     .min(1, "Mã lương cơ bản không được để trống")
     .regex(/^LCB\d{3}$/, "Mã phải dạng LCBxxx"),
 
-  LuongCB: z.coerce.number().min(1, "Lương phải lớn hơn 0"),
+  LuongCB: z.number().min(1, "Lương phải lớn hơn 0"),
 });
 
 /*  OUTPUT (DATA TỪ API)  */
