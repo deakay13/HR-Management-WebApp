@@ -1,11 +1,15 @@
 import { z } from "zod";
 
 export const PermissionSchema = z.object({
-  MaQuyen: z.string(),
-  TenQuyen: z.string(),
+  MaQuyen: z
+    .string()
+    .min(1, "Mã Quyền không được để trống")
+    .regex(/^MQ\d{3}$/, "Mã Quyền phải có dạng MQxxx"),
+  TenQuyen: z.string().min(3, "Tên quyền phải có ít nhất 3 ký tự"),
 });
 
 export type Permission = z.infer<typeof PermissionSchema>;
+export type PermissionInput = z.infer<typeof PermissionSchema>;
 
 export interface PermissionsTypes {
   Permissions: Permission[];

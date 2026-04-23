@@ -243,7 +243,7 @@ const updateEmployee = async (req, res) => {
       return res.status(404).json({ message: "Nhân viên không tồn tại" });
     }
 
-    const parsed = employeeSchema.omit({ MaNV: true }).safeParse(req.body);
+    const parsed = employeeSchema.omit({ MaNV: true }).partial().safeParse(req.body);
     if (!parsed.success) {
       const errors = parsed.error.issues.map((issue) => ({
         field: issue.path[0],

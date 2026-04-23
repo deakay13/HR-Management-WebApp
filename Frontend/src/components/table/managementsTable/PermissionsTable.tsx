@@ -38,9 +38,14 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  PermissionSchema,
+  type Permission,
+} from "@/types/permissionTypes/permissionsTypes";
 
 import { columns } from "../columns/managements/PermissionsTableColumns";
-import type { Permission } from "@/types/permissionTypes/permissionsTypes";
 import { usePermissionsStore } from "@/stores/permissionStores/permissionsStore";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
@@ -66,12 +71,24 @@ export function PermissionsTable({
   const { createPermissions } = usePermissionsStore();
   const { role } = useAuthorizeStore();
   const isAdmin = role?.MaVT === "VT001";
-  const [formData, setFormData] = React.useState({ MaQuyen: "", TenQuyen: "" });
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<Permission>({
+    resolver: zodResolver(PermissionSchema),
+    defaultValues: { MaQuyen: "", TenQuyen: "" },
+  });
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await createPermissions(formData);
-    setFormData({ MaQuyen: "", TenQuyen: "" });
+  const onSubmit: SubmitHandler<Permission> = async (data) => {
+    try {
+      await createPermissions(data);
+      reset();
+    } catch {
+      // toast is handled in store
+    }
   };
 
   const [pagination, setPagination] = React.useState({
@@ -127,14 +144,14 @@ export function PermissionsTable({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setFormData({ MaQuyen: "", TenQuyen: "" })}
+                  onClick={() => reset()}
                 >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleCreate} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle>{t("Tạo quyền")}</DialogTitle>
                     <DialogDescription>
@@ -146,23 +163,25 @@ export function PermissionsTable({
                       <Label htmlFor="MaQuyen">{t("Mã Quyền")}</Label>
                       <Input
                         id="MaQuyen"
-                        name="MaQuyen"
-                        value={formData.MaQuyen}
-                        onChange={(e) =>
-                          setFormData({ ...formData, MaQuyen: e.target.value })
-                        }
+                        placeholder={t("VD: MQ001")}
+                        className={`h-10 ${errors.MaQuyen ? "border-red-500" : ""}`}
+                        {...register("MaQuyen")}
                       />
+                      {errors.MaQuyen && (
+                        <p className="text-red-500 text-xs">{t(errors.MaQuyen.message || "")}</p>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="TenQuyen">{t("Tên Quyền")}</Label>
                       <Input
                         id="TenQuyen"
-                        name="TenQuyen"
-                        value={formData.TenQuyen}
-                        onChange={(e) =>
-                          setFormData({ ...formData, TenQuyen: e.target.value })
-                        }
+                        placeholder={t("VD: Đọc, Tạo")}
+                        className={`h-10 ${errors.TenQuyen ? "border-red-500" : ""}`}
+                        {...register("TenQuyen")}
                       />
+                      {errors.TenQuyen && (
+                        <p className="text-red-500 text-xs">{t(errors.TenQuyen.message || "")}</p>
+                      )}
                     </Field>
                   </FieldGroup>
                   <DialogFooter className="gap-2">
@@ -171,7 +190,7 @@ export function PermissionsTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaQuyen || !formData.TenQuyen}
+                      disabled={isSubmitting}
                     >
                       {t("Thêm")}
                     </Button>

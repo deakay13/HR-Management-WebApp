@@ -500,11 +500,17 @@ const ProfileComponent = () => {
               className="relative h-48 w-48 rounded-full overflow-hidden border-4 border-[hsl(var(--primary)/20)] shadow-2xl cursor-pointer group/preview"
               onClick={() => fileInputRef.current?.click()}
             >
-              <img
-                src={previewUrl || getImageUrl(employee?.HinhAnh)}
-                alt="Preview"
-                className="h-full w-full object-cover"
-              />
+              {previewUrl || employee?.HinhAnh ? (
+                <img
+                  src={previewUrl || getImageUrl(employee?.HinhAnh)}
+                  alt="Preview"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="h-full w-full flex items-center justify-center bg-[hsl(var(--primary)/10)] text-[hsl(var(--primary))] text-6xl font-bold">
+                  {initials}
+                </div>
+              )}
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/preview:opacity-100 transition-smooth">
                 <IconCamera className="text-white size-8" />
               </div>
