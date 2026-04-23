@@ -33,4 +33,18 @@ export const AllowanceServices = {
     });
     return res.data.data;
   },
+  searchAllowance: async (params: Record<string, unknown>) => {
+    const res = await api.get("/api/payroll/allowances/search", {
+      params,
+      withCredentials: true,
+    });
+    return res.data;
+  },
+  exportAllowance: async () => {
+    const res = await api.get("/api/payroll/allowances/export", {
+      responseType: "blob",
+      withCredentials: true,
+    });
+    return res.data;
+  },
 };

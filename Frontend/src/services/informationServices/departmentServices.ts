@@ -2,9 +2,25 @@ import api from "@/lib/axios";
 import type { Department } from "@/types/informationTypes/departmentTypes";
 
 export const DepartmentServices = {
-  getDepartments: async () => {
+  getDepartments: async (params?: any) => {
     const res = await api.get("/api/information/departments", {
-      params: { size: 0 },
+      params: { size: 10, ...params },
+      withCredentials: true,
+    });
+    return res.data;
+  },
+
+  searchDepartment: async (params: any) => {
+    const res = await api.get("/api/information/departments/search", {
+      params: { size: 10, ...params },
+      withCredentials: true,
+    });
+    return res.data;
+  },
+
+  exportDepartment: async () => {
+    const res = await api.get("/api/information/departments/export", {
+      responseType: "blob",
       withCredentials: true,
     });
     return res.data;

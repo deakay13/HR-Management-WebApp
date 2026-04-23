@@ -7,24 +7,38 @@ import type { Contract } from "@/types/informationTypes/contractTypes";
 interface ContractState {
   contracts: Contract[];
   initializing: boolean;
-  getContracts: () => Promise<void>;
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  searchParams: Record<string, any>;
+  getContracts: (params?: Record<string, any>) => Promise<void>;
   createContract: (data: FormData) => Promise<void>;
   updateContract: (id: string, data: FormData) => Promise<void>;
   deleteContract: (id: string) => Promise<void>;
+  searchContracts: (params: Record<string, any>) => Promise<void>;
 }
 
 export const useContractStore = create<ContractState>((set, get) => ({
   contracts: [],
   initializing: true,
+  totalItems: 0,
+  totalPages: 0,
+  currentPage: 1,
+  searchParams: {},
 
-  getContracts: async () => {
+  getContracts: async (params?: Record<string, any>) => {
+    set({ initializing: true });
     try {
-      set({ initializing: true });
-      const data = await ContractServices.getContracts();
-      set({ contracts: data, initializing: false });
+      const response = await ContractServices.getContracts(params);
+      set({
+        contracts: response?.data || [],
+        totalItems: response?.totalItems || 0,
+        totalPages: response?.totalPages || 0,
+      });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách hợp đồng:", error);
       toast.error(i18n.t("Không thể tải danh sách hợp đồng"));
+    } finally {
       set({ initializing: false });
     }
   },
@@ -63,4 +77,23 @@ export const useContractStore = create<ContractState>((set, get) => ({
       toast.error(i18n.t("Không thể xoá hợp đồng"));
     }
   },
+
+  searchContracts: async (params: Record<string, any>) => {
+    try {
+      const res = await ContractServices.searchContracts(params);
+      set({
+        contracts: res.data,
+        totalItems: res.totalItems,
+        totalPages: res.totalPages,
+        currentPage: res.currentPage,
+        searchParams: params,
+      });
+    } catch (error) {
+      console.error("Lỗi search contracts", error);
+      toast.error(i18n.t("Không thể tìm kiếm hợp đồng"));
+    } finally {
+      set({ initializing: false });
+    }
+  },
 }));
+

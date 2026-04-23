@@ -26,9 +26,23 @@ export type Deduction = z.infer<typeof DeductionSchema>;
 export interface DeductionTypes {
   Deductions: Deduction[];
   initializing: boolean;
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  searchParams: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  };
 
   clearState: () => void;
   getDeductions: () => Promise<void>;
+  searchDeduction: (params: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  }) => Promise<void>;
   deleteDeduction: (ID: string) => Promise<void>;
 
   createDeduction: (data: DeductionInput) => Promise<void>;

@@ -19,14 +19,20 @@ export const columns: ColumnDef<BaseSalary>[] = [
     accessorKey: "MaLCB",
     header: () => <H k="Mã Lương Cơ Bản" />,
     cell: ({ row }) => <>{row.original.MaLCB}</>,
+    size: 200,
+    minSize: 200,
   },
   {
     accessorKey: "LuongCB",
     header: () => <H k="Lương Cơ Bản" />,
     cell: ({ row }) => <CellLuongCB amount={Number(row.original.LuongCB || 0)} />,
+    size: 250,
+    minSize: 250,
   },
   {
     id: "actions",
     cell: ({ row }) => <BaseSalaryActionCell baseSalary={row.original} />,
+    size: 100,
+    minSize: 100,
   },
 ];

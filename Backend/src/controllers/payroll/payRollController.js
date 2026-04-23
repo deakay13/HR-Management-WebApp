@@ -11,6 +11,7 @@ import { searchService } from "../../utils/search.js";
 import ExcelJS from "exceljs";
 import { payRollSchema } from "../../utils/validationSchemas.js";
 import { Op } from "sequelize";
+import sequelize from "../../config/dbconnect.js";
 
 export const calculatePayroll = async (req, res) => {
   try {
@@ -161,7 +162,11 @@ export const updatePayroll = async (req, res) => {
 };
 export const getPayrolls = async (req, res) => {
   try {
-    const { offset, limit, page, finalSize } = Pagination(req.query);
+    const query = { ...req.query };
+    if (query.size === undefined) {
+      query.size = 0;
+    }
+    const { offset, limit, page, finalSize } = Pagination(query);
 
     // Role-based filter: Employee only sees their own payroll
     const isEmployee = req.account?.VaiTro?.TenVaiTro === "Nhân Viên";
@@ -175,6 +180,11 @@ export const getPayrolls = async (req, res) => {
 
     const { count, rows } = await BangLuong.findAndCountAll({
       ...options,
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaBL")), "ASC"],
+        ["MaBL", "ASC"],
+      ],
+      distinct: true,
       include: [
         { model: NhanVien, as: "NhanVien", attributes: ["HoVaTen"] },
         { model: KhauTru, as: "KhauTru", attributes: ["LoaiKT"] },
@@ -298,7 +308,8 @@ export const getPayrollByEmployee = async (req, res) => {
 export const searchPayroll = async (req, res) => {
   try {
     const query = { ...req.query };
-    if (!query.keyword) {
+    // Mặc định ép size = 0 (lấy tối đa 2000 bản ghi) để UI có thể phân trang client-side toàn bộ kết quả tìm thấy
+    if (query.size === undefined) {
       query.size = 0;
     }
 
@@ -323,7 +334,11 @@ export const searchPayroll = async (req, res) => {
       likeFields: ["Thang"],
       rangeFields: ["TongLuong"],
       forcedWhere,
-      order: [["NgayTinhLuong", "DESC"]],
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaBL")), "ASC"],
+        ["MaBL", "ASC"],
+      ],
+      distinct: true,
       include: [
         { model: NhanVien, as: "NhanVien", attributes: ["HoVaTen"] },
         { model: KhauTru, as: "KhauTru", attributes: ["LoaiKT"] },
@@ -349,6 +364,10 @@ export const exportPayrollToExcel = async (req, res) => {
         { model: PhuCap, as: "PhuCapThuong", attributes: ["LoaiPC", "SoTien"] },
         { model: LuongCoBan, as: "LuongCoBan", attributes: ["LuongCB"] },
         { model: GioLam, as: "TongGioLam", attributes: ["SoGioLam"] },
+      ],
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaBL")), "ASC"],
+        ["MaBL", "ASC"],
       ],
     });
 

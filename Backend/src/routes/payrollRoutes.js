@@ -6,6 +6,8 @@ import {
   getBaseSalaryById,
   updateBaseSalary,
   deleteBaseSalary,
+  searchBaseSalary,
+  exportBaseSalariesToExcel,
 } from "../controllers/payroll/baseSalaryController.js";
 import {
   createDeduction,
@@ -13,6 +15,8 @@ import {
   getDeductionById,
   updateDeduction,
   deleteDeduction,
+  searchDeduction,
+  exportDeductionsToExcel,
 } from "../controllers/payroll/deductionController.js";
 import {
   createAllowance,
@@ -20,6 +24,8 @@ import {
   getAllowanceById,
   updateAllowance,
   deleteAllowance,
+  searchAllowance,
+  exportAllowancesToExcel,
 } from "../controllers/payroll/allowanceController.js";
 import {
   createHour,
@@ -27,6 +33,8 @@ import {
   getHourById,
   updateHour,
   deleteHour,
+  searchHours,
+  exportHoursToExcel,
 } from "../controllers/payroll/hoursController.js";
 import {
   calculatePayroll,
@@ -44,24 +52,32 @@ const router = express.Router();
 /* Base Salary routes */
 router.post("/basesalary", authorize(["Tạo"]), createBaseSalary);
 router.get("/basesalary", authorize(["Đọc"]), getBaseSalaries);
+router.get("/basesalary/search", authorize(["Đọc"]), searchBaseSalary);
+router.get("/basesalary/export", authorize(["Đọc"]), exportBaseSalariesToExcel);
 router.get("/basesalary/:ID", authorize(["Đọc"]), getBaseSalaryById);
 router.put("/basesalary/:ID", authorize(["Sửa"]), updateBaseSalary);
 router.delete("/basesalary/:ID", authorize(["Xoá"]), deleteBaseSalary);
 /* Deduction routes */
 router.post("/deductions", authorize(["Tạo"]), createDeduction);
 router.get("/deductions", authorize(["Đọc"]), getDeductions);
+router.get("/deductions/search", authorize(["Đọc"]), searchDeduction);
+router.get("/deductions/export", authorize(["Đọc"]), exportDeductionsToExcel);
 router.get("/deductions/:ID", authorize(["Đọc"]), getDeductionById);
 router.put("/deductions/:ID", authorize(["Sửa"]), updateDeduction);
 router.delete("/deductions/:ID", authorize(["Xoá"]), deleteDeduction);
 /* Allowance routes will be added here */
 router.post("/allowances", authorize(["Tạo"]), createAllowance);
 router.get("/allowances", authorize(["Đọc"]), getAllowances);
+router.get("/allowances/search", authorize(["Đọc"]), searchAllowance);
+router.get("/allowances/export", authorize(["Đọc"]), exportAllowancesToExcel);
 router.get("/allowances/:ID", authorize(["Đọc"]), getAllowanceById);
 router.put("/allowances/:ID", authorize(["Sửa"]), updateAllowance);
 router.delete("/allowances/:ID", authorize(["Xoá"]), deleteAllowance);
 /* Hour routes */
 router.post("/hours", authorize(["Tạo"]), createHour);
 router.get("/hours", authorize(["Đọc"]), getHours);
+router.get("/hours/search", authorize(["Đọc"]), searchHours);
+router.get("/hours/export", authorize(["Đọc"]), exportHoursToExcel);
 router.get("/hours/:ID", authorize(["Đọc"]), getHourById);
 router.put("/hours/:ID", authorize(["Sửa"]), updateHour);
 router.delete("/hours/:ID", authorize(["Xoá"]), deleteHour);

@@ -7,20 +7,61 @@ import type { BaseSalaryTypes } from "@/types/payRollTypes/baseSalaryTypes";
 export const useBaseSalaryStore = create<BaseSalaryTypes>((set, get) => ({
   BaseSalaries: [],
   initializing: true,
+  totalItems: 0,
+  totalPages: 1,
+  currentPage: 1,
+  pageSize: 10,
+  searchParams: { keyword: "", page: 1, size: 10 },
+
   clearState: () => {
-    set({ BaseSalaries: [] });
+    set({
+      BaseSalaries: [],
+      totalItems: 0,
+      totalPages: 1,
+      currentPage: 1,
+      pageSize: 10,
+      searchParams: { keyword: "", page: 1, size: 10 },
+    });
   },
 
   getBaseSalaries: async () => {
     set({ initializing: true });
     try {
-      const data = await BaseSalaryServices.getBaseSalaries();
-      set({ BaseSalaries: data });
+      const { searchParams } = get();
+      const response = await BaseSalaryServices.searchBaseSalary(searchParams);
+      if (response && "data" in response) {
+        set({
+          BaseSalaries: response.data,
+          totalItems: response.totalItems,
+          totalPages: response.totalPages,
+          currentPage: response.currentPage,
+          pageSize: response.pageSize,
+        });
+      }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách BaseSalaries", error);
       toast.error(i18n.t("Không thể tải danh sách lương cơ bản"));
     } finally {
       set({ initializing: false });
+    }
+  },
+  searchBaseSalary: async (params) => {
+    try {
+      const currentParams = get().searchParams;
+      const newParams = { ...currentParams, ...params };
+
+      const response = await BaseSalaryServices.searchBaseSalary(newParams);
+      set({
+        BaseSalaries: response.data,
+        totalItems: response.totalItems,
+        totalPages: response.totalPages,
+        currentPage: response.currentPage,
+        pageSize: response.pageSize,
+        searchParams: newParams,
+      });
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm BaseSalary:", error);
+      toast.error(i18n.t("Không thể thực hiện tìm kiếm"));
     }
   },
   deleteBaseSalary: async (ID: string) => {

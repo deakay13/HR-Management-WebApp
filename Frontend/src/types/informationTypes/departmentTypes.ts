@@ -23,9 +23,14 @@ export type Department = z.infer<typeof DepartmentSchema>;
 export interface DepartmentTypes {
   departments: Department[];
   initializing: boolean;
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  searchParams: any;
   clearState: () => void;
   createDepartment: (data: Department) => Promise<void>;
-  getDepartments: () => Promise<void>;
+  getDepartments: (params?: any) => Promise<void>;
+  searchDepartments: (params?: any) => Promise<void>;
   updateDepartment: (ID: string, data: Department) => Promise<void>;
   deleteDepartment: (ID: string) => Promise<void>;
 }

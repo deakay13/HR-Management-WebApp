@@ -21,9 +21,23 @@ export type BaseSalary = z.infer<typeof BaseSalarySchema>;
 export interface BaseSalaryTypes {
   BaseSalaries: BaseSalary[];
   initializing: boolean;
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  searchParams: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  };
 
   clearState: () => void;
   getBaseSalaries: () => Promise<void>;
+  searchBaseSalary: (params: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  }) => Promise<void>;
   deleteBaseSalary: (ID: string) => Promise<void>;
 
   createBaseSalary: (data: BaseSalaryInput) => Promise<void>;

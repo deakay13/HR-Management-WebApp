@@ -13,13 +13,19 @@ export const departmentColumns: ColumnDef<Department>[] = [
   {
     accessorKey: "MaPB",
     header: () => <H k="Mã Phòng Ban" />,
+    size: 200,
+    minSize: 150,
   },
   {
     accessorKey: "TenPB",
     header: () => <H k="Tên Phòng Ban" />,
+    size: 500,
+    minSize: 300,
   },
   {
     id: "actions",
     cell: ({ row }) => <DepartmentActionCell dept={row.original} />,
+    size: 100,
+    minSize: 80,
   },
 ];

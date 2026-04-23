@@ -23,9 +23,23 @@ export type Allowance = z.infer<typeof AllowanceSchema>;
 export interface AllowanceTypes {
   Allowances: Allowance[];
   initializing: boolean;
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  searchParams: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  };
 
   clearState: () => void;
   getAllowances: () => Promise<void>;
+  searchAllowance: (params: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  }) => Promise<void>;
   deleteAllowance: (ID: string) => Promise<void>;
   createAllowance: (data: AllowanceInput) => Promise<void>;
   updateAllowance: (ID: string, data: AllowanceInput) => Promise<void>;

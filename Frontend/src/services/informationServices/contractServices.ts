@@ -1,9 +1,9 @@
 import api from "@/lib/axios";
 
 export const ContractServices = {
-  getContracts: async () => {
+  getContracts: async (params?: Record<string, unknown>) => {
     const res = await api.get("/api/information/contracts", {
-      params: { size: 0 },
+      params,
       withCredentials: true,
     });
     return res.data;
@@ -31,6 +31,20 @@ export const ContractServices = {
   },
   deleteContract: async (ID: string) => {
     const res = await api.delete(`/api/information/contracts/${ID}`, {
+      withCredentials: true,
+    });
+    return res.data;
+  },
+  searchContracts: async (params: Record<string, unknown>) => {
+    const res = await api.get("/api/information/contracts/search", {
+      params,
+      withCredentials: true,
+    });
+    return res.data;
+  },
+  exportContract: async () => {
+    const res = await api.get("/api/information/contracts/export", {
+      responseType: "blob",
       withCredentials: true,
     });
     return res.data;

@@ -24,4 +24,18 @@ export const HoursServices = {
     });
     return res.data.hour;
   },
+  searchHours: async (params: Record<string, unknown>) => {
+    const res = await api.get("/api/payroll/hours/search", {
+      params,
+      withCredentials: true,
+    });
+    return res.data;
+  },
+  exportHours: async () => {
+    const res = await api.get("/api/payroll/hours/export", {
+      responseType: "blob",
+      withCredentials: true,
+    });
+    return res.data;
+  },
 };
