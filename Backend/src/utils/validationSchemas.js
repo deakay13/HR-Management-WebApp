@@ -62,7 +62,6 @@ export const employeeSchema = z.object({
 export const departmentSchema = z.object({
   MaPB: z.string().min(1, "Mã phòng ban không được để trống"),
   TenPB: z.string().min(2, "Tên phòng ban phải từ 2 ký tự").max(100),
-  MoTa: z.string().max(255).optional().nullable(),
 });
 
 export const contractSchema = z.object({

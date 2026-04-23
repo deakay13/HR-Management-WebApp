@@ -2,7 +2,7 @@ export function Pagination(query) {
   const page = parseInt(query.page) || 1;
   const size = parseInt(query.size);
 
-  // Nếu size = 0 thì lấy tối đa 2000 bản ghi để hỗ trợ UI phân trang client-side mà không làm sập server
+  // Nếu size = 0 thì lấy tối đa 500 bản ghi để hỗ trợ UI phân trang client-side mà không làm sập server
   if (size === 0) {
     return { offset: 0, limit: 2000, page, finalSize: 10 };
   }

@@ -10,6 +10,10 @@ import type {
 export const useDepartmentStore = create<DepartmentTypes>((set) => ({
   departments: [],
   initializing: true,
+  totalItems: 0,
+  totalPages: 1,
+  currentPage: 1,
+  searchParams: {},
 
   clearState: () => {
     set({ departments: [], initializing: false });
@@ -32,14 +36,40 @@ export const useDepartmentStore = create<DepartmentTypes>((set) => ({
     }
   },
 
-  getDepartments: async () => {
-    set({ initializing: true });
+  getDepartments: async (params?: any) => {
     try {
-      const data = await DepartmentServices.getDepartments();
-      set({ departments: data });
+      const response = await DepartmentServices.getDepartments(params);
+      if (response && response.data) {
+        set({
+          departments: response.data,
+          totalItems: response.totalItems,
+          totalPages: response.totalPages,
+          currentPage: response.currentPage,
+        });
+      } else {
+        set({ departments: response || [] });
+      }
     } catch (error: unknown) {
       console.error("Lỗi khi lấy danh sách phòng ban:", error);
       toast.error(i18n.t("Không thể tải danh sách phòng ban"));
+    } finally {
+      set({ initializing: false });
+    }
+  },
+
+  searchDepartments: async (params?: any) => {
+    set({ searchParams: params });
+    try {
+      const response = await DepartmentServices.searchDepartment(params);
+      set({
+        departments: response.data,
+        totalItems: response.totalItems,
+        totalPages: response.totalPages,
+        currentPage: response.currentPage,
+      });
+    } catch (error: unknown) {
+      console.error("Lỗi khi tìm kiếm phòng ban:", error);
+      toast.error(i18n.t("Không thể thực hiện tìm kiếm"));
     } finally {
       set({ initializing: false });
     }

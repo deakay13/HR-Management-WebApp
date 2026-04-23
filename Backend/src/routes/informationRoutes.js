@@ -6,6 +6,8 @@ import {
   createDepartment,
   updateDepartment,
   deleteDepartment,
+  searchDepartments,
+  exportDepartmentsToExcel,
 } from "../controllers/information/departmentsControllers.js";
 import {
   getAllEmployees,
@@ -30,6 +32,8 @@ import upload from "../config/multerConfig.js";
 const router = express.Router();
 
 /* Routes for PhongBan */
+router.get("/departments/search", authorize(["Đọc"]), searchDepartments);
+router.get("/departments/export", authorize(["Đọc"]), exportDepartmentsToExcel);
 router.get("/departments", authorize(["Đọc"]), getAllDepartments);
 router.get("/departments/:id", authorize(["Đọc"]), getDepartmentById);
 router.post("/departments", authorize(["Tạo"]), createDepartment);

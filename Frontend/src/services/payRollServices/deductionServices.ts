@@ -29,4 +29,18 @@ export const DeductionServices = {
     });
     return res.data.deduction;
   },
+  searchDeduction: async (params: Record<string, unknown>) => {
+    const res = await api.get("/api/payroll/deductions/search", {
+      params,
+      withCredentials: true,
+    });
+    return res.data;
+  },
+  exportDeduction: async () => {
+    const res = await api.get("/api/payroll/deductions/export", {
+      responseType: "blob",
+      withCredentials: true,
+    });
+    return res.data;
+  },
 };

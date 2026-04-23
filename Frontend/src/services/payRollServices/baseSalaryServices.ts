@@ -29,4 +29,18 @@ export const BaseSalaryServices = {
     });
     return res.data.luong;
   },
+  searchBaseSalary: async (params: Record<string, unknown>) => {
+    const res = await api.get("/api/payroll/basesalary/search", {
+      params,
+      withCredentials: true,
+    });
+    return res.data;
+  },
+  exportBaseSalary: async () => {
+    const res = await api.get("/api/payroll/basesalary/export", {
+      responseType: "blob",
+      withCredentials: true,
+    });
+    return res.data;
+  },
 };

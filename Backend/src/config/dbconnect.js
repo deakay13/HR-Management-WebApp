@@ -14,6 +14,7 @@ const sequelize = new Sequelize(
       options: {
         encrypt: false,
         trustServerCertificate: true,
+        requestTimeout: 60000,
       },
     },
     logging: false,

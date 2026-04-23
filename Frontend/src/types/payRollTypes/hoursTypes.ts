@@ -27,9 +27,23 @@ export type Hours = z.infer<typeof HoursSchema>;
 export interface HoursTypes {
   Hours: Hours[];
   initializing: boolean;
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  searchParams: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  };
 
   clearState: () => void;
   getHours: () => Promise<void>;
+  searchHours: (params: {
+    keyword?: string;
+    page?: number;
+    size?: number;
+  }) => Promise<void>;
   deleteHours: (ID: string) => Promise<void>;
 
   createHours: (data: HoursInput) => Promise<void>;

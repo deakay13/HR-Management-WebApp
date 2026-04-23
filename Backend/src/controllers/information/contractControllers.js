@@ -6,6 +6,7 @@ import { contractSchema, contractUpdateSchema } from "../../utils/validationSche
 import { Pagination } from "../../utils/paginations.js";
 import { searchService } from "../../utils/search.js";
 import ExcelJS from "exceljs";
+import sequelize from "../../config/dbconnect.js";
 
 const getAllContracts = async (req, res) => {
   try {
@@ -32,7 +33,10 @@ const getAllContracts = async (req, res) => {
           required: false,
         },
       ],
-      order: [["MaHopDong", "DESC"]],
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaHopDong")), "ASC"],
+        ["MaHopDong", "ASC"],
+      ],
     };
 
     if (limit !== null) {
@@ -179,7 +183,10 @@ export const searchContracts = async (req, res) => {
       searchFields: ["MaHopDong", "MaNV", "LoaiHD", "ChucDanh", "$NhanVien.HoVaTen$"],
       exactFields: ["MaNV", "MaPB", "TinhTrang"],
       forcedWhere,
-      order: [["MaHopDong", "DESC"]],
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaHopDong")), "ASC"],
+        ["MaHopDong", "ASC"],
+      ],
       include: [
         {
           model: Employees,
@@ -206,7 +213,10 @@ export const exportContractsToExcel = async (req, res) => {
           as: "NhanVien",
         },
       ],
-      order: [["MaHopDong", "DESC"]],
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaHopDong")), "ASC"],
+        ["MaHopDong", "ASC"],
+      ],
     });
 
     const workbook = new ExcelJS.Workbook();

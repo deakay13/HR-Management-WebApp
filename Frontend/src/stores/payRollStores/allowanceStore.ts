@@ -7,20 +7,61 @@ import type { AllowanceTypes } from "@/types/payRollTypes/allowanceTypes";
 export const useAllowanceStore = create<AllowanceTypes>((set, get) => ({
   Allowances: [],
   initializing: true,
+  totalItems: 0,
+  totalPages: 1,
+  currentPage: 1,
+  pageSize: 10,
+  searchParams: { keyword: "", page: 1, size: 10 },
+
   clearState: () => {
-    set({ Allowances: [] });
+    set({
+      Allowances: [],
+      totalItems: 0,
+      totalPages: 1,
+      currentPage: 1,
+      pageSize: 10,
+      searchParams: { keyword: "", page: 1, size: 10 },
+    });
   },
 
   getAllowances: async () => {
     set({ initializing: true });
     try {
-      const data = await AllowanceServices.getAllowances();
-      set({ Allowances: data });
+      const { searchParams } = get();
+      const response = await AllowanceServices.searchAllowance(searchParams);
+      if (response && "data" in response) {
+        set({
+          Allowances: response.data,
+          totalItems: response.totalItems,
+          totalPages: response.totalPages,
+          currentPage: response.currentPage,
+          pageSize: response.pageSize,
+        });
+      }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách Allowances", error);
       toast.error(i18n.t("Không thể lấy danh sách Allowances"));
     } finally {
       set({ initializing: false });
+    }
+  },
+  searchAllowance: async (params) => {
+    try {
+      const currentParams = get().searchParams;
+      const newParams = { ...currentParams, ...params };
+
+      const response = await AllowanceServices.searchAllowance(newParams);
+      set({
+        Allowances: response.data,
+        totalItems: response.totalItems,
+        totalPages: response.totalPages,
+        currentPage: response.currentPage,
+        pageSize: response.pageSize,
+        searchParams: newParams,
+      });
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm Allowance:", error);
+      toast.error(i18n.t("Không thể thực hiện tìm kiếm"));
     }
   },
   deleteAllowance: async (ID: string) => {

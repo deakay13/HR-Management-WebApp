@@ -19,19 +19,27 @@ export const columns: ColumnDef<Allowance>[] = [
     accessorKey: "MaPC",
     header: () => <H k="Mã Phụ Cấp" />,
     cell: ({ row }) => <>{row.original.MaPC}</>,
+    size: 150,
+    minSize: 150,
   },
   {
     accessorKey: "LoaiPC",
     header: () => <H k="Loại Phụ Cấp" />,
     cell: ({ row }) => <>{row.original.LoaiPC}</>,
+    size: 200,
+    minSize: 200,
   },
   {
     accessorKey: "SoTien",
     header: () => <H k="Số Tiền" />,
     cell: ({ row }) => <CellSoTien amount={Number(row.original.SoTien || 0)} />,
+    size: 180,
+    minSize: 180,
   },
   {
     id: "actions",
     cell: ({ row }) => <AllowanceActionCell allowance={row.original} />,
+    size: 100,
+    minSize: 100,
   },
 ];

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconSearch, IconFileSpreadsheet } from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,
@@ -52,6 +52,9 @@ import { canCreate } from "@/utils/authorizeUtils";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
+import { AllowanceServices } from "@/services/payRollServices/allowanceServices";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 export function AllowanceTable({
   data,
@@ -69,9 +72,35 @@ export function AllowanceTable({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const { createAllowance } = useAllowanceStore();
+  const { createAllowance, searchAllowance } = useAllowanceStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
+  const [filters, setFilters] = React.useState({ keyword: "" });
+
+  // Debounce auto-search
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      searchAllowance(filters);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [filters, searchAllowance]);
+
+  const handleExport = async () => {
+    try {
+      const blob = await AllowanceServices.exportAllowance();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `danh_sach_phu_cap.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success(t("Xuất file excel thành công"));
+    } catch (error) {
+      console.error("Lỗi export excel:", error);
+      toast.error(t("Không thể xuất file excel"));
+    }
+  };
 
   const {
     register,
@@ -136,7 +165,30 @@ export function AllowanceTable({
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Phụ Cấp")} />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative flex items-center gap-2">
+            <div className="relative">
+              <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("Search...")}
+                className="h-9 w-[160px] pl-9"
+                value={filters.keyword}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, keyword: e.target.value }))
+                }
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              className="h-9 w-9 p-0"
+              title={t("Xuất Excel")}
+            >
+              <IconFileSpreadsheet size={18} />
+            </Button>
+          </div>
+
           <TableColumnFilter table={table} />
 
           {/* Create button */}
@@ -233,13 +285,18 @@ export function AllowanceTable({
         value="outline"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
-        <div className="overflow-hidden rounded-lg border">
-          <Table>
+        <div className="overflow-x-auto rounded-lg border">
+          <Table className="table-fixed w-full">
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
+                    <TableHead 
+                      key={header.id} 
+                      colSpan={header.colSpan} 
+                      className="text-center align-middle"
+                      style={{ width: header.column.getSize() }}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -259,7 +316,11 @@ export function AllowanceTable({
                     data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="text-center align-middle">
+                      <TableCell 
+                        key={cell.id} 
+                        className="text-center align-middle"
+                        style={{ width: cell.column.getSize() }}
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),

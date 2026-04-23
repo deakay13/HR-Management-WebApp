@@ -7,20 +7,61 @@ import type { DeductionTypes } from "@/types/payRollTypes/deductionTypes";
 export const useDeductionStore = create<DeductionTypes>((set, get) => ({
   Deductions: [],
   initializing: true,
+  totalItems: 0,
+  totalPages: 1,
+  currentPage: 1,
+  pageSize: 10,
+  searchParams: { keyword: "", page: 1, size: 10 },
+
   clearState: () => {
-    set({ Deductions: [] });
+    set({
+      Deductions: [],
+      totalItems: 0,
+      totalPages: 1,
+      currentPage: 1,
+      pageSize: 10,
+      searchParams: { keyword: "", page: 1, size: 10 },
+    });
   },
 
   getDeductions: async () => {
     set({ initializing: true });
     try {
-      const data = await DeductionServices.getDeductions();
-      set({ Deductions: data });
+      const { searchParams } = get();
+      const response = await DeductionServices.searchDeduction(searchParams);
+      if (response && "data" in response) {
+        set({
+          Deductions: response.data,
+          totalItems: response.totalItems,
+          totalPages: response.totalPages,
+          currentPage: response.currentPage,
+          pageSize: response.pageSize,
+        });
+      }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách Deductions", error);
       toast.error(i18n.t("Không thể lấy danh sách Deductions"));
     } finally {
       set({ initializing: false });
+    }
+  },
+  searchDeduction: async (params) => {
+    try {
+      const currentParams = get().searchParams;
+      const newParams = { ...currentParams, ...params };
+
+      const response = await DeductionServices.searchDeduction(newParams);
+      set({
+        Deductions: response.data,
+        totalItems: response.totalItems,
+        totalPages: response.totalPages,
+        currentPage: response.currentPage,
+        pageSize: response.pageSize,
+        searchParams: newParams,
+      });
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm Deduction:", error);
+      toast.error(i18n.t("Không thể thực hiện tìm kiếm"));
     }
   },
   deleteDeduction: async (ID: string) => {

@@ -1,6 +1,9 @@
 import KhauTru from "../../models/salary/KhauTru.js";
 import { Pagination } from "../../utils/paginations.js";
 import { deductionSchema } from "../../utils/validationSchemas.js";
+import { searchService } from "../../utils/search.js";
+import sequelize from "../../config/dbconnect.js";
+import ExcelJS from "exceljs";
 export const createDeduction = async (req, res) => {
   try {
     const parsed = deductionSchema.safeParse({
@@ -45,13 +48,21 @@ export const getDeductions = async (req, res) => {
     //set page and size rows in papge
     const { offset, limit, page, finalSize } = Pagination(req.query);
 
-    const options = {};
+    const options = {
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaKT")), "ASC"],
+        ["MaKT", "ASC"],
+      ],
+    };
     if (limit !== null) {
       options.limit = limit;
       options.offset = offset;
     }
 
-    const { count, rows } = await KhauTru.findAndCountAll(options);
+    const { count, rows } = await KhauTru.findAndCountAll({
+      ...options,
+      distinct: true,
+    });
 
     return res.status(200).json({
       totalItems: count,
@@ -156,5 +167,112 @@ export const deleteDeduction = async (req, res) => {
     console.error("Lỗi khi xóa khấu trừ:", error);
 
     return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
+export const searchDeduction = async (req, res) => {
+  try {
+    const query = { ...req.query };
+    if (query.size === undefined) {
+      query.size = 0;
+    }
+
+    const pagination = Pagination(query);
+
+    const result = await searchService(KhauTru, req.query, pagination, {
+      searchFields: ["MaKT", "LoaiKT", "PhanTram"],
+      numericFields: ["PhanTram"],
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaKT")), "ASC"],
+        ["MaKT", "ASC"],
+      ],
+      distinct: true,
+    });
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
+export const exportDeductionsToExcel = async (req, res) => {
+  try {
+    const deductions = await KhauTru.findAll({
+      order: [
+        [sequelize.fn("LEN", sequelize.col("MaKT")), "ASC"],
+        ["MaKT", "ASC"],
+      ],
+    });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("KhauTru");
+
+    // Title
+    worksheet.mergeCells("A1:C1");
+    const titleRow = worksheet.getRow(1);
+    titleRow.getCell(1).value = "DANH SÁCH CÁC KHOẢN KHẤU TRỪ";
+    titleRow.getCell(1).font = { name: "Arial", size: 14, bold: true };
+    titleRow.getCell(1).alignment = { vertical: "middle", horizontal: "center" };
+    titleRow.height = 25;
+
+    // Header
+    const headerRow = ["Mã Khấu Trừ", "Loại Khấu Trừ", "Phần Trăm (%)"];
+    worksheet.getRow(3).values = headerRow;
+    worksheet.columns = [
+      { key: "MaKT", width: 15 },
+      { key: "LoaiKT", width: 25 },
+      { key: "PhanTram", width: 20 },
+    ];
+
+    // Style Header
+    worksheet.getRow(3).eachCell((cell) => {
+      cell.font = { bold: true, color: { argb: "FFFFFF" } };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "4F81BD" },
+      };
+      cell.alignment = { vertical: "middle", horizontal: "center" };
+      cell.border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        bottom: { style: "thin" },
+        right: { style: "thin" },
+      };
+    });
+
+    // Data
+    deductions.forEach((d) => {
+      const row = worksheet.addRow({
+        MaKT: d.MaKT,
+        LoaiKT: d.LoaiKT,
+        PhanTram: d.PhanTram + "%",
+      });
+      row.eachCell((cell) => {
+        cell.alignment = { vertical: "middle", horizontal: "center" };
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" },
+        };
+      });
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=danh_sach_khau_tru.xlsx",
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error("Lỗi export:", error);
+    res.status(500).json({ message: "Lỗi xuất file" });
   }
 };
