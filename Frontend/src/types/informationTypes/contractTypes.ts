@@ -30,12 +30,12 @@ export const ContractSchema = z.object({
     ),
   NgayKetThuc: z.string().nullable().optional(),
   NgayKy: z.string().nullable().optional(),
-  ChucDanh: z.string().nullable().optional(),
-  MaPB: z.string().nullable().optional(),
-  MaLCB: z.string().nullable().optional(),
-  MaPC: z.string().nullable().optional(),
-  HinhThucTraLuong: z.string().nullable().optional(),
-  TinhTrang: z.string().nullable().optional(),
+  ChucDanh: z.string().min(1, "Chức danh không được để trống"),
+  MaPB: z.string().min(1, "Mã phòng ban không được để trống"),
+  MaLCB: z.string().min(1, "Mã lương cơ bản không được để trống"),
+  MaPC: z.string().min(1, "Mã phụ cấp không được để trống"),
+  HinhThucTraLuong: z.string().min(1, "Hình thức trả lương không được để trống"),
+  TinhTrang: z.string().min(1, "Tình trạng không được để trống"),
   HinhAnhHopDong: z
     .any()
     .refine(
