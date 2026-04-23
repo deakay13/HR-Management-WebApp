@@ -35,6 +35,19 @@ import {
 import { usePermissionsStore } from "@/stores/permissionStores/permissionsStore";
 import { useTranslation } from "react-i18next";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RoleInputSchema, type RoleInput } from "@/types/permissionTypes/rolesTypes";
+
+import {
+  AssignPermissionSchema,
+  ChangePermissionSchema,
+  RemovePermissionSchema,
+  type AssignPermissionPayload,
+  type ChangePermissionPayload,
+  type RemovePermissionPayload,
+} from "@/types/permissionTypes/grantPermissionsTypes";
+
 export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
   const { t } = useTranslation();
   const { deleteRole, updateRoles } = useRolesStore();
@@ -50,57 +63,132 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
     getGrantPermissions,
   } = useGrantPermissionsStore();
   const { Permissions } = usePermissionsStore();
-  const [oldQuyen, setOldQuyen] = React.useState("");
-  const [newQuyen, setNewQuyen] = React.useState("");
-  const [selectedPermissions, setSelectedPermissions] = React.useState<string[]>([]);
 
-  const [formData, setFormData] = React.useState({
-    TenVaiTro: rol.TenVaiTro,
+  const [editOpen, setEditOpen] = React.useState(false);
+  const [assignOpen, setAssignOpen] = React.useState(false);
+  const [changePermOpen, setChangePermOpen] = React.useState(false);
+  const [deletePermOpen, setDeletePermOpen] = React.useState(false);
+
+  // Form for Edit Role
+  const editForm = useForm<RoleInput>({
+    resolver: zodResolver(RoleInputSchema) as any,
+    defaultValues: {
+      MaVT: rol.MaVT,
+      TenVaiTro: rol.TenVaiTro,
+    },
+  });
+
+  // Form for Assign Permission
+  const assignForm = useForm<AssignPermissionPayload>({
+    resolver: zodResolver(AssignPermissionSchema) as any,
+    defaultValues: {
+      MaVT: rol.MaVT,
+      MaQuyen: [],
+    },
+  });
+
+  // Form for Change Permission
+  const changeForm = useForm<ChangePermissionPayload>({
+    resolver: zodResolver(ChangePermissionSchema) as any,
+    defaultValues: {
+      MaVT: rol.MaVT,
+      oldQuyen: "",
+      newQuyen: "",
+    },
+  });
+
+  // Form for Remove Permission
+  const removeForm = useForm<RemovePermissionPayload>({
+    resolver: zodResolver(RemovePermissionSchema) as any,
+    defaultValues: {
+      MaVT: rol.MaVT,
+      MaQuyen: [],
+    },
   });
 
   const handleOpenEdit = () => {
-    setFormData({ TenVaiTro: rol.TenVaiTro });
-  };
-  const handleOpenAssign = () => {
-    setSelectedPermissions([]);
-  };
-  const handleOpenDeletePermissions = () => {
-    setSelectedPermissions([]);
+    editForm.reset({
+      MaVT: rol.MaVT,
+      TenVaiTro: rol.TenVaiTro,
+    });
+    setEditOpen(true);
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await updateRoles(rol.MaVT, { MaVT: rol.MaVT, ...formData });
-  };
-  const togglePermission = (id: string) => {
-    setSelectedPermissions((prev) =>
-      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
-    );
-  };
-  const handleDeleteSelected = async () => {
-    for (const permId of selectedPermissions) {
-      await deleteOneGrantPermissions(rol.MaVT, permId);
-    }
-    setSelectedPermissions([]);
-    await getGrantPermissions();
-  };
-  const handleOpenChangePermission = () => {
-    setOldQuyen(rol.permissions[0]?.MaQuyen ?? "");
-    setNewQuyen("");
-  };
-  const handleChangePermission = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await updateGrantPermissions(rol.MaVT, oldQuyen, newQuyen);
-    setOldQuyen("");
-    setNewQuyen("");
-  };
-  const handleAssign = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await assigGrantPermissions({
+  const handleOpenAssign = () => {
+    assignForm.reset({
       MaVT: rol.MaVT,
-      MaQuyen: selectedPermissions,
+      MaQuyen: [],
     });
-    setSelectedPermissions([]);
+    setAssignOpen(true);
+  };
+
+  const handleOpenDeletePermissions = () => {
+    removeForm.reset({
+      MaVT: rol.MaVT,
+      MaQuyen: [],
+    });
+    setDeletePermOpen(true);
+  };
+
+  const onUpdateSubmit = async (data: RoleInput) => {
+    try {
+      await updateRoles(rol.MaVT, data);
+      setEditOpen(false);
+    } catch {
+      // store handles toast
+    }
+  };
+
+  const togglePermission = (id: string, mode: "assign" | "remove" = "assign") => {
+    const form = mode === "assign" ? assignForm : removeForm;
+    const current = form.getValues("MaQuyen");
+    const updated = current.includes(id)
+      ? current.filter((p) => p !== id)
+      : [...current, id];
+    
+    form.setValue("MaQuyen", updated, { shouldValidate: true });
+  };
+
+  const onRemoveSubmit = async (data: RemovePermissionPayload) => {
+    try {
+      for (const permId of data.MaQuyen) {
+        await deleteOneGrantPermissions(rol.MaVT, permId);
+      }
+      await getGrantPermissions();
+      setDeletePermOpen(false);
+    } catch {
+      // store handles toast
+    }
+  };
+
+  const handleOpenChangePermission = () => {
+    changeForm.reset({
+      MaVT: rol.MaVT,
+      oldQuyen: rol.permissions[0]?.MaQuyen ?? "",
+      newQuyen: "",
+    });
+    setChangePermOpen(true);
+  };
+
+  const onChangeSubmit = async (data: ChangePermissionPayload) => {
+    try {
+      await updateGrantPermissions(rol.MaVT, data.oldQuyen, data.newQuyen);
+      setChangePermOpen(false);
+    } catch {
+      // store handles toast
+    }
+  };
+
+  const onAssignSubmit = async (data: AssignPermissionPayload) => {
+    try {
+      await assigGrantPermissions({
+        MaVT: rol.MaVT,
+        MaQuyen: data.MaQuyen,
+      });
+      setAssignOpen(false);
+    } catch {
+      // store handles toast
+    }
   };
 
   return (
@@ -117,7 +205,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-36">
             {/* Cấp Quyền */}
-            <Dialog>
+            <Dialog open={assignOpen} onOpenChange={setAssignOpen}>
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   onSelect={(e) => {
@@ -128,7 +216,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleAssign} className="space-y-6">
+                <form onSubmit={assignForm.handleSubmit(onAssignSubmit)} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle>{t("Cấp Quyền")}</DialogTitle>
                     <DialogDescription>
@@ -138,11 +226,11 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                   <FieldGroup>
                     <Field>
                       <Label>{t("Tên Vai Trò")}</Label>
-                      <Input value={rol.TenVaiTro} disabled />
+                      <Input value={rol.TenVaiTro} disabled className="h-10" />
                     </Field>
-                    <Field>
+                    <Field className="flex flex-col gap-2">
                       <Label>{t("Danh Sách Quyền")}</Label>
-                      <div className="space-y-2 border rounded-md p-3 max-h-60 overflow-y-auto">
+                      <div className={`space-y-2 border rounded-md p-3 max-h-60 overflow-y-auto ${assignForm.formState.errors.MaQuyen ? "border-red-500" : ""}`}>
                         {Permissions.filter(
                           (p) => !rol.permissions.some((rp) => rp.MaQuyen === p.MaQuyen),
                         ).length === 0 ? (
@@ -153,28 +241,33 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                           Permissions.filter(
                             (p) => !rol.permissions.some((rp) => rp.MaQuyen === p.MaQuyen),
                           ).map((p) => (
-                            <label key={p.MaQuyen} className="flex items-center gap-2">
+                            <label key={p.MaQuyen} className="flex items-center gap-3 py-1 cursor-pointer">
                               <input
                                 type="checkbox"
-                                checked={selectedPermissions.includes(p.MaQuyen)}
-                                onChange={() => togglePermission(p.MaQuyen)}
+                                className="size-4"
+                                checked={assignForm.watch("MaQuyen").includes(p.MaQuyen)}
+                                onChange={() => togglePermission(p.MaQuyen, "assign")}
                               />
-                              {p.TenQuyen}
+                              <span className="text-sm">{p.TenQuyen}</span>
                             </label>
                           ))
                         )}
                       </div>
+                      {assignForm.formState.errors.MaQuyen && (
+                        <p className="text-xs text-red-500">{assignForm.formState.errors.MaQuyen.message}</p>
+                      )}
                     </Field>
                   </FieldGroup>
-                  <DialogFooter>
+                  <DialogFooter className="gap-2">
                     <DialogClose asChild>
                       <Button variant="outline">{t("Huỷ")}</Button>
                     </DialogClose>
-                    <DialogClose asChild>
-                      <Button type="submit" disabled={selectedPermissions.length === 0}>
-                        {t("Cấp Quyền")}
-                      </Button>
-                    </DialogClose>
+                    <Button 
+                      type="submit" 
+                      disabled={assignForm.formState.isSubmitting}
+                    >
+                      {t("Cấp Quyền")}
+                    </Button>
                   </DialogFooter>
                 </form>
               </DialogContent>
@@ -182,7 +275,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
 
             {/* Sửa Vai Trò */}
             {isAdmin && (
-              <Dialog>
+              <Dialog open={editOpen} onOpenChange={setEditOpen}>
                 <DialogTrigger asChild>
                   <DropdownMenuItem
                     onSelect={(e) => {
@@ -193,7 +286,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
-                  <form onSubmit={handleUpdate} className="space-y-6">
+                  <form onSubmit={editForm.handleSubmit(onUpdateSubmit)} className="space-y-6">
                     <DialogHeader>
                       <DialogTitle>{t("Sửa Vai Trò")}</DialogTitle>
                       <DialogDescription>
@@ -201,23 +294,24 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                       </DialogDescription>
                     </DialogHeader>
                     <FieldGroup>
-                      <Field>
+                      <Field className="flex flex-col gap-2">
                         <Label htmlFor="TenVaiTro">{t("Tên Vai Trò")}</Label>
                         <Input
                           id="TenVaiTro"
-                          name="TenVaiTro"
-                          value={formData.TenVaiTro}
-                          onChange={(e) =>
-                            setFormData({ ...formData, TenVaiTro: e.target.value })
-                          }
+                          placeholder={t("VD: Nhân viên")}
+                          className={`h-10 ${editForm.formState.errors.TenVaiTro ? "border-red-500" : ""}`}
+                          {...editForm.register("TenVaiTro")}
                         />
+                        {editForm.formState.errors.TenVaiTro && (
+                          <p className="text-xs text-red-500">{editForm.formState.errors.TenVaiTro.message}</p>
+                        )}
                       </Field>
                     </FieldGroup>
-                    <DialogFooter>
+                    <DialogFooter className="gap-2">
                       <DialogClose asChild>
                         <Button variant="outline">{t("Huỷ")}</Button>
                       </DialogClose>
-                      <Button type="submit" disabled={!formData.TenVaiTro}>
+                      <Button type="submit" disabled={editForm.formState.isSubmitting}>
                         {t("Lưu thay đổi")}
                       </Button>
                     </DialogFooter>
@@ -228,7 +322,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
 
             {/* Thay đổi Quyền */}
             {isAdmin && (
-              <Dialog>
+              <Dialog open={changePermOpen} onOpenChange={setChangePermOpen}>
                 <DialogTrigger asChild>
                   <DropdownMenuItem
                     onSelect={(e) => {
@@ -239,7 +333,7 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                   </DropdownMenuItem>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-sm">
-                  <form onSubmit={handleChangePermission} className="space-y-6">
+                  <form onSubmit={changeForm.handleSubmit(onChangeSubmit)} className="space-y-6">
                     <DialogHeader>
                       <DialogTitle>{t("Thay Đổi Quyền")}</DialogTitle>
                       <DialogDescription>
@@ -247,10 +341,13 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                       </DialogDescription>
                     </DialogHeader>
                     <FieldGroup>
-                      <Field>
+                      <Field className="flex flex-col gap-2">
                         <Label>{t("Quyền Hiện Tại")}</Label>
-                        <Select value={oldQuyen} onValueChange={setOldQuyen}>
-                          <SelectTrigger>
+                        <Select 
+                          value={changeForm.watch("oldQuyen")} 
+                          onValueChange={(val) => changeForm.setValue("oldQuyen", val, { shouldValidate: true })}
+                        >
+                          <SelectTrigger className={`h-10 ${changeForm.formState.errors.oldQuyen ? "border-red-500" : ""}`}>
                             <SelectValue placeholder={t("Chọn quyền hiện tại")} />
                           </SelectTrigger>
                           <SelectContent>
@@ -261,11 +358,17 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                             ))}
                           </SelectContent>
                         </Select>
+                        {changeForm.formState.errors.oldQuyen && (
+                          <p className="text-xs text-red-500">{changeForm.formState.errors.oldQuyen.message}</p>
+                        )}
                       </Field>
-                      <Field>
+                      <Field className="flex flex-col gap-2">
                         <Label>{t("Quyền Mới")}</Label>
-                        <Select value={newQuyen} onValueChange={setNewQuyen}>
-                          <SelectTrigger>
+                        <Select 
+                          value={changeForm.watch("newQuyen")} 
+                          onValueChange={(val) => changeForm.setValue("newQuyen", val, { shouldValidate: true })}
+                        >
+                          <SelectTrigger className={`h-10 ${changeForm.formState.errors.newQuyen ? "border-red-500" : ""}`}>
                             <SelectValue placeholder={t("Chọn quyền mới")} />
                           </SelectTrigger>
                           <SelectContent>
@@ -278,17 +381,18 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                             )}
                           </SelectContent>
                         </Select>
+                        {changeForm.formState.errors.newQuyen && (
+                          <p className="text-xs text-red-500">{changeForm.formState.errors.newQuyen.message}</p>
+                        )}
                       </Field>
                     </FieldGroup>
-                    <DialogFooter>
+                    <DialogFooter className="gap-2">
                       <DialogClose asChild>
                         <Button variant="outline">{t("Huỷ")}</Button>
                       </DialogClose>
-                      <DialogClose asChild>
-                        <Button type="submit" disabled={!oldQuyen || !newQuyen}>
-                          {t("Thay Đổi")}
-                        </Button>
-                      </DialogClose>
+                      <Button type="submit" disabled={changeForm.formState.isSubmitting}>
+                        {t("Thay Đổi")}
+                      </Button>
                     </DialogFooter>
                   </form>
                 </DialogContent>
@@ -299,26 +403,26 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
               <>
                 <DropdownMenuSeparator />
                 {/* Xoá Từng Quyền */}
-                <Dialog>
-                  <form>
-                    <DialogTrigger asChild>
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onSelect={(e) => {
-                          e.preventDefault();
-                          handleOpenDeletePermissions();
-                        }}>
-                        {t("Xoá Từng Quyền")}
-                      </DropdownMenuItem>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+                <Dialog open={deletePermOpen} onOpenChange={setDeletePermOpen}>
+                  <DialogTrigger asChild>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={(e) => {
+                        e.preventDefault();
+                        handleOpenDeletePermissions();
+                      }}>
+                      {t("Xoá Từng Quyền")}
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+                    <form onSubmit={removeForm.handleSubmit(onRemoveSubmit)} className="space-y-6">
                       <DialogHeader>
                         <DialogTitle>{t("Lựa Chọn Quyền Muốn Xoá")}</DialogTitle>
                         <DialogDescription>
                           {t("Tích chọn quyền và bấm Xoá để xoá quyền được chọn")}
                         </DialogDescription>
                       </DialogHeader>
-                      <FieldGroup>
+                      <FieldGroup className={`space-y-2 border rounded-md p-3 max-h-60 overflow-y-auto ${removeForm.formState.errors.MaQuyen ? "border-red-500" : ""}`}>
                         {rol.permissions.length === 0 ? (
                           <p className="text-muted-foreground text-sm">
                             {t("Vai trò chưa có quyền nào")}
@@ -328,108 +432,109 @@ export function RolesActionCell({ rol }: { rol: RoleWithPermissions }) {
                             <Field
                               key={perm.MaQuyen}
                               className="flex items-center justify-between">
-                              <Label>
+                              <label className="flex items-center gap-3 py-1 cursor-pointer w-full">
                                 <input
                                   type="checkbox"
-                                  checked={selectedPermissions.includes(perm.MaQuyen)}
-                                  onChange={() => togglePermission(perm.MaQuyen)}
+                                  className="size-4"
+                                  checked={removeForm.watch("MaQuyen").includes(perm.MaQuyen)}
+                                  onChange={() => togglePermission(perm.MaQuyen, "remove")}
                                 />
-                                {perm.TenQuyen}
-                              </Label>
+                                <span className="text-sm">{perm.TenQuyen}</span>
+                              </label>
                             </Field>
                           ))
                         )}
                       </FieldGroup>
-                      <DialogFooter>
+                      {removeForm.formState.errors.MaQuyen && (
+                        <p className="text-xs text-red-500">{removeForm.formState.errors.MaQuyen.message}</p>
+                      )}
+                      <DialogFooter className="gap-2">
                         <DialogClose asChild>
                           <Button variant="outline">{t("Huỷ")}</Button>
                         </DialogClose>
-                        <DialogClose asChild>
-                          <Button
-                            variant="destructive"
-                            disabled={selectedPermissions.length === 0}
-                            onClick={handleDeleteSelected}>
-                            {t("Xoá Các Quyền Đã Chọn")}
-                          </Button>
-                        </DialogClose>
+                        <Button
+                          type="submit"
+                          variant="destructive"
+                          disabled={removeForm.formState.isSubmitting}>
+                          {t("Xoá Các Quyền Đã Chọn")}
+                        </Button>
                       </DialogFooter>
-                    </DialogContent>
-                  </form>
+                    </form>
+                  </DialogContent>
                 </Dialog>
                 {/* Xoá tất cả Quyền */}
                 <Dialog>
-                  <form>
-                    <DialogTrigger asChild>
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onSelect={(e) => e.preventDefault()}>
-                        {t("Xoá Tất Cả Quyền")}
-                      </DropdownMenuItem>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-sm" showCloseButton={false}>
-                      <DialogHeader>
-                        <DialogTitle>{t("Xoá Tất Cả Quyền")}</DialogTitle>
-                        <DialogDescription>
-                          {t("Bấm xoá để xoá tất cả quyền được cấp")}
-                        </DialogDescription>
-                      </DialogHeader>
-                      <FieldGroup>
-                        <Field>
-                          <Label>{t("Bạn có chắc muốn xoá tất cả quyền?")}</Label>
-                        </Field>
-                      </FieldGroup>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button variant="outline">{t("Huỷ")}</Button>
-                        </DialogClose>
-                        <DialogClose asChild>
-                          <Button
-                            onClick={async () =>
-                              await deleteAllGrantPermissions(rol.MaVT)
-                            }>
-                            {t("Xoá")}
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </form>
+                  <DialogTrigger asChild>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={(e) => e.preventDefault()}>
+                      {t("Xoá Tất Cả Quyền")}
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+                    <DialogHeader>
+                      <DialogTitle>{t("Xoá Tất Cả Quyền")}</DialogTitle>
+                      <DialogDescription>
+                        {t("Bấm xoá để xoá tất cả quyền được cấp")}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <FieldGroup>
+                      <Field>
+                        <Label>{t("Bạn có chắc muốn xoá tất cả quyền?")}</Label>
+                      </Field>
+                    </FieldGroup>
+                    <DialogFooter className="gap-2">
+                      <DialogClose asChild>
+                        <Button variant="outline">{t("Huỷ")}</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          variant="destructive"
+                          onClick={async () =>
+                            await deleteAllGrantPermissions(rol.MaVT)
+                          }>
+                          {t("Xoá")}
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
                 </Dialog>
                 {/* Xoá Vai trò */}
                 <Dialog>
-                  <form>
-                    <DialogTrigger asChild>
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onSelect={(e) => e.preventDefault()}>
-                        {t("Xoá Vai Trò")}
-                      </DropdownMenuItem>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-sm" showCloseButton={false}>
-                      <DialogHeader>
-                        <DialogTitle>{t("Xoá Vai Trò")}</DialogTitle>
-                        <DialogDescription>
-                          {t("Để xoá vai trò bạn phải xoá quyền trước")}
-                        </DialogDescription>
-                      </DialogHeader>
-                      <FieldGroup>
-                        <Field>
-                          <Label>
-                            {t("Bạn có chắc muốn xoá vai trò")} {rol.MaVT} - {rol.TenVaiTro}?
-                          </Label>
-                        </Field>
-                      </FieldGroup>
-                      <DialogFooter>
-                        <DialogClose asChild>
-                          <Button variant="outline">{t("Huỷ")}</Button>
-                        </DialogClose>
-                        <DialogClose asChild>
-                          <Button onClick={async () => await deleteRole(rol.MaVT)}>
-                            {t("Xoá")}
-                          </Button>
-                        </DialogClose>
-                      </DialogFooter>
-                    </DialogContent>
-                  </form>
+                  <DialogTrigger asChild>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={(e) => e.preventDefault()}>
+                      {t("Xoá Vai Trò")}
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+                    <DialogHeader>
+                      <DialogTitle>{t("Xoá Vai Trò")}</DialogTitle>
+                      <DialogDescription>
+                        {t("Để xoá vai trò bạn phải xoá quyền trước")}
+                      </DialogDescription>
+                    </DialogHeader>
+                    <FieldGroup>
+                      <Field>
+                        <Label>
+                          {t("Bạn có chắc muốn xoá vai trò")} {rol.MaVT} - {rol.TenVaiTro}?
+                        </Label>
+                      </Field>
+                    </FieldGroup>
+                    <DialogFooter className="gap-2">
+                      <DialogClose asChild>
+                        <Button variant="outline">{t("Huỷ")}</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          variant="destructive"
+                          onClick={async () => await deleteRole(rol.MaVT)}>
+                          {t("Xoá")}
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
                 </Dialog>
               </>
             )}

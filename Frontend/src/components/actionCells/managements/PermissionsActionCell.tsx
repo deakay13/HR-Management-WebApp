@@ -27,27 +27,47 @@ import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
 import { useTranslation } from "react-i18next";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PermissionSchema, type PermissionInput } from "@/types/permissionTypes/permissionsTypes";
+
 export function PermissionActionCell({ permis }: { permis: Permission }) {
   const { t } = useTranslation();
   const { deletePermission, updatePermissions } = usePermissionsStore();
   const { permissions } = useAuthorizeStore();
 
-  const [formData, setFormData] = React.useState({
-    TenQuyen: permis.TenQuyen,
+  const [editOpen, setEditOpen] = React.useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<PermissionInput>({
+    resolver: zodResolver(PermissionSchema) as any,
+    defaultValues: {
+      MaQuyen: permis.MaQuyen,
+      TenQuyen: permis.TenQuyen,
+    },
   });
 
   if (!canWrite(permissions)) return null;
 
   const handleOpenEdit = () => {
-    setFormData({ TenQuyen: permis.TenQuyen });
+    reset({
+      MaQuyen: permis.MaQuyen,
+      TenQuyen: permis.TenQuyen,
+    });
+    setEditOpen(true);
   };
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await updatePermissions(permis.MaQuyen, {
-      MaQuyen: permis.MaQuyen,
-      ...formData,
-    });
+  const onUpdateSubmit = async (data: PermissionInput) => {
+    try {
+      await updatePermissions(permis.MaQuyen, data);
+      setEditOpen(false);
+    } catch {
+      // Store handles toast
+    }
   };
 
   return (
@@ -62,7 +82,7 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-32">
         {canUpdate(permissions) && (
-          <Dialog>
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 onSelect={(e) => {
@@ -73,7 +93,7 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm">
-              <form onSubmit={handleUpdate} className="space-y-6">
+              <form onSubmit={handleSubmit(onUpdateSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle>{t("Sửa Quyền")}</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
@@ -81,23 +101,24 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                     </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
-                  <Field>
+                  <Field className="flex flex-col gap-2">
                     <Label htmlFor="TenQuyen">{t("Tên Quyền")}</Label>
                     <Input
                       id="TenQuyen"
-                      name="TenQuyen"
-                      value={formData.TenQuyen}
-                      onChange={(e) =>
-                        setFormData({ ...formData, TenQuyen: e.target.value })
-                      }
+                      placeholder={t("VD: Xem danh sách")}
+                      className={`h-10 ${errors.TenQuyen ? "border-red-500" : ""}`}
+                      {...register("TenQuyen")}
                     />
+                    {errors.TenQuyen && (
+                      <p className="text-xs text-red-500">{errors.TenQuyen.message}</p>
+                    )}
                   </Field>
                 </FieldGroup>
-                <DialogFooter>
+                <DialogFooter className="gap-2">
                   <DialogClose asChild>
                     <Button variant="outline">{t("Huỷ")}</Button>
                   </DialogClose>
-                  <Button type="submit" disabled={!formData.TenQuyen}>
+                  <Button type="submit" disabled={isSubmitting}>
                     {t("Lưu thay đổi")}
                   </Button>
                 </DialogFooter>
