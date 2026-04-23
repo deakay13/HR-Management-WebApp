@@ -8,7 +8,8 @@ import { useTranslation } from "react-i18next";
 
 const PayRollComponents = () => {
   const { t } = useTranslation();
-  const { PayRolls, initializing, getPayRolls, getMyPayrolls } = usePayRollStore();
+  const { PayRolls, initializing, getPayRolls, getMyPayrolls } =
+    usePayRollStore();
   const accessToken = useAuthStore((state) => state.accessToken);
   const account = useAuthStore((state) => state.account);
   const role = useAuthorizeStore((state) => state.role);
@@ -49,4 +50,3 @@ const PayRollComponents = () => {
 };
 
 export default PayRollComponents;
-

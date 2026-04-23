@@ -57,14 +57,21 @@ export function AllowanceTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const { createAllowance } = useAllowanceStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState({ MaPC: "", LoaiPC: "", SoTien: 0 });
+  const [formData, setFormData] = React.useState({
+    MaPC: "",
+    LoaiPC: "",
+    SoTien: 0,
+  });
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,13 +84,22 @@ export function AllowanceTable({
     }
   };
 
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Allowance>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaPC.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -104,7 +120,10 @@ export function AllowanceTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Phụ Cấp")} />
 
@@ -121,7 +140,8 @@ export function AllowanceTable({
                   onClick={() => {
                     setFormData({ MaPC: "", LoaiPC: "", SoTien: 0 });
                     setCreateOpen(true);
-                  }}>
+                  }}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
@@ -145,7 +165,9 @@ export function AllowanceTable({
                         placeholder={t("VD: PC001")}
                         className="h-10"
                         value={formData.MaPC}
-                        onChange={(e) => setFormData({ ...formData, MaPC: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaPC: e.target.value })
+                        }
                       />
                     </Field>
 
@@ -156,7 +178,9 @@ export function AllowanceTable({
                         placeholder={t("VD: Phụ cấp ăn trưa")}
                         className="h-10"
                         value={formData.LoaiPC}
-                        onChange={(e) => setFormData({ ...formData, LoaiPC: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, LoaiPC: e.target.value })
+                        }
                       />
                     </Field>
 
@@ -169,7 +193,10 @@ export function AllowanceTable({
                         className="h-10"
                         value={formData.SoTien}
                         onChange={(e) =>
-                          setFormData({ ...formData, SoTien: Number(e.target.value) })
+                          setFormData({
+                            ...formData,
+                            SoTien: Number(e.target.value),
+                          })
                         }
                       />
                     </Field>
@@ -183,7 +210,12 @@ export function AllowanceTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaPC || !formData.LoaiPC || formData.SoTien <= 0}>
+                      disabled={
+                        !formData.MaPC ||
+                        !formData.LoaiPC ||
+                        formData.SoTien <= 0
+                      }
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -197,17 +229,21 @@ export function AllowanceTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -216,10 +252,16 @@ export function AllowanceTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -228,7 +270,8 @@ export function AllowanceTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

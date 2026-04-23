@@ -1,5 +1,4 @@
-﻿ 
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -36,7 +35,8 @@ export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
-            }}>
+            }}
+          >
             <SelectTrigger size="sm" className="w-20" id="rows-per-page">
               <SelectValue placeholder={table.getState().pagination.pageSize} />
             </SelectTrigger>
@@ -62,7 +62,8 @@ export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
             variant="outline"
             className="hidden h-8 w-8 p-0 lg:flex"
             onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}>
+            disabled={!table.getCanPreviousPage()}
+          >
             <IconChevronsLeft />
           </Button>
           <Button
@@ -70,7 +71,8 @@ export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
             className="size-8"
             size="icon"
             onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}>
+            disabled={!table.getCanPreviousPage()}
+          >
             <IconChevronLeft />
           </Button>
           <Button
@@ -78,7 +80,8 @@ export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
             className="size-8"
             size="icon"
             onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}>
+            disabled={!table.getCanNextPage()}
+          >
             <IconChevronRight />
           </Button>
           <Button
@@ -86,7 +89,8 @@ export function TablePagination<TData>({ table }: TablePaginationProps<TData>) {
             className="hidden size-8 lg:flex"
             size="icon"
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}>
+            disabled={!table.getCanNextPage()}
+          >
             <IconChevronsRight />
           </Button>
         </div>

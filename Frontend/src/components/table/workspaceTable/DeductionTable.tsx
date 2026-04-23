@@ -57,14 +57,24 @@ export function DeductionTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [formData, setFormData] = React.useState({ MaKT: "", LoaiKT: "", PhanTram: 0 });
+  const [formData, setFormData] = React.useState({
+    MaKT: "",
+    LoaiKT: "",
+    PhanTram: 0,
+  });
   const { createDeduction } = useDeductionStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +91,13 @@ export function DeductionTable({
   const table = useReactTable<Deduction>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaKT.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -102,7 +118,10 @@ export function DeductionTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Khấu Trừ")} />
 
@@ -119,7 +138,8 @@ export function DeductionTable({
                   onClick={() => {
                     setFormData({ MaKT: "", LoaiKT: "", PhanTram: 0 });
                     setCreateOpen(true);
-                  }}>
+                  }}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
@@ -143,7 +163,9 @@ export function DeductionTable({
                         placeholder={t("VD: KT001")}
                         className="h-10"
                         value={formData.MaKT}
-                        onChange={(e) => setFormData({ ...formData, MaKT: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaKT: e.target.value })
+                        }
                       />
                     </Field>
 
@@ -154,7 +176,9 @@ export function DeductionTable({
                         placeholder={t("VD: Thuế TNCN")}
                         className="h-10"
                         value={formData.LoaiKT}
-                        onChange={(e) => setFormData({ ...formData, LoaiKT: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, LoaiKT: e.target.value })
+                        }
                       />
                     </Field>
 
@@ -167,7 +191,10 @@ export function DeductionTable({
                         className="h-10"
                         value={formData.PhanTram}
                         onChange={(e) =>
-                          setFormData({ ...formData, PhanTram: Number(e.target.value) })
+                          setFormData({
+                            ...formData,
+                            PhanTram: Number(e.target.value),
+                          })
                         }
                       />
                     </Field>
@@ -181,7 +208,12 @@ export function DeductionTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaKT || !formData.LoaiKT || formData.PhanTram <= 0}>
+                      disabled={
+                        !formData.MaKT ||
+                        !formData.LoaiKT ||
+                        formData.PhanTram <= 0
+                      }
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -195,17 +227,21 @@ export function DeductionTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -214,10 +250,16 @@ export function DeductionTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -226,7 +268,8 @@ export function DeductionTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

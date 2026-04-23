@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { ContractServices } from "@/services/informationServices/contractServices";
@@ -23,7 +24,7 @@ export const useContractStore = create<ContractState>((set, get) => ({
       set({ contracts: data, initializing: false });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách hợp đồng:", error);
-      toast.error("Không thể tải danh sách hợp đồng");
+      toast.error(i18n.t("Không thể tải danh sách hợp đồng"));
       set({ initializing: false });
     }
   },
@@ -32,10 +33,10 @@ export const useContractStore = create<ContractState>((set, get) => ({
     try {
       await ContractServices.createContract(data);
       await get().getContracts();
-      toast.success("Thêm hợp đồng thành công");
+      toast.success(i18n.t("Thêm hợp đồng thành công"));
     } catch (error) {
       console.error("Lỗi khi tạo hợp đồng:", error);
-      toast.error("Không thể thêm hợp đồng");
+      toast.error(i18n.t("Không thể thêm hợp đồng"));
       throw error;
     }
   },
@@ -44,10 +45,10 @@ export const useContractStore = create<ContractState>((set, get) => ({
     try {
       await ContractServices.updateContract(id, data);
       await get().getContracts();
-      toast.success("Lưu thay đổi hợp đồng thành công");
+      toast.success(i18n.t("Lưu thay đổi hợp đồng thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật hợp đồng:", error);
-      toast.error("Không thể lưu thay đổi hợp đồng");
+      toast.error(i18n.t("Không thể lưu thay đổi hợp đồng"));
       throw error;
     }
   },
@@ -56,10 +57,10 @@ export const useContractStore = create<ContractState>((set, get) => ({
     try {
       await ContractServices.deleteContract(id);
       await get().getContracts();
-      toast.success("Xoá hợp đồng thành công");
+      toast.success(i18n.t("Xoá hợp đồng thành công"));
     } catch (error) {
       console.error("Lỗi khi xóa hợp đồng:", error);
-      toast.error("Không thể xoá hợp đồng");
+      toast.error(i18n.t("Không thể xoá hợp đồng"));
     }
   },
 }));

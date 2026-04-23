@@ -59,19 +59,31 @@ export function DepartmentTable({
   const { t } = useTranslation();
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [openCreate, setOpenCreate] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const { permissions } = useAuthorizeStore();
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Department>({
     data: data || [],
     columns: departmentColumns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaPB.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -117,10 +129,14 @@ export function DepartmentTable({
     }
   };
 
-  if (loading) return <p className="text-center py-4">{t("Đang tải dữ liệu...")}</p>;
+  if (loading)
+    return <p className="text-center py-4">{t("Đang tải dữ liệu...")}</p>;
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Phòng Ban")} />
 
@@ -138,15 +154,20 @@ export function DepartmentTable({
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>{t("Tạo Phòng Ban Mới")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để tạo mới.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để tạo mới.")}
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                   <FieldGroup className="space-y-4">
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaPB">{t("Mã Phòng Ban")}</Label>
-                      <Input id="MaPB" name="MaPB" placeholder={t("VD: PB001")} className="h-10" />
+                      <Input
+                        id="MaPB"
+                        name="MaPB"
+                        placeholder={t("VD: PB001")}
+                        className="h-10"
+                      />
                       {errors.MaPB && (
                         <span className="text-xs text-red-500">
                           {errors.MaPB}
@@ -180,17 +201,21 @@ export function DepartmentTable({
 
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-center align-middle">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -201,8 +226,11 @@ export function DepartmentTable({
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -211,7 +239,8 @@ export function DepartmentTable({
                 <TableRow>
                   <TableCell
                     colSpan={departmentColumns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

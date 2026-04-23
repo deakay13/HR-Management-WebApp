@@ -4,62 +4,45 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { HoursActionCell } from "@/components/actionCells/workspace/HoursActionCell";
 import { useTranslation } from "react-i18next";
 
-function HeaderMaGL() {
+function H({ k }: { k: string }) {
   const { t } = useTranslation();
-  return <div className="w-30 text-center">{t("Mã Giờ Làm")}</div>;
-}
-
-function HeaderSoGioLam() {
-  const { t } = useTranslation();
-  return <div className="w-30 text-center">{t("Số Giờ/Ngày")}</div>;
-}
-
-function HeaderSoNgayLam() {
-  const { t } = useTranslation();
-  return <div className="w-30 text-center">{t("Số Ngày Công Chuẩn")}</div>;
-}
-
-function HeaderTongSoGio() {
-  const { t } = useTranslation();
-  return <div className="w-30 text-center">{t("Tổng Giờ Chuẩn")}</div>;
+  return <>{t(k)}</>;
 }
 
 function CellSoGioLam({ count }: { count: number }) {
   const { t } = useTranslation();
-  return <div className="w-30 text-center h-8">{t("{{count}} giờ/ngày", { count })}</div>;
+  return <>{t("{{count}} giờ/ngày", { count })}</>;
 }
 
 function CellSoNgayLam({ count }: { count: number }) {
   const { t } = useTranslation();
-  return <div className="w-30 text-center h-8">{t("{{count}} ngày", { count })}</div>;
+  return <>{t("{{count}} ngày", { count })}</>;
 }
 
 function CellTongSoGio({ count }: { count: number }) {
   const { t } = useTranslation();
-  return <div className="w-30 text-center h-8">{t("{{count}} giờ/tháng", { count })}</div>;
+  return <>{t("{{count}} giờ/tháng", { count })}</>;
 }
 
 export const columns: ColumnDef<Hours>[] = [
   {
     accessorKey: "MaGL",
-    header: () => <HeaderMaGL />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaGL}</div>
-    ),
+    header: () => <H k="Mã Giờ Làm" />,
+    cell: ({ row }) => <>{row.original.MaGL}</>,
   },
   {
     accessorKey: "SoGioLam",
-    header: () => <HeaderSoGioLam />,
+    header: () => <H k="Số Giờ/Ngày" />,
     cell: ({ row }) => <CellSoGioLam count={row.original.SoGioLam} />,
   },
   {
     accessorKey: "SoNgayLam",
-    header: () => <HeaderSoNgayLam />,
+    header: () => <H k="Số Ngày Công Chuẩn" />,
     cell: ({ row }) => <CellSoNgayLam count={row.original.SoNgayLam} />,
   },
   {
     accessorKey: "TongSoGio",
-    header: () => <HeaderTongSoGio />,
+    header: () => <H k="Tổng Giờ Chuẩn" />,
     cell: ({ row }) => <CellTongSoGio count={row.original.TongSoGio} />,
   },
   {

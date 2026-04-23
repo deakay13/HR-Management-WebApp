@@ -1,5 +1,4 @@
-﻿ 
-import { Button } from "@/components/ui/button";
+﻿import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -15,7 +14,9 @@ interface TableColumnFilterProps<TData> {
   table: Table<TData>;
 }
 
-export function TableColumnFilter<TData>({ table }: TableColumnFilterProps<TData>) {
+export function TableColumnFilter<TData>({
+  table,
+}: TableColumnFilterProps<TData>) {
   const { t } = useTranslation();
 
   return (
@@ -46,7 +47,8 @@ export function TableColumnFilter<TData>({ table }: TableColumnFilterProps<TData
                 onCheckedChange={(value) => {
                   if (!value && visibleColumns.length <= 3) return;
                   column.toggleVisibility(!!value);
-                }}>
+                }}
+              >
                 {t(COLUMN_LABEL_MAP[column.id] ?? column.id)}
               </DropdownMenuCheckboxItem>
             );

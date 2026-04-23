@@ -22,9 +22,11 @@ export const employeeColumns: ColumnDef<Employee>[] = [
     accessorKey: "MaPB",
     header: () => <H k="Phòng Ban" />,
     cell: ({ row }) => (
-      <div className="w-40 text-left">
-        {row.original.PhongBan ? `${row.original.PhongBan.TenPB} (${row.original.MaPB})` : row.original.MaPB}
-      </div>
+      <>
+        {row.original.PhongBan
+          ? `${row.original.PhongBan.TenPB} (${row.original.MaPB})`
+          : row.original.MaPB}
+      </>
     ),
   },
   {

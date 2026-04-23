@@ -137,7 +137,11 @@ export function ChartAreaInteractive() {
     }[] = [];
 
     for (let i = monthsBack - 1; i >= 0; i--) {
-      const d = new Date(anchorDate.getFullYear(), anchorDate.getMonth() - i, 1);
+      const d = new Date(
+        anchorDate.getFullYear(),
+        anchorDate.getMonth() - i,
+        1,
+      );
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
       const monthIdx = d.getMonth();
       const salaryReal = salaryByMonth[key];
@@ -166,7 +170,9 @@ export function ChartAreaInteractive() {
     <Card className="@container/card">
       <CardHeader>
         <CardTitle>
-          {mode === "salary" ? t("Quỹ Lương Theo Tháng") : t("Giờ Làm Theo Tháng")}
+          {mode === "salary"
+            ? t("Quỹ Lương Theo Tháng")
+            : t("Giờ Làm Theo Tháng")}
         </CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
@@ -185,7 +191,8 @@ export function ChartAreaInteractive() {
             value={mode}
             onValueChange={(v) => v && setMode(v as "salary" | "hours")}
             variant="outline"
-            className="hidden *:data-[slot=toggle-group-item]:px-3! @[540px]/card:flex *:data-[state=on]:bg-primary *:data-[state=on]:text-primary-foreground *:data-[state=on]:border-primary">
+            className="hidden *:data-[slot=toggle-group-item]:px-3! @[540px]/card:flex *:data-[state=on]:bg-primary *:data-[state=on]:text-primary-foreground *:data-[state=on]:border-primary"
+          >
             <ToggleGroupItem value="salary">{t("Lương")}</ToggleGroupItem>
             <ToggleGroupItem value="hours">{t(t("Giờ làm"))}</ToggleGroupItem>
           </ToggleGroup>
@@ -195,7 +202,8 @@ export function ChartAreaInteractive() {
             <SelectTrigger
               className="ml-2 flex w-32 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
               size="sm"
-              aria-label="Chọn khoảng thời gian">
+              aria-label="Chọn khoảng thời gian"
+            >
               <SelectValue placeholder={t("12 tháng")} />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
@@ -216,7 +224,8 @@ export function ChartAreaInteractive() {
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         <ChartContainer
           config={chartConfig}
-          className="aspect-auto h-64 w-full">
+          className="aspect-auto h-64 w-full"
+        >
           <BarChart data={chartData} barSize={range === "12m" ? 28 : 48}>
             <CartesianGrid
               vertical={false}

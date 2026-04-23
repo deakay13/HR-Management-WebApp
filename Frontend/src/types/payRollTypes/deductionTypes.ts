@@ -7,9 +7,7 @@ export const DeductionInputSchema = z.object({
     .min(1, "Mã khấu trừ không được để trống")
     .regex(/^KT\d{3}$/, "Mã phải dạng KTxxx"),
 
-  LoaiKT: z
-    .string()
-    .min(1, "Loại khấu trừ không được để trống"),
+  LoaiKT: z.string().min(1, "Loại khấu trừ không được để trống"),
 
   PhanTram: z.coerce
     .number()

@@ -72,7 +72,12 @@ export function SignInFrom({
                 />
               </Field>
               <Field>
-                <Button type="submit" disabled={isSubmitting || !username.trim() || !password.trim()}>
+                <Button
+                  type="submit"
+                  disabled={
+                    isSubmitting || !username.trim() || !password.trim()
+                  }
+                >
                   {isSubmitting ? "Đang đăng nhập..." : "Đăng nhập"}
                 </Button>
               </Field>

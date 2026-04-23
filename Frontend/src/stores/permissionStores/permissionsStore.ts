@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { PermissionsServices } from "@/services/permissionServices/permissionsServices";
@@ -19,10 +20,10 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       set({
         Permissions: [...get().Permissions, newdata],
       });
-      toast.success("Thêm quyền thành công");
+      toast.success(i18n.t("Thêm quyền thành công"));
     } catch (error) {
       console.error("Lỗi khi tạo quyền", error);
-      toast.error("Không thể tạo quyền");
+      toast.error(i18n.t("Không thể tạo quyền"));
     } finally {
       set({ initializing: false });
     }
@@ -34,7 +35,7 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       set({ Permissions: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách quyền", error);
-      toast.error("Không thể lấy danh sách quyền");
+      toast.error(i18n.t("Không thể lấy danh sách quyền"));
     } finally {
       set({ initializing: false });
     }
@@ -48,10 +49,10 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
           per.MaQuyen === ID ? updated : per,
         ),
       });
-      toast.success("Lưu thay đổi quyền thành công");
+      toast.success(i18n.t("Lưu thay đổi quyền thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật phụ cấp", error);
-      toast.error("Không thể lưu thay đổi quyền");
+      toast.error(i18n.t("Không thể lưu thay đổi quyền"));
     }
   },
   deletePermission: async (ID: string) => {
@@ -61,10 +62,10 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       set({
         Permissions: get().Permissions.filter((p) => p.MaQuyen !== ID),
       });
-      toast.success("Xoá Quyền thành công");
+      toast.success(i18n.t("Xoá Quyền thành công"));
     } catch (error) {
       console.error("Lỗi khi xoá Quyền", error);
-      toast.error("Không thể xoá Quyền");
+      toast.error(i18n.t("Không thể xoá Quyền"));
     }
   },
 }));

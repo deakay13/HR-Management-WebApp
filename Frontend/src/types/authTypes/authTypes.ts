@@ -9,6 +9,6 @@ export interface AuthTypes {
   clearState: () => void;
   signIn: (TenTaiKhoan: string, MatKhau: string) => Promise<void>;
   signOut: () => Promise<void>;
-  refresh: () => Promise<void>;
+  refresh: (showToast?: boolean) => Promise<void>;
   getCurrentAccount: () => Promise<void>;
 }

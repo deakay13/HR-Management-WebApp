@@ -129,7 +129,8 @@ export function SectionCards() {
       {/* Card 1: Total Employees */}
       <Card
         style={{ backgroundColor: "#7DA0FA" }}
-        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]">
+        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]"
+      >
         <CardHeader className="pb-0 pt-4 px-4 flex-none min-h-[64px]">
           <div className="flex flex-wrap items-start justify-between gap-2.5 w-full min-w-0">
             <CardDescription className="flex items-center gap-1.5 text-white/90 font-semibold mb-0 shrink-0 min-w-0 max-w-full">
@@ -140,7 +141,8 @@ export function SectionCards() {
               <div className="group relative flex items-center justify-center">
                 <Badge
                   variant="outline"
-                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer">
+                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer"
+                >
                   <IconActivity className="mr-1 size-3.5 shrink-0" />
                   <span className="truncate font-bold">
                     {activeEmployeesCount}
@@ -154,7 +156,8 @@ export function SectionCards() {
                 <div className="group relative flex items-center justify-center">
                   <Badge
                     variant="outline"
-                    className="bg-insight-danger-bg text-insight-danger-text hover:bg-insight-danger-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer">
+                    className="bg-insight-danger-bg text-insight-danger-text hover:bg-insight-danger-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer"
+                  >
                     <IconMinus className="mr-1 size-3.5 shrink-0" />
                     <span className="truncate font-bold">
                       {inactiveEmployeesCount}
@@ -172,7 +175,8 @@ export function SectionCards() {
         <CardContent className="flex-1 flex flex-col items-center justify-center px-4 py-2 min-h-0 w-full">
           <div
             className="text-4xl @[250px]/card:text-5xl font-mono text-white font-extrabold tabular-nums truncate w-full text-center drop-shadow-sm"
-            title={totalEmployees.toLocaleString("vi-VN")}>
+            title={totalEmployees.toLocaleString("vi-VN")}
+          >
             {totalEmployees.toLocaleString("vi-VN")}
           </div>
         </CardContent>
@@ -187,7 +191,8 @@ export function SectionCards() {
       {/* Card 2: Active Contracts */}
       <Card
         style={{ backgroundColor: "#7978E9" }}
-        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]">
+        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]"
+      >
         <CardHeader className="pb-0 pt-4 px-4 flex-none min-h-[64px]">
           <div className="flex flex-wrap items-start justify-between gap-2.5 w-full min-w-0">
             <CardDescription className="flex items-center gap-1.5 text-white/90 font-semibold mb-0 shrink-0 min-w-0 max-w-full">
@@ -198,7 +203,8 @@ export function SectionCards() {
               <div className="group relative flex items-center justify-center">
                 <Badge
                   variant="outline"
-                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer">
+                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer"
+                >
                   <IconTrendingUp className="mr-1 size-3.5 shrink-0" />
                   <span className="truncate font-bold">
                     {contracts.length > 0
@@ -217,7 +223,8 @@ export function SectionCards() {
         <CardContent className="flex-1 flex flex-col items-center justify-center px-4 py-2 min-h-0 w-full">
           <div
             className="text-4xl @[250px]/card:text-5xl font-mono text-white font-extrabold tabular-nums truncate w-full text-center drop-shadow-sm"
-            title={activeContracts.toLocaleString("vi-VN")}>
+            title={activeContracts.toLocaleString("vi-VN")}
+          >
             {activeContracts.toLocaleString("vi-VN")}
           </div>
         </CardContent>
@@ -235,7 +242,8 @@ export function SectionCards() {
       {/* Card 3: Departments */}
       <Card
         style={{ backgroundColor: "#6261CB" }}
-        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]">
+        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]"
+      >
         <CardHeader className="pb-0 pt-4 px-4 flex-none min-h-[64px]">
           <div className="flex flex-wrap items-start justify-between gap-2.5 w-full min-w-0">
             <CardDescription className="flex items-center gap-1.5 text-white/90 font-semibold mb-0 shrink-0 min-w-0 max-w-full">
@@ -246,7 +254,8 @@ export function SectionCards() {
               <div className="group relative flex items-center justify-center">
                 <Badge
                   variant="outline"
-                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer">
+                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer"
+                >
                   <IconActivity className="mr-1 size-3.5 shrink-0" />
                   <span className="truncate font-bold">
                     {activeDepartmentsCount}
@@ -260,7 +269,8 @@ export function SectionCards() {
                 <div className="group relative flex items-center justify-center">
                   <Badge
                     variant="outline"
-                    className="bg-insight-danger-bg text-insight-danger-text hover:bg-insight-danger-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer">
+                    className="bg-insight-danger-bg text-insight-danger-text hover:bg-insight-danger-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer"
+                  >
                     <IconMinus className="mr-1 size-3.5 shrink-0" />
                     <span className="truncate font-bold">
                       {inactiveDepartmentsCount}
@@ -278,7 +288,8 @@ export function SectionCards() {
         <CardContent className="flex-1 flex flex-col items-center justify-center px-4 py-2 min-h-0 w-full">
           <div
             className="text-4xl @[250px]/card:text-5xl font-mono text-white font-extrabold tabular-nums truncate w-full text-center drop-shadow-sm"
-            title={totalDepartments.toLocaleString("vi-VN")}>
+            title={totalDepartments.toLocaleString("vi-VN")}
+          >
             {totalDepartments.toLocaleString("vi-VN")}
           </div>
         </CardContent>
@@ -293,7 +304,8 @@ export function SectionCards() {
       {/* Card 4: Total Payroll */}
       <Card
         style={{ backgroundColor: "#4B49AC" }}
-        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]">
+        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]"
+      >
         <CardHeader className="pb-0 pt-4 px-4 flex-none min-h-[64px]">
           <div className="flex flex-wrap items-start justify-between gap-2.5 w-full min-w-0">
             <CardDescription className="flex items-center gap-1.5 text-white/90 font-semibold mb-0 shrink-0 min-w-0 max-w-full">
@@ -311,7 +323,8 @@ export function SectionCards() {
                       : payrollTrend < 0
                         ? "bg-insight-danger-bg text-insight-danger-text hover:bg-insight-danger-bg/90"
                         : "bg-insight-neutral-bg text-insight-neutral-text hover:bg-insight-neutral-bg/90",
-                  )}>
+                  )}
+                >
                   {payrollTrend > 0 ? (
                     <IconTrendingUp className="mr-1 size-3.5 shrink-0" />
                   ) : payrollTrend < 0 ? (
@@ -332,7 +345,8 @@ export function SectionCards() {
                       : payrollTrend < 0
                         ? "bg-insight-danger-bg text-insight-danger-text border border-insight-danger-text/20"
                         : "bg-insight-neutral-bg text-insight-neutral-text border border-insight-neutral-text/20",
-                  )}>
+                  )}
+                >
                   {payrollTrend > 0
                     ? t("Tăng")
                     : payrollTrend < 0
@@ -351,7 +365,8 @@ export function SectionCards() {
             title={new Intl.NumberFormat("vi-VN", {
               style: "currency",
               currency: "VND",
-            }).format(totalPayroll)}>
+            }).format(totalPayroll)}
+          >
             {formatVND(totalPayroll)}
           </div>
         </CardContent>
@@ -375,7 +390,8 @@ export function SectionCards() {
       {/* Card 5: Account Status */}
       <Card
         style={{ backgroundColor: "#6F42C1" }}
-        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]">
+        className="@container/card flex flex-col text-white border-transparent overflow-hidden h-full min-h-[180px]"
+      >
         <CardHeader className="pb-0 pt-4 px-4 flex-none min-h-[64px]">
           <div className="flex flex-wrap items-start justify-between gap-2.5 w-full min-w-0">
             <CardDescription className="flex items-center gap-1.5 text-white/90 font-semibold mb-0 shrink-0 min-w-0 max-w-full">
@@ -386,7 +402,8 @@ export function SectionCards() {
               <div className="group relative flex items-center justify-center">
                 <Badge
                   variant="outline"
-                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer">
+                  className="bg-insight-success-bg text-insight-success-text hover:bg-insight-success-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer"
+                >
                   <IconActivity className="mr-1 size-3.5 shrink-0" />
                   <span className="truncate font-bold">{onlineAccounts}</span>
                 </Badge>
@@ -398,7 +415,8 @@ export function SectionCards() {
                 <div className="group relative flex items-center justify-center">
                   <Badge
                     variant="outline"
-                    className="bg-insight-neutral-bg text-insight-neutral-text hover:bg-insight-neutral-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer">
+                    className="bg-insight-neutral-bg text-insight-neutral-text hover:bg-insight-neutral-bg/90 border-transparent transition-colors max-w-full px-2 cursor-pointer"
+                  >
                     <IconMinus className="mr-1 size-3.5 shrink-0" />
                     <span className="truncate font-bold">
                       {offlineAccounts}
@@ -416,7 +434,8 @@ export function SectionCards() {
         <CardContent className="flex-1 flex flex-col items-center justify-center px-4 py-2 min-h-0 w-full">
           <div
             className="text-4xl @[250px]/card:text-5xl font-mono text-white font-extrabold tabular-nums truncate w-full text-center drop-shadow-sm"
-            title={totalAccounts.toLocaleString("vi-VN")}>
+            title={totalAccounts.toLocaleString("vi-VN")}
+          >
             {totalAccounts.toLocaleString("vi-VN")}
           </div>
         </CardContent>

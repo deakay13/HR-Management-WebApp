@@ -75,7 +75,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -89,7 +90,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                   e.preventDefault();
                   handleOpenEdit();
                   setEditOpen(true);
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -100,9 +102,9 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                   <DialogTitle className="text-lg font-semibold">
                     {t("Sửa Phụ Cấp")}
                   </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để cập nhật.")}
+                  </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
@@ -161,7 +163,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   variant="destructive"
-                  onSelect={(e) => e.preventDefault()}>
+                  onSelect={(e) => e.preventDefault()}
+                >
                   {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
@@ -169,9 +172,11 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
                   <DialogTitle>{t("Xoá Phụ Cấp")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t(
+                      "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                    )}
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="text-sm space-y-1 text-muted-foreground">
                   <p>{t("Bạn có chắc muốn xoá không?")}</p>
@@ -194,7 +199,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                   </DialogClose>
                   <Button
                     variant="destructive"
-                    onClick={() => deleteAllowance(allowance.MaPC)}>
+                    onClick={() => deleteAllowance(allowance.MaPC)}
+                  >
                     {t("Xoá")}
                   </Button>
                 </DialogFooter>

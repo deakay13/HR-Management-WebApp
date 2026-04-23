@@ -6,31 +6,25 @@ import { useTranslation } from "react-i18next";
 
 function H({ k }: { k: string }) {
   const { t } = useTranslation();
-  return <div className="w-full text-center">{t(k)}</div>;
+  return <>{t(k)}</>;
 }
 
 export const columns: ColumnDef<RoleWithPermissions>[] = [
   {
     accessorKey: "MaVT",
     header: () => <H k="Mã Vai Trò" />,
-    cell: ({ row }) => (
-      <div className="w-full text-center h-8">{row.original.MaVT}</div>
-    ),
+    cell: ({ row }) => <>{row.original.MaVT}</>,
   },
   {
     accessorKey: "TenVaiTro",
     header: () => <H k="Tên Vai Trò" />,
-    cell: ({ row }) => (
-      <div className="w-full text-center h-8">{row.original.TenVaiTro}</div>
-    ),
+    cell: ({ row }) => <>{row.original.TenVaiTro}</>,
   },
   {
     accessorKey: "permissions",
     header: () => <H k="Quyền Được Cấp" />,
     cell: ({ row }) => (
-      <div className="w-full text-center h-8">
-        {row.original.permissions?.map((p) => p.TenQuyen).join(", ")}
-      </div>
+      <>{row.original.permissions?.map((p) => p.TenQuyen).join(", ")}</>
     ),
   },
   {

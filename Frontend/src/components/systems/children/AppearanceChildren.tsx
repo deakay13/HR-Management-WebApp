@@ -1,4 +1,3 @@
-
 import {
   Select,
   SelectTrigger,
@@ -28,7 +27,12 @@ export default function AppearanceChilds() {
         <p className="text-sm text-gray-500 mb-2">
           {t("Lựa chọn ngôn ngữ bạn muốn sử dụng cho hệ thống.")}
         </p>
-        <Select value={language} onValueChange={(val) => setLanguage(val as Parameters<typeof setLanguage>[0])}>
+        <Select
+          value={language}
+          onValueChange={(val) =>
+            setLanguage(val as Parameters<typeof setLanguage>[0])
+          }
+        >
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Chọn ngôn ngữ" />
           </SelectTrigger>
@@ -49,7 +53,8 @@ export default function AppearanceChilds() {
                 ? "bg-primary text-primary-foreground font-semibold"
                 : "hover:bg-primary/10"
             }`}
-            onClick={() => setTheme("light")}>
+            onClick={() => setTheme("light")}
+          >
             <IconSun className="w-8 h-8" />
             <span>{t("Sáng")}</span>
           </Card>
@@ -59,7 +64,8 @@ export default function AppearanceChilds() {
                 ? "bg-primary text-primary-foreground font-semibold"
                 : "hover:bg-primary/10"
             }`}
-            onClick={() => setTheme("dark")}>
+            onClick={() => setTheme("dark")}
+          >
             <IconMoon className="w-8 h-8" />
             <span>{t("Tối")}</span>
           </Card>
@@ -69,7 +75,8 @@ export default function AppearanceChilds() {
                 ? "bg-primary text-primary-foreground font-semibold"
                 : "hover:bg-primary/10"
             }`}
-            onClick={() => setTheme("system")}>
+            onClick={() => setTheme("system")}
+          >
             <IconDeviceDesktop className="w-8 h-8" />
             <span>{t("Hệ thống")}</span>
           </Card>

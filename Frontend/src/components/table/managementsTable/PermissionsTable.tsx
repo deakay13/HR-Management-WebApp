@@ -56,10 +56,13 @@ export function PermissionsTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  
+
   const { createPermissions } = usePermissionsStore();
   const { role } = useAuthorizeStore();
   const isAdmin = role?.MaVT === "VT001";
@@ -71,13 +74,22 @@ export function PermissionsTable({
     setFormData({ MaQuyen: "", TenQuyen: "" });
   };
 
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Permission>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaQuyen.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -98,10 +110,13 @@ export function PermissionsTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Phân Quyền")} page={t("Quyền Hạn")} />
-        
+
         <div className="flex items-center gap-2">
           <TableColumnFilter table={table} />
 
@@ -112,7 +127,8 @@ export function PermissionsTable({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setFormData({ MaQuyen: "", TenQuyen: "" })}>
+                  onClick={() => setFormData({ MaQuyen: "", TenQuyen: "" })}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
@@ -155,7 +171,8 @@ export function PermissionsTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaQuyen || !formData.TenQuyen}>
+                      disabled={!formData.MaQuyen || !formData.TenQuyen}
+                    >
                       {t("Thêm")}
                     </Button>
                   </DialogFooter>
@@ -169,17 +186,21 @@ export function PermissionsTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -188,10 +209,16 @@ export function PermissionsTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -200,7 +227,8 @@ export function PermissionsTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>
