@@ -17,12 +17,16 @@ import BasicSalary from "./components/workspaces/BasicSalaryComponents";
 import Allowances from "./components/workspaces/AllowancesComponents";
 import Deductions from "./components/workspaces/DeductionsComponents";
 
-{/*import managements*/ }
+{
+  /*import managements*/
+}
 import Accounts from "./components/managements/AccountsComponents";
 import Roles from "./components/managements/RolesComponents";
 import Permissions from "./components/managements/PermissionsComponents";
 
-{/*import systems*/ }
+{
+  /*import systems*/
+}
 import GetHelp from "./components/systems/GetHelpComponents";
 import Settings from "./components/systems/SettingsComponents";
 import Profile from "./components/systems/profile/proFileComponent";
@@ -37,9 +41,9 @@ function App() {
         richColors
         toastOptions={{
           classNames: {
-            error: 'bg-[#cd3536] text-white border-[#cd3536]',
-            success: 'bg-[#42c584] text-white border-[#42c584]',
-          }
+            error: "bg-[#cd3536] text-white border-[#cd3536]",
+            success: "bg-[#42c584] text-white border-[#42c584]",
+          },
         }}
       />
       <BrowserRouter>
@@ -55,7 +59,13 @@ function App() {
               <Route path="Contract" element={<Contract />} />
               <Route path="Payroll" element={<Payroll />} />
               {/* Routes restricted to Admin & HR only */}
-              <Route element={<RoleProtectedRoute allowedRoles={["Quản Trị Viên", "Nhân Sự"]} />}>
+              <Route
+                element={
+                  <RoleProtectedRoute
+                    allowedRoles={["Quản Trị Viên", "Nhân Sự"]}
+                  />
+                }
+              >
                 <Route path="Employee" element={<Employee />} />
                 <Route path="Department" element={<Department />} />
                 <Route path="WorkingHours" element={<WorkingHours />} />

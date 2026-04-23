@@ -76,7 +76,8 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -88,7 +89,8 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
                 onSelect={(e) => {
                   e.preventDefault();
                   handleOpenEdit();
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -96,9 +98,9 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
               <form onSubmit={handleSubmit(onUpdateSubmit)} className="space-y-6">
                 <DialogHeader>
                   <DialogTitle>{t("Sửa Quyền")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để cập nhật.")}
+                  </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field className="flex flex-col gap-2">
@@ -136,16 +138,19 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   variant="destructive"
-                  onSelect={(e) => e.preventDefault()}>
+                  onSelect={(e) => e.preventDefault()}
+                >
                   {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
                   <DialogTitle>{t("Xoá Quyền")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t(
+                      "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                    )}
+                  </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>

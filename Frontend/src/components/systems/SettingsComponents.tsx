@@ -19,7 +19,9 @@ export default function SettingsComponents() {
       {/* Header */}
       <header className="border-b p-6">
         <h1 className="text-2xl font-bold">{t("Cài đặt")}</h1>
-        <p className="text-gray-600">{t("Quản lý cài đặt và thiết lập của bạn.")}</p>
+        <p className="text-gray-600">
+          {t("Quản lý cài đặt và thiết lập của bạn.")}
+        </p>
       </header>
 
       {/* Content area */}
@@ -32,10 +34,11 @@ export default function SettingsComponents() {
                 key={name}
                 onClick={() => setActive(name)}
                 className={`flex flex-shrink-0 items-center gap-2 cursor-pointer rounded px-3 py-2 transition-colors ${
-                  active === name 
-                    ? "bg-primary text-primary-foreground font-semibold" 
+                  active === name
+                    ? "bg-primary text-primary-foreground font-semibold"
                     : "hover:bg-primary hover:text-primary-foreground"
-                }`}>
+                }`}
+              >
                 <Icon size={18} />
                 {t(name)}
               </div>

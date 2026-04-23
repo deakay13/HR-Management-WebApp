@@ -47,10 +47,6 @@ import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { RoleInputSchema, type RoleInput } from "@/types/permissionTypes/rolesTypes";
-
 export function RolesTable({
   data,
   loading,
@@ -60,44 +56,40 @@ export function RolesTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
 
   const { createRoles } = useRolesStore();
   const { role } = useAuthorizeStore();
   const isAdmin = role?.MaVT === "VT001";
-  const [createOpen, setCreateOpen] = React.useState(false);
+  const [formData, setFormData] = React.useState({ MaVT: "", TenVaiTro: "" });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<RoleInput>({
-    resolver: zodResolver(RoleInputSchema) as any,
-    defaultValues: {
-      MaVT: "",
-      TenVaiTro: "",
-    },
-  });
-
-  const onSubmit = async (data: RoleInput) => {
-    try {
-      await createRoles(data);
-      setCreateOpen(false);
-      reset();
-    } catch {
-      // store handles toast
-    }
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createRoles(formData);
+    setFormData({ MaVT: "", TenVaiTro: "" });
   };
+
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<RoleWithPermissions>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaVT.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -118,33 +110,31 @@ export function RolesTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Phân Quyền")} page={t("Vai Trò")} />
-        
+
         <div className="flex items-center gap-2">
           <TableColumnFilter table={table} />
 
           {/* Button create */}
           {isAdmin && (
-            <Dialog open={createOpen} onOpenChange={(open) => {
-              setCreateOpen(open);
-              if (!open) reset();
-            }}>
+            <Dialog>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    reset({ MaVT: "", TenVaiTro: "" });
-                    setCreateOpen(true);
-                  }}>
+                  onClick={() => setFormData({ MaVT: "", TenVaiTro: "" })}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleCreate} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle>{t("Tạo vai trò")}</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
@@ -156,25 +146,27 @@ export function RolesTable({
                       <Label htmlFor="MaVT">{t("Mã Vai Trò")}</Label>
                       <Input
                         id="MaVT"
-                        placeholder="VTxxx"
-                        className={`h-10 ${errors.MaVT ? "border-red-500" : ""}`}
-                        {...register("MaVT")}
+                        name="MaVT"
+                        defaultValue="VTxxx"
+                        value={formData.MaVT}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaVT: e.target.value })
+                        }
                       />
-                      {errors.MaVT && (
-                        <p className="text-xs text-red-500">{t(errors.MaVT.message || "")}</p>
-                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="TenVaiTro">{t("Tên Vai Trò")}</Label>
                       <Input
                         id="TenVaiTro"
-                        placeholder={t("VD: Nhân viên")}
-                        className={`h-10 ${errors.TenVaiTro ? "border-red-500" : ""}`}
-                        {...register("TenVaiTro")}
+                        name="TenVaiTro"
+                        value={formData.TenVaiTro}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            TenVaiTro: e.target.value,
+                          })
+                        }
                       />
-                      {errors.TenVaiTro && (
-                        <p className="text-xs text-red-500">{t(errors.TenVaiTro.message || "")}</p>
-                      )}
                     </Field>
                   </FieldGroup>
                   <DialogFooter className="gap-2">
@@ -183,7 +175,8 @@ export function RolesTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={isSubmitting}>
+                      disabled={!formData.MaVT || !formData.TenVaiTro}
+                    >
                       {t("Thêm")}
                     </Button>
                   </DialogFooter>
@@ -197,17 +190,21 @@ export function RolesTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -216,10 +213,16 @@ export function RolesTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -228,7 +231,8 @@ export function RolesTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

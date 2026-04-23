@@ -37,11 +37,12 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageThemeKey) as Theme) || defaultTheme
+    () => (localStorage.getItem(storageThemeKey) as Theme) || defaultTheme,
   );
-  
+
   const [language, setLanguage] = useState<Language>(
-    () => (localStorage.getItem(storageLanguageKey) as Language) || defaultLanguage
+    () =>
+      (localStorage.getItem(storageLanguageKey) as Language) || defaultLanguage,
   );
 
   useEffect(() => {
@@ -65,7 +66,6 @@ export function ThemeProvider({
   useEffect(() => {
     i18n.changeLanguage(language);
   }, [language]);
-
 
   const value = {
     theme,

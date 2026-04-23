@@ -1,4 +1,3 @@
-
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, beforeAll, afterEach } from "vitest";
@@ -14,19 +13,19 @@ i18n.use(initReactI18next).init({
     vi: {
       translation: {
         hello: "Xin chào",
-        button: "Đổi Ngôn Ngữ"
-      }
+        button: "Đổi Ngôn Ngữ",
+      },
     },
     en: {
       translation: {
         hello: "Hello",
-        button: "Change Language"
-      }
-    }
+        button: "Change Language",
+      },
+    },
   },
   interpolation: {
     escapeValue: false, // not needed for react as it escapes by default
-  }
+  },
 });
 
 const DummyComponent = () => {
@@ -61,7 +60,7 @@ describe("i18n language switching capabilities", () => {
     render(
       <I18nextProvider i18n={i18n}>
         <DummyComponent />
-      </I18nextProvider>
+      </I18nextProvider>,
     );
 
     expect(screen.getByTestId("greeting-text").textContent).toBe("Xin chào");
@@ -72,20 +71,22 @@ describe("i18n language switching capabilities", () => {
     render(
       <I18nextProvider i18n={i18n}>
         <DummyComponent />
-      </I18nextProvider>
+      </I18nextProvider>,
     );
 
     const btn = screen.getByTestId("toggle-btn");
-    
+
     // User clicks the button to change language to English
     await userEvent.click(btn);
 
     // Wait for the rerender
     await waitFor(() => {
       expect(screen.getByTestId("greeting-text").textContent).toBe("Hello");
-      expect(screen.getByTestId("toggle-btn").textContent).toBe("Change Language");
+      expect(screen.getByTestId("toggle-btn").textContent).toBe(
+        "Change Language",
+      );
     });
-    
+
     // User clicks again to change language back to Vietnamese
     await userEvent.click(btn);
 

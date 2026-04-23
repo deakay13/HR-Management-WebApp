@@ -50,9 +50,6 @@ import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 import { PayRollServices } from "@/services/payRollServices/payRollServices";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PayRollInputSchema } from "@/types/payRollTypes/payRollTypes";
 
 export function PayRollTable({
   data,
@@ -65,8 +62,18 @@ export function PayRollTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [formData, setFormData] = React.useState<PayRollInput>({
+    MaBL: "",
+    MaNV: "",
+    MaKT: "",
+    MaPC: "",
+    MaLCB: "",
+    MaGL: "",
+    Thang: "",
+    SoNgayLam: 26,
+  });
   const [filters, setFilters] = React.useState({
     keyword: "",
     Thang: "",
@@ -74,27 +81,6 @@ export function PayRollTable({
   });
   const { createPayRolls, searchPayRolls } = usePayRollStore();
   const { permissions } = useAuthorizeStore();
-  const [createOpen, setCreateOpen] = React.useState(false);
-
-  // Form for creation
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<PayRollInput>({
-    resolver: zodResolver(PayRollInputSchema) as any,
-    defaultValues: {
-      MaBL: "",
-      MaNV: "",
-      MaKT: "",
-      MaPC: "",
-      MaLCB: "",
-      MaGL: "",
-      Thang: "",
-      SoNgayLam: 0,
-    },
-  });
 
   // Debounce auto-search — same logic as AccountsTable
   useEffect(() => {
@@ -121,25 +107,31 @@ export function PayRollTable({
     }
   };
 
-  const onSubmit = async (data: PayRollInput) => {
-    try {
-      await createPayRolls(data);
-      setCreateOpen(false);
-      reset();
-    } catch {
-      // store handles toast
-    }
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await createPayRolls(formData);
   };
 
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<PayRoll>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaBL.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -160,7 +152,10 @@ export function PayRollTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Bảng Lương")} />
 
@@ -173,7 +168,9 @@ export function PayRollTable({
                 placeholder={t("Search...")}
                 className="h-9 w-[160px] pl-9"
                 value={filters.keyword}
-                onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, keyword: e.target.value }))
+                }
               />
             </div>
             {/* Export only visible for Admin/HR */}
@@ -183,7 +180,8 @@ export function PayRollTable({
                 size="sm"
                 onClick={handleExport}
                 className="h-9 w-9 p-0"
-                title={t("Xuất Excel")}>
+                title={t("Xuất Excel")}
+              >
                 <IconFileSpreadsheet size={18} />
               </Button>
             )}
@@ -193,25 +191,31 @@ export function PayRollTable({
 
           {/* Create button — only for Admin/HR */}
           {!isEmployee && canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={(open) => {
-              setCreateOpen(open);
-              if (!open) reset();
-            }}>
+            <Dialog>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    reset({ MaBL: "", MaNV: "", MaKT: "", MaPC: "", MaLCB: "", MaGL: "", Thang: "", SoNgayLam: 0 });
-                    setCreateOpen(true);
-                  }}>
+                  onClick={() =>
+                    setFormData({
+                      MaBL: "",
+                      MaNV: "",
+                      MaKT: "",
+                      MaPC: "",
+                      MaLCB: "",
+                      MaGL: "",
+                      Thang: "",
+                      SoNgayLam: 26,
+                    })
+                  }
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleCreate} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
                       {t("Tạo bảng lương")}
@@ -227,12 +231,12 @@ export function PayRollTable({
                       <Input
                         id="MaBL"
                         placeholder={t("BLxxx")}
-                        className={`h-10 ${errors.MaBL ? "border-red-500" : ""}`}
-                        {...register("MaBL")}
+                        className="h-10"
+                        value={formData.MaBL}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaBL: e.target.value })
+                        }
                       />
-                      {errors.MaBL && (
-                        <p className="text-xs text-red-500">{t(errors.MaBL.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -240,12 +244,12 @@ export function PayRollTable({
                       <Input
                         id="MaNV"
                         placeholder={t("NVxxx")}
-                        className={`h-10 ${errors.MaNV ? "border-red-500" : ""}`}
-                        {...register("MaNV")}
+                        className="h-10"
+                        value={formData.MaNV}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaNV: e.target.value })
+                        }
                       />
-                      {errors.MaNV && (
-                        <p className="text-xs text-red-500">{t(errors.MaNV.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -253,12 +257,12 @@ export function PayRollTable({
                       <Input
                         id="MaKT"
                         placeholder={t("KTxxx")}
-                        className={`h-10 ${errors.MaKT ? "border-red-500" : ""}`}
-                        {...register("MaKT")}
+                        className="h-10"
+                        value={formData.MaKT}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaKT: e.target.value })
+                        }
                       />
-                      {errors.MaKT && (
-                        <p className="text-xs text-red-500">{t(errors.MaKT.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -266,12 +270,12 @@ export function PayRollTable({
                       <Input
                         id="MaPC"
                         placeholder={t("PCxxx")}
-                        className={`h-10 ${errors.MaPC ? "border-red-500" : ""}`}
-                        {...register("MaPC")}
+                        className="h-10"
+                        value={formData.MaPC}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaPC: e.target.value })
+                        }
                       />
-                      {errors.MaPC && (
-                        <p className="text-xs text-red-500">{t(errors.MaPC.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -279,12 +283,12 @@ export function PayRollTable({
                       <Input
                         id="MaLCB"
                         placeholder={t("LCBxxx")}
-                        className={`h-10 ${errors.MaLCB ? "border-red-500" : ""}`}
-                        {...register("MaLCB")}
+                        className="h-10"
+                        value={formData.MaLCB}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaLCB: e.target.value })
+                        }
                       />
-                      {errors.MaLCB && (
-                        <p className="text-xs text-red-500">{t(errors.MaLCB.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -292,12 +296,12 @@ export function PayRollTable({
                       <Input
                         id="MaGL"
                         placeholder={t("GLxxx")}
-                        className={`h-10 ${errors.MaGL ? "border-red-500" : ""}`}
-                        {...register("MaGL")}
+                        className="h-10"
+                        value={formData.MaGL}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaGL: e.target.value })
+                        }
                       />
-                      {errors.MaGL && (
-                        <p className="text-xs text-red-500">{t(errors.MaGL.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -305,12 +309,12 @@ export function PayRollTable({
                       <Input
                         id="Thang"
                         type="month"
-                        className={`h-10 ${errors.Thang ? "border-red-500" : ""}`}
-                        {...register("Thang")}
+                        className="h-10"
+                        value={formData.Thang}
+                        onChange={(e) =>
+                          setFormData({ ...formData, Thang: e.target.value })
+                        }
                       />
-                      {errors.Thang && (
-                        <p className="text-xs text-red-500">{t(errors.Thang.message || "")}</p>
-                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="SoNgayLam">{t("Số ngày công")}</Label>
@@ -318,12 +322,15 @@ export function PayRollTable({
                         id="SoNgayLam"
                         type="number"
                         placeholder="26"
-                        className={`h-10 ${errors.SoNgayLam ? "border-red-500" : ""}`}
-                        {...register("SoNgayLam", { valueAsNumber: true })}
+                        className="h-10"
+                        value={formData.SoNgayLam}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            SoNgayLam: Number(e.target.value),
+                          })
+                        }
                       />
-                      {errors.SoNgayLam && (
-                        <p className="text-xs text-red-500">{t(errors.SoNgayLam.message || "")}</p>
-                      )}
                     </Field>
                   </FieldGroup>
 
@@ -335,7 +342,17 @@ export function PayRollTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={isSubmitting}>
+                      disabled={
+                        !formData.MaBL ||
+                        !formData.MaNV ||
+                        !formData.MaKT ||
+                        !formData.MaPC ||
+                        !formData.MaLCB ||
+                        !formData.MaGL ||
+                        !formData.Thang ||
+                        !formData.SoNgayLam
+                      }
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -349,17 +366,21 @@ export function PayRollTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-x-auto rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -368,10 +389,16 @@ export function PayRollTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -380,7 +407,8 @@ export function PayRollTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

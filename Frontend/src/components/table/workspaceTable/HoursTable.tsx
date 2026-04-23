@@ -48,10 +48,6 @@ import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { HoursInputSchema, type HoursInput } from "@/types/payRollTypes/hoursTypes";
-
 export function HoursTable({
   data,
   loading,
@@ -61,48 +57,49 @@ export function HoursTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [formData, setFormData] = React.useState({
+    MaGL: "",
+    SoGioLam: 0,
+    SoNgayLam: 26,
+    TongSoGio: 0,
+  });
   const { createHours } = useHoursStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<HoursInput>({
-    resolver: zodResolver(HoursInputSchema) as any,
-    defaultValues: {
-      MaGL: "",
-      SoGioLam: 0,
-      SoNgayLam: 26,
-      TongSoGio: 0,
-    },
-  });
-
-  const onSubmit = async (data: HoursInput) => {
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      await createHours(data);
+      await createHours(formData);
       setCreateOpen(false);
-      reset();
+      setFormData({ MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 });
     } catch {
       // store handles toast
     }
   };
 
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Hours>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaGL.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -123,7 +120,10 @@ export function HoursTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Giờ Làm")} />
 
@@ -132,25 +132,28 @@ export function HoursTable({
 
           {/* Create button */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={(open) => {
-              setCreateOpen(open);
-              if (!open) reset();
-            }}>
+            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    reset({ MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 });
+                    setFormData({
+                      MaGL: "",
+                      SoGioLam: 0,
+                      SoNgayLam: 26,
+                      TongSoGio: 0,
+                    });
                     setCreateOpen(true);
-                  }}>
+                  }}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleCreate} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
                       {t("Tạo ca làm việc")}
@@ -165,12 +168,12 @@ export function HoursTable({
                       <Input
                         id="MaGL"
                         placeholder={t("VD: GL001")}
-                        className={`h-10 ${errors.MaGL ? "border-red-500" : ""}`}
-                        {...register("MaGL")}
+                        className="h-10"
+                        value={formData.MaGL}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaGL: e.target.value })
+                        }
                       />
-                      {errors.MaGL && (
-                        <p className="text-xs text-red-500">{t(errors.MaGL.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -179,45 +182,49 @@ export function HoursTable({
                         id="SoGioLam"
                         type="number"
                         placeholder={t("VD: 8")}
-                        className={`h-10 ${errors.SoGioLam ? "border-red-500" : ""}`}
-                        {...register("SoGioLam")}
+                        className="h-10"
+                        value={formData.SoGioLam}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          setValue("SoGioLam", val);
-                          setValue("TongSoGio", val * Number(watch("SoNgayLam")));
+                          setFormData({
+                            ...formData,
+                            SoGioLam: val,
+                            TongSoGio: val * formData.SoNgayLam,
+                          });
                         }}
                       />
-                      {errors.SoGioLam && (
-                        <p className="text-xs text-red-500">{t(errors.SoGioLam.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="SoNgayLam">{t("Số Ngày Công Chuẩn")}</Label>
+                      <Label htmlFor="SoNgayLam">
+                        {t("Số Ngày Công Chuẩn")}
+                      </Label>
                       <Input
                         id="SoNgayLam"
                         type="number"
                         placeholder="26"
-                        className={`h-10 ${errors.SoNgayLam ? "border-red-500" : ""}`}
-                        {...register("SoNgayLam")}
+                        className="h-10"
+                        value={formData.SoNgayLam}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          setValue("SoNgayLam", val);
-                          setValue("TongSoGio", Number(watch("SoGioLam")) * val);
+                          setFormData({
+                            ...formData,
+                            SoNgayLam: val,
+                            TongSoGio: formData.SoGioLam * val,
+                          });
                         }}
                       />
-                      {errors.SoNgayLam && (
-                        <p className="text-xs text-red-500">{t(errors.SoNgayLam.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="TongSoGio">{t("Tổng Giờ Chuẩn/Tháng")}</Label>
+                      <Label htmlFor="TongSoGio">
+                        {t("Tổng Giờ Chuẩn/Tháng")}
+                      </Label>
                       <Input
                         id="TongSoGio"
                         type="number"
                         className="h-10 bg-muted"
-                        {...register("TongSoGio")}
+                        value={formData.TongSoGio}
                         readOnly
                       />
                     </Field>
@@ -231,7 +238,8 @@ export function HoursTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={isSubmitting}>
+                      disabled={!formData.MaGL || formData.SoGioLam <= 0}
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -245,17 +253,21 @@ export function HoursTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -264,10 +276,16 @@ export function HoursTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -276,7 +294,8 @@ export function HoursTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

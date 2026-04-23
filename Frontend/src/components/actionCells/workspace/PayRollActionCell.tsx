@@ -84,7 +84,8 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -97,7 +98,8 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                 onSelect={(e) => {
                   e.preventDefault();
                   handleOpenEdit();
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -116,55 +118,68 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                 <FieldGroup className="space-y-4">
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Lương Cơ Bản")}</Label>
-                    <Input className={errors.MaLCB ? "border-red-500" : ""} {...register("MaLCB")} />
+                    <Input {...register("MaLCB")} />
                     {errors.MaLCB && (
-                      <p className="text-red-500 text-xs">{t(errors.MaLCB.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.MaLCB.message}
+                      </p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Nhân Viên")}</Label>
-                    <Input className={errors.MaNV ? "border-red-500" : ""} {...register("MaNV")} />
+                    <Input {...register("MaNV")} />
                     {errors.MaNV && (
-                      <p className="text-red-500 text-xs">{t(errors.MaNV.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.MaNV.message}
+                      </p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Khấu Trừ")}</Label>
-                    <Input className={errors.MaKT ? "border-red-500" : ""} {...register("MaKT")} />
+                    <Input {...register("MaKT")} />
                     {errors.MaKT && (
-                      <p className="text-red-500 text-xs">{t(errors.MaKT.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.MaKT.message}
+                      </p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Phụ Cấp")}</Label>
-                    <Input className={errors.MaPC ? "border-red-500" : ""} {...register("MaPC")} />
+                    <Input {...register("MaPC")} />
                     {errors.MaPC && (
-                      <p className="text-red-500 text-xs">{t(errors.MaPC.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.MaPC.message}
+                      </p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Mã Giờ Làm")}</Label>
-                    <Input className={errors.MaGL ? "border-red-500" : ""} {...register("MaGL")} />
+                    <Input {...register("MaGL")} />
                     {errors.MaGL && (
-                      <p className="text-red-500 text-xs">{t(errors.MaGL.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.MaGL.message}
+                      </p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Tháng")}</Label>
-                    <Input type="month" className={errors.Thang ? "border-red-500" : ""} {...register("Thang")} />
+                    <Input type="month" {...register("Thang")} />
                     {errors.Thang && (
-                      <p className="text-red-500 text-xs">{t(errors.Thang.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.Thang.message}
+                      </p>
                     )}
                   </Field>
                   <Field className="flex flex-col gap-2">
                     <Label>{t("Số ngày công")}</Label>
                     <Input
                       type="number"
-                      className={errors.SoNgayLam ? "border-red-500" : ""}
                       {...register("SoNgayLam", { valueAsNumber: true })}
                     />
                     {errors.SoNgayLam && (
-                      <p className="text-red-500 text-xs">{t(errors.SoNgayLam.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.SoNgayLam.message}
+                      </p>
                     )}
                   </Field>
                 </FieldGroup>
@@ -193,30 +208,50 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
-                onSelect={(e) => e.preventDefault()}>
+                onSelect={(e) => e.preventDefault()}
+              >
                 {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-sm max-h-[85vh] overflow-y-auto" showCloseButton={false}>
+            <DialogContent
+              className="sm:max-w-sm max-h-[85vh] overflow-y-auto"
+              showCloseButton={false}
+            >
               <DialogHeader>
                 <DialogTitle>{t("Xoá Bảng Lương")}</DialogTitle>
                 <DialogDescription className="text-sm text-muted-foreground">
-                  {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
+                  {t(
+                    "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                  )}
                 </DialogDescription>
               </DialogHeader>
               <div className="text-sm space-y-1 text-muted-foreground">
                 <p>{t("Bạn có chắc muốn xoá không?")}</p>
                 <ul>
-                  <li><b>{t("Mã Bảng Lương")}:</b> {payRoll.MaBL}</li>
-                  <li><b>{t("Mã Nhân Viên")}:</b> {payRoll.MaNV}</li>
-                  <li><b>{t("Mã Lương Cơ Bản")}:</b> {payRoll.MaLCB}</li>
-                  <li><b>{t("Mã Phụ Cấp")}:</b> {payRoll.MaPC}</li>
-                  <li><b>{t("Mã Khấu Trừ")}:</b> {payRoll.MaKT}</li>
-                  <li><b>{t("Mã Giờ Làm")}:</b> {payRoll.MaGL}</li>
+                  <li>
+                    <b>{t("Mã Bảng Lương")}:</b> {payRoll.MaBL}
+                  </li>
+                  <li>
+                    <b>{t("Mã Nhân Viên")}:</b> {payRoll.MaNV}
+                  </li>
+                  <li>
+                    <b>{t("Mã Lương Cơ Bản")}:</b> {payRoll.MaLCB}
+                  </li>
+                  <li>
+                    <b>{t("Mã Phụ Cấp")}:</b> {payRoll.MaPC}
+                  </li>
+                  <li>
+                    <b>{t("Mã Khấu Trừ")}:</b> {payRoll.MaKT}
+                  </li>
+                  <li>
+                    <b>{t("Mã Giờ Làm")}:</b> {payRoll.MaGL}
+                  </li>
                   <li>
                     <b>{t("Tháng Trong Năm")}:</b>{" "}
-                    <span className="font-semibold text-red-500">{payRoll.Thang}</span>
+                    <span className="font-semibold text-red-500">
+                      {payRoll.Thang}
+                    </span>
                   </li>
                 </ul>
               </div>
@@ -226,7 +261,8 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deletePayRoll(payRoll.MaBL)}>
+                  onClick={() => deletePayRoll(payRoll.MaBL)}
+                >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

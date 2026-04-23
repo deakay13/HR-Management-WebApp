@@ -76,7 +76,10 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
       setEditOpen(false);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const fieldErrors = error.flatten().fieldErrors as Record<string, string[]>;
+        const fieldErrors = error.flatten().fieldErrors as Record<
+          string,
+          string[]
+        >;
         const newErrors: Record<string, string> = {};
         for (const key in fieldErrors) {
           if (fieldErrors[key]) newErrors[key] = fieldErrors[key][0];
@@ -92,7 +95,8 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -106,7 +110,8 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                 onSelect={(e) => {
                   e.preventDefault();
                   setEditOpen(true);
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -114,9 +119,9 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{t("Sửa Thông Tin Nhân Viên")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t("Nhập thông tin chi tiết để cập nhật.")}
+                </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
@@ -130,7 +135,8 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     value={formData.MaPB}
                     onValueChange={(val) =>
                       setFormData((prev) => ({ ...prev, MaPB: val }))
-                    }>
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder={t("Chọn phòng ban")} />
                     </SelectTrigger>
@@ -143,7 +149,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     </SelectContent>
                   </Select>
                   {errors.MaPB && (
-                    <span className="text-xs text-red-500">{t(errors.MaPB || "")}</span>
+                    <span className="text-xs text-red-500">{errors.MaPB}</span>
                   )}
                 </Field>
 
@@ -153,11 +159,16 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     id="HoVaTen"
                     value={formData.HoVaTen}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, HoVaTen: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        HoVaTen: e.target.value,
+                      }))
                     }
                   />
                   {errors.HoVaTen && (
-                    <span className="text-xs text-red-500">{t(errors.HoVaTen || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.HoVaTen}
+                    </span>
                   )}
                 </Field>
 
@@ -166,8 +177,12 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                   <Select
                     value={formData.GioiTinh}
                     onValueChange={(val) =>
-                      setFormData((prev) => ({ ...prev, GioiTinh: val as Employee["GioiTinh"] }))
-                    }>
+                      setFormData((prev) => ({
+                        ...prev,
+                        GioiTinh: val as Employee["GioiTinh"],
+                      }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -180,7 +195,9 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     </SelectContent>
                   </Select>
                   {errors.GioiTinh && (
-                    <span className="text-xs text-red-500">{t(errors.GioiTinh || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.GioiTinh}
+                    </span>
                   )}
                 </Field>
 
@@ -191,11 +208,16 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     type="date"
                     value={formData.NgaySinh}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, NgaySinh: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        NgaySinh: e.target.value,
+                      }))
                     }
                   />
                   {errors.NgaySinh && (
-                    <span className="text-xs text-red-500">{t(errors.NgaySinh || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.NgaySinh}
+                    </span>
                   )}
                 </Field>
 
@@ -209,7 +231,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     }
                   />
                   {errors.SDT && (
-                    <span className="text-xs text-red-500">{t(errors.SDT || "")}</span>
+                    <span className="text-xs text-red-500">{errors.SDT}</span>
                   )}
                 </Field>
 
@@ -220,11 +242,16 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     type="date"
                     value={formData.NgayVaoLam}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, NgayVaoLam: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        NgayVaoLam: e.target.value,
+                      }))
                     }
                   />
                   {errors.NgayVaoLam && (
-                    <span className="text-xs text-red-500">{t(errors.NgayVaoLam || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.NgayVaoLam}
+                    </span>
                   )}
                 </Field>
 
@@ -234,11 +261,16 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                     id="DiaChi"
                     value={formData.DiaChi}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, DiaChi: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        DiaChi: e.target.value,
+                      }))
                     }
                   />
                   {errors.DiaChi && (
-                    <span className="text-xs text-red-500">{t(errors.DiaChi || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.DiaChi}
+                    </span>
                   )}
                 </Field>
               </FieldGroup>
@@ -263,16 +295,19 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
-                onSelect={(e) => e.preventDefault()}>
+                onSelect={(e) => e.preventDefault()}
+              >
                 {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm" showCloseButton={false}>
               <DialogHeader>
                 <DialogTitle>{t("Xoá Nhân Viên")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t(
+                    "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                  )}
+                </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
@@ -288,7 +323,8 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteEmployee(emp.MaNV)}>
+                  onClick={() => deleteEmployee(emp.MaNV)}
+                >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

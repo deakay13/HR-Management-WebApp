@@ -10,7 +10,8 @@ export const DepartmentSchema = z.object({
 // Schema dynamic for Validation (Check duplicate )
 export const getDepartmentValidationSchema = (existingCodes: string[]) =>
   DepartmentSchema.extend({
-    MaPB: z.string()
+    MaPB: z
+      .string()
       .min(1)
       .refine((val) => !existingCodes.includes(val), {
         message: "Mã phòng ban này đã tồn tại",

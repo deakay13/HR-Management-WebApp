@@ -89,16 +89,17 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
                 onSelect={(e) => {
                   e.preventDefault();
                   setEditOpen(true);
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
                 <DialogTitle>{t("Sửa Thông Tin Phòng Ban")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t("Nhập thông tin chi tiết để cập nhật.")}
+                </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
@@ -111,7 +112,10 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
                     id="TenPB"
                     value={formData.TenPB}
                     onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, TenPB: e.target.value }))
+                      setFormData((prev) => ({
+                        ...prev,
+                        TenPB: e.target.value,
+                      }))
                     }
                   />
                   {errors.TenPB && (
@@ -140,16 +144,19 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
-                onSelect={(e) => e.preventDefault()}>
+                onSelect={(e) => e.preventDefault()}
+              >
                 {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm" showCloseButton={false}>
               <DialogHeader>
                 <DialogTitle>{t("Xoá Phòng Ban")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t(
+                    "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                  )}
+                </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
@@ -165,7 +172,8 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteDepartment(dept.MaPB)}>
+                  onClick={() => deleteDepartment(dept.MaPB)}
+                >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

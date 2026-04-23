@@ -48,13 +48,13 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<HoursInput>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     resolver: zodResolver(HoursInputSchema) as any,
     defaultValues: {
       MaGL: hours.MaGL,
       SoGioLam: hours.SoGioLam,
       SoNgayLam: hours.SoNgayLam || 26,
-      TongSoGio: hours.TongSoGio || (Number(hours.SoGioLam) * 26),
+      TongSoGio: hours.TongSoGio || Number(hours.SoGioLam) * 26,
     },
   });
 
@@ -80,7 +80,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -95,7 +96,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                   e.preventDefault();
                   handleOpenEdit();
                   setEditOpen(true);
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -106,9 +108,9 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                   <DialogTitle className="text-lg font-semibold">
                     {t("Sửa ca làm việc")}
                   </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để cập nhật.")}
+                  </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
@@ -117,17 +119,20 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                     <Input
                       id="SoGioLam"
                       type="number"
-                      className={`h-10 ${errors.SoGioLam ? "border-red-500" : ""}`}
+                      className="h-10"
                       placeholder={t("VD: 8")}
                       {...register("SoGioLam")}
                       onChange={(e) => {
                         const val = Number(e.target.value);
                         setValue("SoGioLam", val);
+                        /* eslint-disable-next-line react-hooks/incompatible-library */
                         setValue("TongSoGio", val * Number(watch("SoNgayLam")));
                       }}
                     />
                     {errors.SoGioLam && (
-                      <p className="text-red-500 text-xs">{t(errors.SoGioLam.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.SoGioLam.message}
+                      </p>
                     )}
                   </Field>
 
@@ -137,7 +142,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       id="SoNgayLam"
                       type="number"
                       placeholder="26"
-                      className={`h-10 ${errors.SoNgayLam ? "border-red-500" : ""}`}
+                      className="h-10"
                       {...register("SoNgayLam")}
                       onChange={(e) => {
                         const val = Number(e.target.value);
@@ -146,12 +151,16 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       }}
                     />
                     {errors.SoNgayLam && (
-                      <p className="text-red-500 text-xs">{t(errors.SoNgayLam.message || "")}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.SoNgayLam.message}
+                      </p>
                     )}
                   </Field>
 
                   <Field className="flex flex-col gap-2">
-                    <Label htmlFor="TongSoGio">{t("Tổng Giờ Chuẩn/Tháng")}</Label>
+                    <Label htmlFor="TongSoGio">
+                      {t("Tổng Giờ Chuẩn/Tháng")}
+                    </Label>
                     <Input
                       id="TongSoGio"
                       type="number"
@@ -187,7 +196,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
-                onSelect={(e) => e.preventDefault()}>
+                onSelect={(e) => e.preventDefault()}
+              >
                 {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -195,9 +205,11 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
             <DialogContent className="sm:max-w-sm max-h-[85vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{t("Xoá ca làm việc")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t(
+                    "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                  )}
+                </DialogDescription>
               </DialogHeader>
               <div className="text-sm space-y-1 text-muted-foreground">
                 <p>{t("Bạn có chắc muốn xoá không?")}</p>
@@ -219,7 +231,8 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteHours(hours.MaGL)}>
+                  onClick={() => deleteHours(hours.MaGL)}
+                >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

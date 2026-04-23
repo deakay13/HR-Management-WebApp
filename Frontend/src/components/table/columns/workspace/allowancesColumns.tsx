@@ -4,48 +4,30 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { AllowanceActionCell } from "@/components/actionCells/workspace/AllowanceActionCell";
 import { useTranslation } from "react-i18next";
 
-function HeaderMaPC() {
+function H({ k }: { k: string }) {
   const { t } = useTranslation();
-  return <div className="w-30 text-center">{t("Mã Phụ Cấp")}</div>;
-}
-
-function HeaderLoaiPC() {
-  const { t } = useTranslation();
-  return <div className="w-30 text-center">{t("Loại Phụ Cấp")}</div>;
-}
-
-function HeaderSoTien() {
-  const { t } = useTranslation();
-  return <div className="w-30 text-center">{t("Số Tiền")}</div>;
+  return <>{t(k)}</>;
 }
 
 function CellSoTien({ amount }: { amount: number }) {
   const { t } = useTranslation();
-  return (
-    <div className="w-30 text-center h-8">
-      {t("{{count}} VND", { count: amount.toLocaleString("vi-VN") })}
-    </div>
-  );
+  return <>{t("{{count}} VND", { count: amount.toLocaleString("vi-VN") })}</>;
 }
 
 export const columns: ColumnDef<Allowance>[] = [
   {
     accessorKey: "MaPC",
-    header: () => <HeaderMaPC />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaPC}</div>
-    ),
+    header: () => <H k="Mã Phụ Cấp" />,
+    cell: ({ row }) => <>{row.original.MaPC}</>,
   },
   {
     accessorKey: "LoaiPC",
-    header: () => <HeaderLoaiPC />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.LoaiPC}</div>
-    ),
+    header: () => <H k="Loại Phụ Cấp" />,
+    cell: ({ row }) => <>{row.original.LoaiPC}</>,
   },
   {
     accessorKey: "SoTien",
-    header: () => <HeaderSoTien />,
+    header: () => <H k="Số Tiền" />,
     cell: ({ row }) => <CellSoTien amount={Number(row.original.SoTien || 0)} />,
   },
   {

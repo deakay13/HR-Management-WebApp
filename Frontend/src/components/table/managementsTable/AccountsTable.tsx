@@ -49,9 +49,7 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 import { columns } from "../columns/managements/AccountsTableColumns";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AccountInputSchema, type AccountInput, type Account } from "@/types/authTypes/accountTypes";
+import type { Account } from "@/types/authTypes/accountTypes";
 import type { Role } from "@/types/permissionTypes/rolesTypes";
 
 import { useAccountsStore } from "@/stores/authStores/accountStore";
@@ -72,32 +70,21 @@ export function AccountsTable({
   const { t } = useTranslation();
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { permissions } = useAuthorizeStore();
   const [searchTerm, setSearchTerm] = React.useState("");
   const { createAccount, exportAccounts, getAccounts } = useAccountsStore();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<AccountInput>({
-    resolver: zodResolver(AccountInputSchema) as any,
-    defaultValues: {
-      MaTK: "",
-      MaNV: "",
-      MaVT: "",
-      TenTaiKhoan: "",
-      MatKhau: "",
-    },
-  });
-
-  // Debounce search
+  /* Debounce search */
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       getAccounts(searchTerm);
@@ -105,11 +92,17 @@ export function AccountsTable({
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm, getAccounts]);
-
+  /* eslint-disable-next-line react-hooks/incompatible-library */
   const table = useReactTable<Account>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaTK.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -127,14 +120,28 @@ export function AccountsTable({
 
   const { Roles, getRoles } = useRolesStore();
   const [createOpen, setCreateOpen] = React.useState(false);
+  const [formData, setFormData] = React.useState({
+    MaTK: "",
+    MaNV: "",
+    MaVT: "",
+    TenTaiKhoan: "",
+    MatKhau: "",
+  });
 
-  const onSubmit = async (data: AccountInput) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      await createAccount(data as any);
+      await createAccount(formData);
       setCreateOpen(false);
-      reset();
+      setFormData({
+        MaTK: "",
+        MaNV: "",
+        MaVT: "",
+        TenTaiKhoan: "",
+        MatKhau: "",
+      });
     } catch {
-      // store handles toast
+      /* store handles toast */
     }
   };
 
@@ -147,10 +154,13 @@ export function AccountsTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Phân Quyền")} page={t("Tài Khoản")} />
-        
+
         <div className="flex items-center gap-2 flex-wrap">
           <div className="relative flex items-center gap-2">
             <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
@@ -167,7 +177,8 @@ export function AccountsTable({
             size="icon"
             onClick={() => exportAccounts()}
             className="size-9"
-            title={t("Xuất Excel")}>
+            title={t("Xuất Excel")}
+          >
             <IconDownload className="h-4 w-4" />
           </Button>
 
@@ -175,16 +186,13 @@ export function AccountsTable({
 
           {/* Button create */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={(open) => {
-              setCreateOpen(open);
-              if (!open) reset();
-            }}>
+            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    reset({
+                    setFormData({
                       MaTK: "",
                       MaNV: "",
                       MaVT: "",
@@ -192,13 +200,14 @@ export function AccountsTable({
                       MatKhau: "",
                     });
                     setCreateOpen(true);
-                  }}>
+                  }}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle>{t("Tạo Tài Khoản")}</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
@@ -207,69 +216,62 @@ export function AccountsTable({
                   </DialogHeader>
                   <FieldGroup>
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaTK">{t("Mã Tài Khoản")}</Label>
+                      <Label htmlFor="MaTk">{t("Mã Tài Khoản")}</Label>
                       <Input
-                        id="MaTK"
+                        id="MaTk"
                         placeholder={t("VD: TK001")}
-                        className={errors.MaTK ? "border-red-500" : ""}
-                        {...register("MaTK")}
+                        value={formData.MaTK}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaTK: e.target.value })
+                        }
                       />
-                      {errors.MaTK && (
-                        <p className="text-xs text-red-500">{t(errors.MaTK.message || "")}</p>
-                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaNV">{t("Mã Nhân Viên")}</Label>
                       <Input
                         id="MaNV"
                         placeholder={t("VD: NV001")}
-                        className={errors.MaNV ? "border-red-500" : ""}
-                        {...register("MaNV")}
+                        value={formData.MaNV}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaNV: e.target.value })
+                        }
                       />
-                      {errors.MaNV && (
-                        <p className="text-xs text-red-500">{t(errors.MaNV.message || "")}</p>
-                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaVT">{t("Mã Vai Trò")}</Label>
-                      <Controller
-                        name="MaVT"
-                        control={control}
-                        render={({ field }) => (
-                          <Select
-                            onValueChange={field.onChange}
-                            value={field.value}
-                          >
-                            <SelectTrigger className={`w-full ${errors.MaVT ? "border-red-500" : ""}`}>
-                              <SelectValue placeholder={t("Chọn Vai trò")} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {Roles.map((vt: Role) => (
-                                  <SelectItem key={vt.MaVT} value={vt.MaVT}>
-                                    {vt.MaVT} - {vt.TenVaiTro}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                      {errors.MaVT && (
-                        <p className="text-xs text-red-500">{t(errors.MaVT.message || "")}</p>
-                      )}
+                      <Select
+                        value={formData.MaVT}
+                        onValueChange={(value) =>
+                          setFormData({ ...formData, MaVT: value })
+                        }
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder={t("Chọn Vai trò")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {Roles.map((vt: Role) => (
+                              <SelectItem key={vt.MaVT} value={vt.MaVT}>
+                                {vt.MaVT} - {vt.TenVaiTro}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="TenTaiKhoan">{t("Tên Tài Khoản")}</Label>
                       <Input
                         id="TenTaiKhoan"
                         placeholder={t("VD: nguyenvana")}
-                        className={errors.TenTaiKhoan ? "border-red-500" : ""}
-                        {...register("TenTaiKhoan")}
+                        value={formData.TenTaiKhoan}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            TenTaiKhoan: e.target.value,
+                          })
+                        }
                       />
-                      {errors.TenTaiKhoan && (
-                        <p className="text-xs text-red-500">{t(errors.TenTaiKhoan.message || "")}</p>
-                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MatKhau">{t("Mật Khẩu")}</Label>
@@ -277,12 +279,11 @@ export function AccountsTable({
                         id="MatKhau"
                         type="password"
                         placeholder={t("Nhập mật khẩu")}
-                        className={errors.MatKhau ? "border-red-500" : ""}
-                        {...register("MatKhau")}
+                        value={formData.MatKhau}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MatKhau: e.target.value })
+                        }
                       />
-                      {errors.MatKhau && (
-                        <p className="text-xs text-red-500">{t(errors.MatKhau.message || "")}</p>
-                      )}
                     </Field>
                   </FieldGroup>
                   <DialogFooter className="gap-2">
@@ -291,7 +292,14 @@ export function AccountsTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={isSubmitting}>
+                      disabled={
+                        !formData.MaTK ||
+                        !formData.MaNV ||
+                        !formData.MaVT ||
+                        !formData.TenTaiKhoan ||
+                        !formData.MatKhau
+                      }
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -305,17 +313,21 @@ export function AccountsTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -324,10 +336,16 @@ export function AccountsTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -336,7 +354,8 @@ export function AccountsTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

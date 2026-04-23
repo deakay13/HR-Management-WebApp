@@ -60,13 +60,19 @@ export function ContractTable({
   const { t } = useTranslation();
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const [openCreate, setOpenCreate] = React.useState(false);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { employees, getEmployees } = useEmployeeStore();
   const { permissions } = useAuthorizeStore();
 
@@ -74,7 +80,13 @@ export function ContractTable({
   const table = useReactTable<Contract>({
     data: data || [],
     columns: contractColumns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaHopDong,
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -107,6 +119,13 @@ export function ContractTable({
       LoaiHD: formData.get("LoaiHD") as string,
       NgayBatDau: formData.get("NgayBatDau") as string,
       NgayKetThuc: formData.get("NgayKetThuc") as string,
+      NgayKy: formData.get("NgayKy") as string,
+      ChucDanh: formData.get("ChucDanh") as string,
+      MaPB: formData.get("MaPB") as string,
+      MaLCB: formData.get("MaLCB") as string,
+      MaPC: formData.get("MaPC") as string,
+      HinhThucTraLuong: formData.get("HinhThucTraLuong") as string,
+      TinhTrang: formData.get("TinhTrang") as string,
       HinhAnhHopDong: formData.get("HinhAnhHopDong"),
     };
 
@@ -135,10 +154,14 @@ export function ContractTable({
     }
   };
 
-  if (loading) return <p className="text-center py-4">{t("Đang tải dữ liệu...")}</p>;
+  if (loading)
+    return <p className="text-center py-4">{t("Đang tải dữ liệu...")}</p>;
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Hợp Đồng")} />
 
@@ -154,7 +177,8 @@ export function ContractTable({
               onOpenChange={(open) => {
                 setOpenCreate(open);
                 if (!open) setErrors({});
-              }}>
+              }}
+            >
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <IconPlus />
@@ -164,9 +188,9 @@ export function ContractTable({
               <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{t("Tạo Hợp Đồng Mới")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để tạo mới.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để tạo mới.")}
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} encType="multipart/form-data">
                   <FieldGroup className="space-y-4">
@@ -186,7 +210,12 @@ export function ContractTable({
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaNV">{t("Mã Nhân Viên")}</Label>
-                      <Input id="MaNV" name="MaNV" placeholder={t("VD: NV001")} className="uppercase h-10" />
+                      <Input
+                        id="MaNV"
+                        name="MaNV"
+                        placeholder={t("VD: NV001")}
+                        className="uppercase h-10"
+                      />
                       {errors.MaNV && (
                         <span className="text-xs text-red-500">
                           {t(errors.MaNV || "")}
@@ -195,7 +224,12 @@ export function ContractTable({
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="LoaiHD">{t("Loại Hợp Đồng")}</Label>
-                      <Input id="LoaiHD" name="LoaiHD" placeholder={t("VD: Có thời hạn")} className="h-10" />
+                      <Input
+                        id="LoaiHD"
+                        name="LoaiHD"
+                        placeholder={t("VD: Có thời hạn")}
+                        className="h-10"
+                      />
                       {errors.LoaiHD && (
                         <span className="text-xs text-red-500">
                           {t(errors.LoaiHD || "")}
@@ -204,7 +238,12 @@ export function ContractTable({
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="NgayBatDau">{t("Ngày Bắt Đầu")}</Label>
-                      <Input id="NgayBatDau" name="NgayBatDau" type="date" className="h-10" />
+                      <Input
+                        id="NgayBatDau"
+                        name="NgayBatDau"
+                        type="date"
+                        className="h-10"
+                      />
                       {errors.NgayBatDau && (
                         <span className="text-xs text-red-500">
                           {t(errors.NgayBatDau || "")}
@@ -213,7 +252,12 @@ export function ContractTable({
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="NgayKetThuc">{t("Ngày Kết Thúc")}</Label>
-                      <Input id="NgayKetThuc" name="NgayKetThuc" type="date" className="h-10" />
+                      <Input
+                        id="NgayKetThuc"
+                        name="NgayKetThuc"
+                        type="date"
+                        className="h-10"
+                      />
                       {errors.NgayKetThuc && (
                         <span className="text-xs text-red-500">
                           {t(errors.NgayKetThuc || "")}
@@ -221,7 +265,77 @@ export function ContractTable({
                       )}
                     </Field>
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="HinhAnhHopDong">{t("Hình ảnh (File)")}</Label>
+                      <Label htmlFor="NgayKy">{t("Ngày Ký")}</Label>
+                      <Input
+                        id="NgayKy"
+                        name="NgayKy"
+                        type="date"
+                        className="h-10"
+                      />
+                      {errors.NgayKy && (
+                        <span className="text-xs text-red-500">
+                          {errors.NgayKy}
+                        </span>
+                      )}
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="ChucDanh">{t("Chức Danh")}</Label>
+                      <Input
+                        id="ChucDanh"
+                        name="ChucDanh"
+                        placeholder={t("Nhập chức danh")}
+                        className="h-10"
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="MaPB">{t("Mã Phòng Ban")}</Label>
+                      <Input
+                        id="MaPB"
+                        name="MaPB"
+                        placeholder={t("VD: PB001")}
+                        className="uppercase h-10"
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="MaLCB">{t("Mã Lương CB")}</Label>
+                      <Input
+                        id="MaLCB"
+                        name="MaLCB"
+                        placeholder={t("VD: LCB001")}
+                        className="uppercase h-10"
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="MaPC">{t("Mã Phụ Cấp")}</Label>
+                      <Input
+                        id="MaPC"
+                        name="MaPC"
+                        placeholder={t("VD: PC001")}
+                        className="uppercase h-10"
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="HinhThucTraLuong">{t("Hình Thức Trả Lương")}</Label>
+                      <Input
+                        id="HinhThucTraLuong"
+                        name="HinhThucTraLuong"
+                        placeholder={t("VD: Chuyển khoản")}
+                        className="h-10"
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="TinhTrang">{t("Tình Trạng")}</Label>
+                      <Input
+                        id="TinhTrang"
+                        name="TinhTrang"
+                        placeholder={t("VD: Còn hiệu lực")}
+                        className="h-10"
+                      />
+                    </Field>
+                    <Field className="flex flex-col gap-2">
+                      <Label htmlFor="HinhAnhHopDong">
+                        {t("Hình ảnh (File)")}
+                      </Label>
                       <Input
                         id="HinhAnhHopDong"
                         name="HinhAnhHopDong"
@@ -253,17 +367,21 @@ export function ContractTable({
 
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="text-center align-middle">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -272,10 +390,16 @@ export function ContractTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -284,7 +408,8 @@ export function ContractTable({
                 <TableRow>
                   <TableCell
                     colSpan={contractColumns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

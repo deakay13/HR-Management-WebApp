@@ -14,7 +14,10 @@ export const BaseSalaryServices = {
     });
     return true;
   },
-  updateBaseSalary: async (ID: string, baseSalaryData: Record<string, unknown>) => {
+  updateBaseSalary: async (
+    ID: string,
+    baseSalaryData: Record<string, unknown>,
+  ) => {
     const res = await api.put(`/api/payroll/basesalary/${ID}`, baseSalaryData, {
       withCredentials: true,
     });

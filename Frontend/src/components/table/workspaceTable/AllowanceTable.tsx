@@ -48,10 +48,6 @@ import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AllowanceInputSchema, type AllowanceInput } from "@/types/payRollTypes/allowanceTypes";
-
 export function AllowanceTable({
   data,
   loading,
@@ -61,45 +57,49 @@ export function AllowanceTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const { createAllowance } = useAllowanceStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<AllowanceInput>({
-    resolver: zodResolver(AllowanceInputSchema) as any,
-    defaultValues: {
-      MaPC: "",
-      LoaiPC: "",
-      SoTien: 0,
-    },
+  const [formData, setFormData] = React.useState({
+    MaPC: "",
+    LoaiPC: "",
+    SoTien: 0,
   });
 
-  const onSubmit = async (data: AllowanceInput) => {
+  const handleCreate = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      await createAllowance(data);
+      await createAllowance(formData);
       setCreateOpen(false);
-      reset();
+      setFormData({ MaPC: "", LoaiPC: "", SoTien: 0 });
     } catch {
       // store handles toast
     }
   };
 
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Allowance>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaPC.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -120,7 +120,10 @@ export function AllowanceTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Phụ Cấp")} />
 
@@ -129,25 +132,23 @@ export function AllowanceTable({
 
           {/* Create button */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={(open) => {
-              setCreateOpen(open);
-              if (!open) reset();
-            }}>
+            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
               <DialogTrigger asChild>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    reset({ MaPC: "", LoaiPC: "", SoTien: 0 });
+                    setFormData({ MaPC: "", LoaiPC: "", SoTien: 0 });
                     setCreateOpen(true);
-                  }}>
+                  }}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-md">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={handleCreate} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
                       {t("Tạo phụ cấp")}
@@ -162,12 +163,12 @@ export function AllowanceTable({
                       <Input
                         id="MaPC"
                         placeholder={t("VD: PC001")}
-                        className={`h-10 ${errors.MaPC ? "border-red-500" : ""}`}
-                        {...register("MaPC")}
+                        className="h-10"
+                        value={formData.MaPC}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaPC: e.target.value })
+                        }
                       />
-                      {errors.MaPC && (
-                        <p className="text-xs text-red-500">{t(errors.MaPC.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -175,12 +176,12 @@ export function AllowanceTable({
                       <Input
                         id="LoaiPC"
                         placeholder={t("VD: Phụ cấp ăn trưa")}
-                        className={`h-10 ${errors.LoaiPC ? "border-red-500" : ""}`}
-                        {...register("LoaiPC")}
+                        className="h-10"
+                        value={formData.LoaiPC}
+                        onChange={(e) =>
+                          setFormData({ ...formData, LoaiPC: e.target.value })
+                        }
                       />
-                      {errors.LoaiPC && (
-                        <p className="text-xs text-red-500">{t(errors.LoaiPC.message || "")}</p>
-                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -189,12 +190,15 @@ export function AllowanceTable({
                         id="SoTien"
                         type="number"
                         placeholder={t("VD: 500000")}
-                        className={`h-10 ${errors.SoTien ? "border-red-500" : ""}`}
-                        {...register("SoTien", { valueAsNumber: true })}
+                        className="h-10"
+                        value={formData.SoTien}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            SoTien: Number(e.target.value),
+                          })
+                        }
                       />
-                      {errors.SoTien && (
-                        <p className="text-xs text-red-500">{t(errors.SoTien.message || "")}</p>
-                      )}
                     </Field>
                   </FieldGroup>
 
@@ -206,7 +210,12 @@ export function AllowanceTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={isSubmitting}>
+                      disabled={
+                        !formData.MaPC ||
+                        !formData.LoaiPC ||
+                        formData.SoTien <= 0
+                      }
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -220,17 +229,21 @@ export function AllowanceTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -239,10 +252,16 @@ export function AllowanceTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -251,7 +270,8 @@ export function AllowanceTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

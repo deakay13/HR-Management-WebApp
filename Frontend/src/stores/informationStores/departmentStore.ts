@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { DepartmentServices } from "@/services/informationServices/departmentServices";
@@ -22,10 +23,10 @@ export const useDepartmentStore = create<DepartmentTypes>((set) => ({
         departments: [...state.departments, newDepartment],
         initializing: false,
       }));
-      toast.success("Thêm phòng ban thành công");
+      toast.success(i18n.t("Thêm phòng ban thành công"));
     } catch (error: unknown) {
       console.error("Lỗi khi tạo phòng ban:", error);
-      toast.error("Không thể thêm phòng ban");
+      toast.error(i18n.t("Không thể thêm phòng ban"));
       set({ initializing: false });
       throw error;
     }
@@ -38,7 +39,7 @@ export const useDepartmentStore = create<DepartmentTypes>((set) => ({
       set({ departments: data });
     } catch (error: unknown) {
       console.error("Lỗi khi lấy danh sách phòng ban:", error);
-      toast.error("Không thể tải danh sách phòng ban");
+      toast.error(i18n.t("Không thể tải danh sách phòng ban"));
     } finally {
       set({ initializing: false });
     }
@@ -54,10 +55,10 @@ export const useDepartmentStore = create<DepartmentTypes>((set) => ({
         ),
         initializing: false,
       }));
-      toast.success("Lưu thay đổi phòng ban thành công");
+      toast.success(i18n.t("Lưu thay đổi phòng ban thành công"));
     } catch (error: unknown) {
       console.error("Lỗi khi cập nhật phòng ban:", error);
-      toast.error("Không thể lưu thay đổi phòng ban");
+      toast.error(i18n.t("Không thể lưu thay đổi phòng ban"));
       set({ initializing: false });
       throw error;
     }
@@ -71,10 +72,10 @@ export const useDepartmentStore = create<DepartmentTypes>((set) => ({
         departments: state.departments.filter((d) => d.MaPB !== ID),
         initializing: false,
       }));
-      toast.success("Xoá phòng ban thành công");
+      toast.success(i18n.t("Xoá phòng ban thành công"));
     } catch (error: unknown) {
       console.error("Lỗi khi xoá phòng ban:", error);
-      toast.error("Không thể xoá phòng ban");
+      toast.error(i18n.t("Không thể xoá phòng ban"));
       set({ initializing: false });
     }
   },

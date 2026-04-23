@@ -65,6 +65,13 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
         LoaiHD: formDataState.LoaiHD,
         NgayBatDau: formDataState.NgayBatDau,
         NgayKetThuc: formDataState.NgayKetThuc,
+        NgayKy: formDataState.NgayKy,
+        ChucDanh: formDataState.ChucDanh,
+        MaPB: formDataState.MaPB,
+        MaLCB: formDataState.MaLCB,
+        MaPC: formDataState.MaPC,
+        HinhThucTraLuong: formDataState.HinhThucTraLuong,
+        TinhTrang: formDataState.TinhTrang,
         HinhAnhHopDong: file,
       });
 
@@ -74,7 +81,14 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
       formData.append("MaNV", validatedData.MaNV);
       formData.append("LoaiHD", validatedData.LoaiHD);
       formData.append("NgayBatDau", validatedData.NgayBatDau);
-      formData.append("NgayKetThuc", validatedData.NgayKetThuc);
+      formData.append("NgayKetThuc", validatedData.NgayKetThuc || "");
+      formData.append("NgayKy", validatedData.NgayKy || "");
+      formData.append("ChucDanh", validatedData.ChucDanh || "");
+      formData.append("MaPB", validatedData.MaPB || "");
+      formData.append("MaLCB", validatedData.MaLCB || "");
+      formData.append("MaPC", validatedData.MaPC || "");
+      formData.append("HinhThucTraLuong", validatedData.HinhThucTraLuong || "");
+      formData.append("TinhTrang", validatedData.TinhTrang || "");
       formData.append("MaHopDong", validatedData.MaHopDong);
       if (file) formData.append("HinhAnhHopDong", file);
 
@@ -84,7 +98,8 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
       if (error instanceof z.ZodError) {
         const newErrors: Record<string, string> = {};
         error.issues.forEach((issue) => {
-          if (issue.path[0]) newErrors[issue.path[0].toString()] = issue.message;
+          if (issue.path[0])
+            newErrors[issue.path[0].toString()] = issue.message;
         });
         setErrors(newErrors);
       }
@@ -97,7 +112,8 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -110,7 +126,8 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                 onSelect={(e) => {
                   e.preventDefault();
                   setEditOpen(true);
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -118,15 +135,19 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
             <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{t("Sửa Thông Tin Hợp Đồng")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t("Nhập thông tin chi tiết để cập nhật.")}
+                </DialogDescription>
               </DialogHeader>
 
               <FieldGroup>
                 <Field>
                   <Label htmlFor="MaHopDong">{t("Mã HĐ")}</Label>
-                  <Input id="MaHopDong" value={formDataState.MaHopDong} disabled />
+                  <Input
+                    id="MaHopDong"
+                    value={formDataState.MaHopDong}
+                    disabled
+                  />
                 </Field>
 
                 <Field>
@@ -136,11 +157,14 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     className="uppercase"
                     value={formDataState.MaNV}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({ ...prev, MaNV: e.target.value }))
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        MaNV: e.target.value,
+                      }))
                     }
                   />
                   {errors.MaNV && (
-                    <span className="text-xs text-red-500">{t(errors.MaNV || "")}</span>
+                    <span className="text-xs text-red-500">{errors.MaNV}</span>
                   )}
                 </Field>
 
@@ -150,11 +174,16 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     id="LoaiHD"
                     value={formDataState.LoaiHD}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({ ...prev, LoaiHD: e.target.value }))
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        LoaiHD: e.target.value,
+                      }))
                     }
                   />
                   {errors.LoaiHD && (
-                    <span className="text-xs text-red-500">{t(errors.LoaiHD || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.LoaiHD}
+                    </span>
                   )}
                 </Field>
 
@@ -165,11 +194,16 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     type="date"
                     value={formDataState.NgayBatDau}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({ ...prev, NgayBatDau: e.target.value }))
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        NgayBatDau: e.target.value,
+                      }))
                     }
                   />
                   {errors.NgayBatDau && (
-                    <span className="text-xs text-red-500">{t(errors.NgayBatDau || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.NgayBatDau}
+                    </span>
                   )}
                 </Field>
 
@@ -178,14 +212,126 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                   <Input
                     id="NgayKetThuc"
                     type="date"
-                    value={formDataState.NgayKetThuc}
+                    value={formDataState.NgayKetThuc || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({ ...prev, NgayKetThuc: e.target.value }))
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        NgayKetThuc: e.target.value,
+                      }))
                     }
                   />
                   {errors.NgayKetThuc && (
-                    <span className="text-xs text-red-500">{t(errors.NgayKetThuc || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.NgayKetThuc}
+                    </span>
                   )}
+                </Field>
+
+                <Field>
+                  <Label htmlFor="NgayKy">{t("Ngày Ký")}</Label>
+                  <Input
+                    id="NgayKy"
+                    type="date"
+                    value={formDataState.NgayKy || ""}
+                    onChange={(e) =>
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        NgayKy: e.target.value,
+                      }))
+                    }
+                  />
+                  {errors.NgayKy && (
+                    <span className="text-xs text-red-500">
+                      {errors.NgayKy}
+                    </span>
+                  )}
+                </Field>
+
+                <Field>
+                  <Label htmlFor="ChucDanh">{t("Chức Danh")}</Label>
+                  <Input
+                    id="ChucDanh"
+                    value={formDataState.ChucDanh || ""}
+                    onChange={(e) =>
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        ChucDanh: e.target.value,
+                      }))
+                    }
+                  />
+                </Field>
+
+                <Field>
+                  <Label htmlFor="MaPB">{t("Mã PB")}</Label>
+                  <Input
+                    id="MaPB"
+                    className="uppercase"
+                    value={formDataState.MaPB || ""}
+                    onChange={(e) =>
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        MaPB: e.target.value,
+                      }))
+                    }
+                  />
+                </Field>
+
+                <Field>
+                  <Label htmlFor="MaLCB">{t("Mã LCB")}</Label>
+                  <Input
+                    id="MaLCB"
+                    className="uppercase"
+                    value={formDataState.MaLCB || ""}
+                    onChange={(e) =>
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        MaLCB: e.target.value,
+                      }))
+                    }
+                  />
+                </Field>
+
+                <Field>
+                  <Label htmlFor="MaPC">{t("Mã PC")}</Label>
+                  <Input
+                    id="MaPC"
+                    className="uppercase"
+                    value={formDataState.MaPC || ""}
+                    onChange={(e) =>
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        MaPC: e.target.value,
+                      }))
+                    }
+                  />
+                </Field>
+
+                <Field>
+                  <Label htmlFor="HinhThucTraLuong">{t("Hình Thức Trả Lương")}</Label>
+                  <Input
+                    id="HinhThucTraLuong"
+                    value={formDataState.HinhThucTraLuong || ""}
+                    onChange={(e) =>
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        HinhThucTraLuong: e.target.value,
+                      }))
+                    }
+                  />
+                </Field>
+
+                <Field>
+                  <Label htmlFor="TinhTrang">{t("Tình Trạng")}</Label>
+                  <Input
+                    id="TinhTrang"
+                    value={formDataState.TinhTrang || ""}
+                    onChange={(e) =>
+                      setFormDataState((prev) => ({
+                        ...prev,
+                        TinhTrang: e.target.value,
+                      }))
+                    }
+                  />
                 </Field>
 
                 <Field>
@@ -203,7 +349,9 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     }}
                   />
                   {errors.HinhAnhHopDong && (
-                    <span className="text-xs text-red-500">{t(errors.HinhAnhHopDong || "")}</span>
+                    <span className="text-xs text-red-500">
+                      {errors.HinhAnhHopDong}
+                    </span>
                   )}
                 </Field>
               </FieldGroup>
@@ -229,16 +377,19 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
-                onSelect={(e) => e.preventDefault()}>
+                onSelect={(e) => e.preventDefault()}
+              >
                 {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm" showCloseButton={false}>
               <DialogHeader>
                 <DialogTitle>{t("Xoá Hợp Đồng")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t(
+                    "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                  )}
+                </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
@@ -254,7 +405,8 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteContract(contract.MaHopDong)}>
+                  onClick={() => deleteContract(contract.MaHopDong)}
+                >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

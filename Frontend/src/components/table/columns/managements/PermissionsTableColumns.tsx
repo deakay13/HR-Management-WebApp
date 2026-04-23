@@ -6,23 +6,19 @@ import { useTranslation } from "react-i18next";
 
 function H({ k }: { k: string }) {
   const { t } = useTranslation();
-  return <div className="w-30 text-center">{t(k)}</div>;
+  return <>{t(k)}</>;
 }
 
 export const columns: ColumnDef<Permission>[] = [
   {
     accessorKey: "MaQuyen",
     header: () => <H k="Mã Quyền" />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.MaQuyen}</div>
-    ),
+    cell: ({ row }) => <>{row.original.MaQuyen}</>,
   },
   {
     accessorKey: "TenQuyen",
     header: () => <H k="Tên Quyền" />,
-    cell: ({ row }) => (
-      <div className="w-30 text-center h-8">{row.original.TenQuyen}</div>
-    ),
+    cell: ({ row }) => <>{row.original.TenQuyen}</>,
   },
   {
     id: "actions",

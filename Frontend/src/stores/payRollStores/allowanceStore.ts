@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { AllowanceServices } from "@/services/payRollServices/allowanceServices";
@@ -17,7 +18,7 @@ export const useAllowanceStore = create<AllowanceTypes>((set, get) => ({
       set({ Allowances: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách Allowances", error);
-      toast.error("Không thể lấy danh sách Allowances");
+      toast.error(i18n.t("Không thể lấy danh sách Allowances"));
     } finally {
       set({ initializing: false });
     }
@@ -28,10 +29,10 @@ export const useAllowanceStore = create<AllowanceTypes>((set, get) => ({
       set({
         Allowances: get().Allowances.filter((d) => d.MaPC !== ID),
       });
-      toast.success("Xoá Phụ cấp thành công");
+      toast.success(i18n.t("Xoá Phụ cấp thành công"));
     } catch (error) {
       console.error("Lỗi khi xoá Phụ cấp", error);
-      toast.error("Không thể xoá Phụ cấp");
+      toast.error(i18n.t("Không thể xoá Phụ cấp"));
     }
   },
   // CREATE
@@ -41,10 +42,10 @@ export const useAllowanceStore = create<AllowanceTypes>((set, get) => ({
       set({
         Allowances: [...get().Allowances, newItem],
       });
-      toast.success("Thêm phụ cấp thành công");
+      toast.success(i18n.t("Thêm phụ cấp thành công"));
     } catch (error) {
       console.error("Lỗi khi thêm phụ cấp", error);
-      toast.error("Không thể thêm phụ cấp");
+      toast.error(i18n.t("Không thể thêm phụ cấp"));
       throw error;
     }
   },
@@ -56,10 +57,10 @@ export const useAllowanceStore = create<AllowanceTypes>((set, get) => ({
       set({
         Allowances: get().Allowances.map((d) => (d.MaPC === ID ? updated : d)),
       });
-      toast.success("Lưu thay đổi phụ cấp thành công");
+      toast.success(i18n.t("Lưu thay đổi phụ cấp thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật phụ cấp", error);
-      toast.error("Không thể lưu thay đổi phụ cấp");
+      toast.error(i18n.t("Không thể lưu thay đổi phụ cấp"));
       throw error;
     }
   },

@@ -10,7 +10,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export function NavDocuments({
   items,
@@ -23,29 +24,42 @@ export function NavDocuments({
   }[];
 }) {
   const { t } = useTranslation();
+  const location = useLocation();
+  const { isMobile, setOpenMobile } = useSidebar();
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>{t("Phân Quyền")}</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            {item.disabled ? (
-              <SidebarMenuButton
-                disabled
-                className="cursor-not-allowed opacity-50">
-                <item.icon />
-                <span>{t(item.name)}</span>
-              </SidebarMenuButton>
-            ) : (
-              <SidebarMenuButton asChild>
-                <Link to={item.url}>
+        {items.map((item) => {
+          const isActive = location.pathname.startsWith(item.url);
+          return (
+            <SidebarMenuItem key={item.name}>
+              {item.disabled ? (
+                <SidebarMenuButton
+                  disabled
+                  className="cursor-not-allowed opacity-50"
+                >
                   <item.icon />
                   <span>{t(item.name)}</span>
-                </Link>
-              </SidebarMenuButton>
-            )}
-          </SidebarMenuItem>
-        ))}
+                </SidebarMenuButton>
+              ) : (
+                <SidebarMenuButton 
+                  asChild
+                  isActive={isActive}
+                  onClick={() => {
+                    if (isMobile) setOpenMobile(false);
+                  }}
+                >
+                  <Link to={item.url}>
+                    <item.icon />
+                    <span>{t(item.name)}</span>
+                  </Link>
+                </SidebarMenuButton>
+              )}
+            </SidebarMenuItem>
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   );

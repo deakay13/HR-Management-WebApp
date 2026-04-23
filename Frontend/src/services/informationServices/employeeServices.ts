@@ -21,14 +21,17 @@ export const EmployeeServices = {
     const res = await api.post("/api/information/employees", data, {
       withCredentials: true,
     });
-    return res.data;       
+    return res.data;
   },
 
-  updateEmployee: async (ID: string, data: Employee | FormData): Promise<Employee> => {
+  updateEmployee: async (
+    ID: string,
+    data: Employee | FormData,
+  ): Promise<Employee> => {
     const res = await api.put(`/api/information/employees/${ID}`, data, {
       withCredentials: true,
     });
-    return res.data;        
+    return res.data;
   },
 
   deleteEmployee: async (ID: string): Promise<void> => {

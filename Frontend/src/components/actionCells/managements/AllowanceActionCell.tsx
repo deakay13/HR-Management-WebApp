@@ -45,7 +45,10 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateAllowance(allowance.MaPC, { MaPC: allowance.MaPC, ...formData });
+    await updateAllowance(allowance.MaPC, {
+      MaPC: allowance.MaPC,
+      ...formData,
+    });
   };
 
   return (
@@ -54,7 +57,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -66,7 +70,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                 onSelect={(e) => {
                   e.preventDefault();
                   handleOpenEdit();
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -76,9 +81,9 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                   <DialogTitle className="text-lg font-semibold">
                     {t("Sửa Phụ Cấp")}
                   </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để cập nhật.")}
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div className="flex flex-col gap-2">
@@ -100,21 +105,29 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                       className="h-10"
                       value={formData.SoTien}
                       onChange={(e) =>
-                        setFormData({ ...formData, SoTien: Number(e.target.value) })
+                        setFormData({
+                          ...formData,
+                          SoTien: Number(e.target.value),
+                        })
                       }
                     />
                   </div>
                 </div>
                 <DialogFooter className="gap-2">
                   <DialogClose asChild>
-                    <Button type="button" variant="outline" className="w-full sm:w-auto">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full sm:w-auto"
+                    >
                       {t("Huỷ")}
                     </Button>
                   </DialogClose>
                   <Button
                     type="submit"
                     className="w-full sm:w-auto"
-                    disabled={!formData.LoaiPC || formData.SoTien <= 0}>
+                    disabled={!formData.LoaiPC || formData.SoTien <= 0}
+                  >
                     {t("Lưu thay đổi")}
                   </Button>
                 </DialogFooter>
@@ -131,16 +144,19 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   variant="destructive"
-                  onSelect={(e) => e.preventDefault()}>
+                  onSelect={(e) => e.preventDefault()}
+                >
                   {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
                   <DialogTitle>{t("Xoá Phụ Cấp")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t(
+                      "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                    )}
+                  </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>

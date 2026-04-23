@@ -78,7 +78,8 @@ export function BaseSalaryActionCell({
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -93,7 +94,8 @@ export function BaseSalaryActionCell({
                   e.preventDefault();
                   handleOpenEdit();
                   setEditOpen(true);
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -104,9 +106,9 @@ export function BaseSalaryActionCell({
                   <DialogTitle className="text-lg font-semibold">
                     {t("Sửa Lương Cơ Bản")}
                   </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để cập nhật.")}
+                  </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
@@ -151,7 +153,8 @@ export function BaseSalaryActionCell({
             <DialogTrigger asChild>
               <DropdownMenuItem
                 variant="destructive"
-                onSelect={(e) => e.preventDefault()}>
+                onSelect={(e) => e.preventDefault()}
+              >
                 {t("Xoá")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -159,9 +162,11 @@ export function BaseSalaryActionCell({
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
                 <DialogTitle>{t("Xoá Lương Cơ Bản")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t(
+                    "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                  )}
+                </DialogDescription>
               </DialogHeader>
 
               <div className="text-sm space-y-1 text-muted-foreground">
@@ -171,7 +176,8 @@ export function BaseSalaryActionCell({
                     <b>{t("Mã")}:</b> {baseSalary.MaLCB}
                   </li>
                   <li>
-                    <b>{t("Lương")}:</b> {Number(baseSalary.LuongCB).toLocaleString()} VNĐ
+                    <b>{t("Lương")}:</b>{" "}
+                    {Number(baseSalary.LuongCB).toLocaleString()} VNĐ
                   </li>
                 </ul>
               </div>
@@ -182,7 +188,8 @@ export function BaseSalaryActionCell({
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteBaseSalary(baseSalary.MaLCB)}>
+                  onClick={() => deleteBaseSalary(baseSalary.MaLCB)}
+                >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

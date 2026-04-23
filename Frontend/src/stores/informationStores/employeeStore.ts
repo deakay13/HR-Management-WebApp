@@ -1,7 +1,11 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { EmployeeServices } from "@/services/informationServices/employeeServices";
-import type { Employee, EmployeeTypes } from "@/types/informationTypes/employeeTypes";
+import type {
+  Employee,
+  EmployeeTypes,
+} from "@/types/informationTypes/employeeTypes";
 
 export const useEmployeeStore = create<EmployeeTypes>((set) => ({
   employees: [],
@@ -19,11 +23,11 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
         employees: [...state.employees, newEmployee],
         initializing: false,
       }));
-      toast.success("Thêm nhân viên thành công");
+      toast.success(i18n.t("Thêm nhân viên thành công"));
     } catch (error: unknown) {
       console.error("Lỗi khi tạo nhân viên:", error);
-      toast.error("Không thể thêm nhân viên", {
-        description: "Vui lòng kiểm tra lại thông tin.",
+      toast.error(i18n.t("Không thể thêm nhân viên"), {
+        description: i18n.t("Vui lòng kiểm tra lại thông tin."),
       });
       set({ initializing: false });
       throw error;
@@ -36,7 +40,7 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
       set({ employees: Array.isArray(data) ? data : [] });
     } catch (error: unknown) {
       console.error("Lỗi khi lấy danh sách nhân viên:", error);
-      toast.error("Không thể tải danh sách nhân viên");
+      toast.error(i18n.t("Không thể tải danh sách nhân viên"));
       set({ employees: [] });
     } finally {
       set({ initializing: false });
@@ -50,7 +54,7 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
       set({ employees: Array.isArray(response.data) ? response.data : [] });
     } catch (error: unknown) {
       console.error("Lỗi khi tìm kiếm nhân viên:", error);
-      toast.error("Không thể tìm kiếm nhân viên");
+      toast.error(i18n.t("Không thể tìm kiếm nhân viên"));
       set({ employees: [] });
     } finally {
       set({ initializing: false });
@@ -63,14 +67,14 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
       const updated = await EmployeeServices.updateEmployee(ID, data);
       set((state) => ({
         employees: state.employees.map((emp) =>
-          emp.MaNV === ID ? updated : emp
+          emp.MaNV === ID ? updated : emp,
         ),
         initializing: false,
       }));
-      toast.success("Lưu thay đổi nhân viên thành công");
+      toast.success(i18n.t("Lưu thay đổi nhân viên thành công"));
     } catch (error: unknown) {
       console.error("Lỗi khi cập nhật nhân viên:", error);
-      toast.error("Không thể lưu thay đổi nhân viên");
+      toast.error(i18n.t("Không thể lưu thay đổi nhân viên"));
       set({ initializing: false });
       throw error;
     }
@@ -84,10 +88,10 @@ export const useEmployeeStore = create<EmployeeTypes>((set) => ({
         employees: state.employees.filter((emp) => emp.MaNV !== ID),
         initializing: false,
       }));
-      toast.success("Xoá nhân viên thành công");
+      toast.success(i18n.t("Xoá nhân viên thành công"));
     } catch (error: unknown) {
       console.error("Lỗi khi xoá nhân viên:", error);
-      toast.error("Không thể xoá nhân viên");
+      toast.error(i18n.t("Không thể xoá nhân viên"));
       set({ initializing: false });
     }
   },

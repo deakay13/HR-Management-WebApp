@@ -37,10 +37,6 @@ import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
 import { useTranslation } from "react-i18next";
 
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AccountUpdateSchema, type AccountInput } from "@/types/authTypes/accountTypes";
-
 export function AccountsActionCell({ acc }: { acc: Account }) {
   const { t } = useTranslation();
   const { updateAccount, deleteAccount } = useAccountsStore();
@@ -48,51 +44,34 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
   const { permissions } = useAuthorizeStore();
 
   const [editOpen, setEditOpen] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<AccountInput>({
-    resolver: zodResolver(AccountUpdateSchema) as any,
-    defaultValues: {
-      MaTK: acc.MaTK,
-      MaNV: acc.MaNV,
-      MaVT: acc.MaVT,
-      TenTaiKhoan: acc.TenTaiKhoan,
-      MatKhau: "",
-    },
-  });
+  const [editTenTK, setEditTenTK] = useState(acc.TenTaiKhoan);
+  const [editMaVT, setEditMaVT] = useState(acc.MaVT);
+  const [editMatKhau, setEditMatKhau] = useState("");
 
   useEffect(() => {
     getRoles();
   }, [getRoles]);
 
-  const handleOpenEdit = () => {
-    reset({
-      MaTK: acc.MaTK,
-      MaNV: acc.MaNV,
-      MaVT: acc.MaVT,
-      TenTaiKhoan: acc.TenTaiKhoan,
-      MatKhau: "",
-    });
-  };
+  useEffect(() => {
+    if (editOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setEditTenTK(acc.TenTaiKhoan);
+      setEditMaVT(acc.MaVT);
+      setEditMatKhau("");
+    }
+  }, [editOpen, acc.TenTaiKhoan, acc.MaVT]);
 
-  const onSubmit = async (data: AccountInput) => {
-    const updateData: Partial<Account> = {};
-    if (data.TenTaiKhoan !== acc.TenTaiKhoan) updateData.TenTaiKhoan = data.TenTaiKhoan;
-    if (data.MaVT !== acc.MaVT) updateData.MaVT = data.MaVT;
-    if (data.MatKhau && data.MatKhau.trim() !== "") updateData.MatKhau = data.MatKhau;
-
-    if (Object.keys(updateData).length === 0) {
+  const handleUpdate = async () => {
+    const data: Partial<Account> = {};
+    if (editTenTK !== acc.TenTaiKhoan) data.TenTaiKhoan = editTenTK;
+    if (editMaVT !== acc.MaVT) data.MaVT = editMaVT;
+    if (editMatKhau) data.MatKhau = editMatKhau;
+    if (Object.keys(data).length === 0) {
       setEditOpen(false);
       return;
     }
-
     try {
-      await updateAccount(acc.MaTK, updateData);
+      await updateAccount(acc.MaTK, data);
       setEditOpen(false);
     } catch {
       // keep dialog open on error
@@ -106,91 +85,67 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-32">
         {canUpdate(permissions) && (
-          <Dialog open={editOpen} onOpenChange={(open) => {
-            setEditOpen(open);
-            if (open) handleOpenEdit();
-          }}>
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
             <DialogContent className="sm:max-w-sm">
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                <DialogHeader>
-                  <DialogTitle>{t("Sửa Tài Khoản")}</DialogTitle>
-                      <DialogDescription className="text-sm text-muted-foreground">
-                        {t("Nhập thông tin chi tiết để cập nhật.")}
-                      </DialogDescription>
-                </DialogHeader>
-                <FieldGroup>
-                  <Field className="flex flex-col gap-2">
-                    <Label htmlFor="MaVT-edit">{t("Vai Trò")}</Label>
-                    <Controller
-                      name="MaVT"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger id="MaVT-edit" className={`w-full ${errors.MaVT ? "border-red-500" : ""}`}>
-                            <SelectValue placeholder={t("Chọn vai trò")} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              {Roles.map((vt: Role) => (
-                                <SelectItem key={vt.MaVT} value={vt.MaVT}>
-                                  {vt.MaVT} - {vt.TenVaiTro}
-                                </SelectItem>
-                              ))}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    {errors.MaVT && (
-                      <p className="text-xs text-red-500">{t(errors.MaVT.message || "")}</p>
-                    )}
-                  </Field>
-                  <Field className="flex flex-col gap-2">
-                    <Label htmlFor="TenTaiKhoan-edit">{t("Tên Tài Khoản")}</Label>
-                    <Input
-                      id="TenTaiKhoan-edit"
-                      className={errors.TenTaiKhoan ? "border-red-500" : ""}
-                      {...register("TenTaiKhoan")}
-                    />
-                    {errors.TenTaiKhoan && (
-                      <p className="text-xs text-red-500">{t(errors.TenTaiKhoan.message || "")}</p>
-                    )}
-                  </Field>
-                  <Field className="flex flex-col gap-2">
-                    <Label htmlFor="MatKhau-edit">{t("Mật Khẩu")}</Label>
-                    <Input
-                      id="MatKhau-edit"
-                      type="password"
-                      placeholder={t("Để trống nếu không đổi")}
-                      className={errors.MatKhau ? "border-red-500" : ""}
-                      {...register("MatKhau")}
-                    />
-                    {errors.MatKhau && (
-                      <p className="text-xs text-red-500">{t(errors.MatKhau.message || "")}</p>
-                    )}
-                  </Field>
-                </FieldGroup>
-                <DialogFooter className="gap-2">
-                  <DialogClose asChild>
-                    <Button variant="outline">{t("Huỷ")}</Button>
-                  </DialogClose>
-                  <Button type="submit" disabled={isSubmitting}>{t("Lưu thay đổi")}</Button>
-                </DialogFooter>
-              </form>
+              <DialogHeader>
+                <DialogTitle>{t("Sửa Tài Khoản")}</DialogTitle>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t("Nhập thông tin chi tiết để cập nhật.")}
+                </DialogDescription>
+              </DialogHeader>
+              <FieldGroup>
+                <Field>
+                  <Label>{t("Vai Trò")}</Label>
+                  <Select value={editMaVT} onValueChange={setEditMaVT}>
+                    <SelectTrigger className="w-full max-w-48">
+                      <SelectValue placeholder={t("Chọn vai trò")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {Roles.map((vt: Role) => (
+                          <SelectItem key={vt.MaVT} value={vt.MaVT}>
+                            {vt.MaVT} - {vt.TenVaiTro}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <Label>{t("Tên Tài Khoản")}</Label>
+                  <Input
+                    value={editTenTK}
+                    onChange={(e) => setEditTenTK(e.target.value)}
+                  />
+                </Field>
+                <Field>
+                  <Label>{t("Mật Khẩu")}</Label>
+                  <Input
+                    type="password"
+                    placeholder={t("Để trống nếu không đổi")}
+                    value={editMatKhau}
+                    onChange={(e) => setEditMatKhau(e.target.value)}
+                  />
+                </Field>
+              </FieldGroup>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">{t("Huỷ")}</Button>
+                </DialogClose>
+                <Button onClick={handleUpdate}>{t("Lưu thay đổi")}</Button>
+              </DialogFooter>
             </DialogContent>
           </Dialog>
         )}
@@ -203,20 +158,25 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   variant="destructive"
-                  onSelect={(e) => e.preventDefault()}>
+                  onSelect={(e) => e.preventDefault()}
+                >
                   {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
                   <DialogTitle>{t("Xoá Tài Khoản")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t(
+                      "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                    )}
+                  </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label>{t("Bạn có chắc muốn xoá tài khoản đã chọn?")}</Label>
+                    <Label>
+                      {t("Bạn có chắc muốn xoá tài khoản đã chọn?")}
+                    </Label>
                   </Field>
                 </FieldGroup>
                 <DialogFooter>

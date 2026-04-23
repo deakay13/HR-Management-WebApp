@@ -1,11 +1,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  IconPlus,
-  IconSearch,
-  IconFileSpreadsheet,
-} from "@tabler/icons-react";
+import { IconPlus, IconSearch, IconFileSpreadsheet } from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,
@@ -193,7 +189,8 @@ export function EmployeeTable({
   return (
     <Tabs
       defaultValue="outline"
-      className="w-full flex-col justify-start gap-6">
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section="Danh Mục" page="Nhân Viên" />
 
@@ -206,7 +203,9 @@ export function EmployeeTable({
                 placeholder={t("Search...")}
                 className="h-9 w-[160px] pl-9"
                 value={filters.keyword}
-                onChange={(e) => setFilters((prev) => ({ ...prev, keyword: e.target.value }))}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, keyword: e.target.value }))
+                }
               />
             </div>
             <Button
@@ -214,7 +213,8 @@ export function EmployeeTable({
               size="sm"
               onClick={handleExport}
               className="h-9 w-9 p-0"
-              title={t("Xuất Excel")}>
+              title={t("Xuất Excel")}
+            >
               <IconFileSpreadsheet size={18} />
             </Button>
           </div>
@@ -228,7 +228,8 @@ export function EmployeeTable({
               onOpenChange={(val) => {
                 setOpenCreate(val);
                 if (!val) setErrors({});
-              }}>
+              }}
+            >
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <IconPlus />
@@ -238,9 +239,9 @@ export function EmployeeTable({
               <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{t("Tạo nhân viên mới")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để tạo mới.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để tạo mới.")}
+                  </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit}>
                   <FieldGroup>
@@ -262,7 +263,8 @@ export function EmployeeTable({
                       <Label>{t("Phòng ban")}</Label>
                       <Select
                         value={selectedDept}
-                        onValueChange={setSelectedDept}>
+                        onValueChange={setSelectedDept}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder={t("Chọn phòng ban")} />
                         </SelectTrigger>
@@ -293,7 +295,8 @@ export function EmployeeTable({
                       <Label>{t("Giới tính")}</Label>
                       <Select
                         value={selectedGender}
-                        onValueChange={setSelectedGender}>
+                        onValueChange={setSelectedGender}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder={t("Chọn giới tính")} />
                         </SelectTrigger>
@@ -365,14 +368,15 @@ export function EmployeeTable({
       {/* ================== TABLE CONTENT ================== */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -389,9 +393,10 @@ export function EmployeeTable({
                 table.getRowModel().rows.map((row) => (
                   <TableRow
                     key={row.id}
-                    data-state={row.getIsSelected() && "selected"}>
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} className="text-center align-middle">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -404,7 +409,10 @@ export function EmployeeTable({
                 <TableRow>
                   <TableCell
                     colSpan={employeeColumns.length}
-                    className="h-24 text-center text-muted-foreground font-roboto">Không có dữ liệu.</TableCell>
+                    className="h-24 text-center text-muted-foreground font-roboto"
+                  >
+                    Không có dữ liệu.
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -416,4 +424,3 @@ export function EmployeeTable({
     </Tabs>
   );
 }
-
