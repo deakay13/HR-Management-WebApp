@@ -19,7 +19,12 @@ export default {
     //Path infor
     const PhongBan = await readCSV('seeders/seed-data/PhongBan.csv');
     const nhanvien = await readCSV('seeders/seed-data/NhanVien.csv');
-    const HopDong = await readCSV('seeders/seed-data/HopDong.csv');
+    let HopDong = await readCSV('seeders/seed-data/HopDong.csv');
+    HopDong = HopDong.map(row => ({
+      ...row,
+      NgayKetThuc: row.NgayKetThuc === '' ? null : row.NgayKetThuc,
+      HinhAnhHopDong: row.HinhAnhHopDong === '' ? null : row.HinhAnhHopDong
+    }));
     //Path salary
     const KhauTru = await readCSV('seeders/seed-data/KhauTru.csv');
     const GioLam = await readCSV('seeders/seed-data/GioLam.csv');
@@ -52,12 +57,15 @@ export default {
     //Insert infor
     await queryInterface.bulkInsert('PhongBan', PhongBan);
     await queryInterface.bulkInsert('NhanVien', nhanvien);
-    await queryInterface.bulkInsert('HopDong', HopDong);
     //Insert salary
     await queryInterface.bulkInsert('KhauTru', KhauTru);
     await queryInterface.bulkInsert('GioLam', GioLam);
     await queryInterface.bulkInsert('LuongCoBan', LuongCoBan);
     await queryInterface.bulkInsert('PhuCap', PhuCap);
+    
+    //Insert HopDong (which depends on NhanVien, PhongBan, LuongCoBan, PhuCap)
+    await queryInterface.bulkInsert('HopDong', HopDong);
+
     await queryInterface.bulkInsert('BangLuong', BangLuong);
     //Insert auth
     await queryInterface.bulkInsert('VaiTro', VaiTro);

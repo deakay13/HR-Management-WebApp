@@ -1,22 +1,30 @@
-import { NhanVien as Employee, PhongBan as Department } from '../../models/index.js';
-import { searchService } from '../../utils/search.js';
-import { Pagination } from '../../utils/paginations.js';
-import ExcelJS from 'exceljs';
+import {
+  NhanVien as Employee,
+  PhongBan as Department,
+} from "../../models/index.js";
+import { searchService } from "../../utils/search.js";
+import { Pagination } from "../../utils/paginations.js";
+import ExcelJS from "exceljs";
+import { employeeSchema } from "../../utils/validationSchemas.js";
 
 const getAllEmployees = async (req, res) => {
   try {
     const employees = await Employee.findAll({
-      include: [{
-        model: Department,
-        as: 'PhongBan',
-        required: false,
-        attributes: ['MaPB', 'TenPB']
-      }]
+      include: [
+        {
+          model: Department,
+          as: "PhongBan",
+          required: false,
+          attributes: ["MaPB", "TenPB"],
+        },
+      ],
     });
     res.status(200).json(employees);
   } catch (error) {
-    console.error('Error fetching Employees:', error);
-    res.status(500).json({ message: 'Lỗi khi lấy danh sách nhân viên: ' + error.message });
+    console.error("Error fetching Employees:", error);
+    res
+      .status(500)
+      .json({ message: "Lỗi khi lấy danh sách nhân viên: " + error.message });
   }
 };
 
@@ -29,40 +37,41 @@ const searchEmployees = async (req, res) => {
 
     const pagination = Pagination(query);
 
-    const result = await searchService(
-      Employee,
-      req.query,
-      pagination,
-      {
-        searchFields: ["MaNV", "HoVaTen", "SDT", "DiaChi", "$PhongBan.TenPB$"],
-        exactFields: ["MaPB", "GioiTinh"],
-        include: [{
+    const result = await searchService(Employee, req.query, pagination, {
+      searchFields: ["MaNV", "HoVaTen", "SDT", "DiaChi", "$PhongBan.TenPB$"],
+      exactFields: ["MaPB", "GioiTinh"],
+      include: [
+        {
           model: Department,
-          as: 'PhongBan',
+          as: "PhongBan",
           required: false,
-          attributes: ['MaPB', 'TenPB']
-        }],
-        order: [["MaNV", "ASC"]],
-        subQuery: false
-      }
-    );
+          attributes: ["MaPB", "TenPB"],
+        },
+      ],
+      order: [["MaNV", "ASC"]],
+      subQuery: false,
+    });
 
     res.status(200).json(result);
   } catch (error) {
-    console.error('Error searching Employees:', error);
-    res.status(500).json({ message: 'Lỗi khi tìm kiếm nhân viên: ' + error.message });
+    console.error("Error searching Employees:", error);
+    res
+      .status(500)
+      .json({ message: "Lỗi khi tìm kiếm nhân viên: " + error.message });
   }
 };
 
 const exportEmployeesToExcel = async (req, res) => {
   try {
     const employees = await Employee.findAll({
-      include: [{
-        model: Department,
-        as: 'PhongBan',
-        required: false,
-        attributes: ['MaPB', 'TenPB']
-      }]
+      include: [
+        {
+          model: Department,
+          as: "PhongBan",
+          required: false,
+          attributes: ["MaPB", "TenPB"],
+        },
+      ],
     });
 
     const workbook = new ExcelJS.Workbook();
@@ -73,11 +82,23 @@ const exportEmployeesToExcel = async (req, res) => {
     const titleRow = worksheet.getRow(1);
     titleRow.getCell(1).value = "DANH SÁCH NHÂN VIÊN";
     titleRow.getCell(1).font = { name: "Arial", size: 16, bold: true };
-    titleRow.getCell(1).alignment = { vertical: "middle", horizontal: "center" };
+    titleRow.getCell(1).alignment = {
+      vertical: "middle",
+      horizontal: "center",
+    };
     titleRow.height = 30;
 
     // Header
-    const headerRow = ["Mã NV", "Họ và Tên", "Phòng Ban", "Giới Tính", "Ngày Sinh", "SĐT", "Ngày Vào Làm", "Địa Chỉ"];
+    const headerRow = [
+      "Mã NV",
+      "Họ và Tên",
+      "Phòng Ban",
+      "Giới Tính",
+      "Ngày Sinh",
+      "SĐT",
+      "Ngày Vào Làm",
+      "Địa Chỉ",
+    ];
     worksheet.getRow(3).values = headerRow;
     worksheet.columns = [
       { key: "MaNV", width: 15 },
@@ -87,19 +108,23 @@ const exportEmployeesToExcel = async (req, res) => {
       { key: "NgaySinh", width: 15 },
       { key: "SDT", width: 15 },
       { key: "NgayVaoLam", width: 15 },
-      { key: "DiaChi", width: 40 }
+      { key: "DiaChi", width: 40 },
     ];
 
     // Style Header
     worksheet.getRow(3).eachCell((cell) => {
       cell.font = { bold: true, color: { argb: "FFFFFF" } };
-      cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "4F81BD" } };
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "4F81BD" },
+      };
       cell.alignment = { vertical: "middle", horizontal: "center" };
       cell.border = {
         top: { style: "thin" },
         left: { style: "thin" },
         bottom: { style: "thin" },
-        right: { style: "thin" }
+        right: { style: "thin" },
       };
     });
 
@@ -108,12 +133,14 @@ const exportEmployeesToExcel = async (req, res) => {
       const row = worksheet.addRow({
         MaNV: emp.MaNV,
         HoVaTen: emp.HoVaTen,
-        PhongBan: emp.PhongBan ? `${emp.PhongBan.MaPB} - ${emp.PhongBan.TenPB}` : "N/A",
+        PhongBan: emp.PhongBan
+          ? `${emp.PhongBan.MaPB} - ${emp.PhongBan.TenPB}`
+          : "N/A",
         GioiTinh: emp.GioiTinh,
         NgaySinh: emp.NgaySinh,
         SDT: emp.SDT,
         NgayVaoLam: emp.NgayVaoLam,
-        DiaChi: emp.DiaChi
+        DiaChi: emp.DiaChi,
       });
 
       row.eachCell((cell) => {
@@ -122,62 +149,90 @@ const exportEmployeesToExcel = async (req, res) => {
           top: { style: "thin" },
           left: { style: "thin" },
           bottom: { style: "thin" },
-          right: { style: "thin" }
+          right: { style: "thin" },
         };
       });
     });
 
     res.setHeader(
       "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     );
     res.setHeader(
       "Content-Disposition",
-      "attachment; filename=danh_sach_nhan_vien.xlsx"
+      "attachment; filename=danh_sach_nhan_vien.xlsx",
     );
 
     await workbook.xlsx.write(res);
     res.end();
   } catch (error) {
-    console.error('Error exporting Employees:', error);
-    res.status(500).json({ message: 'Lỗi khi xuất file excel: ' + error.message });
+    console.error("Error exporting Employees:", error);
+    res
+      .status(500)
+      .json({ message: "Lỗi khi xuất file excel: " + error.message });
   }
 };
 
 const getEmployeeById = async (req, res) => {
   try {
     const employee = await Employee.findByPk(req.params.id, {
-      include: [{
-        model: Department,
-        as: 'PhongBan',
-        required: false,
-        attributes: ['MaPB', 'TenPB']
-      }]
+      include: [
+        {
+          model: Department,
+          as: "PhongBan",
+          required: false,
+          attributes: ["MaPB", "TenPB"],
+        },
+      ],
     });
-    if (!employee) return res.status(404).json({ message: 'Nhân viên không tồn tại' });
+    if (!employee)
+      return res.status(404).json({ message: "Nhân viên không tồn tại" });
     res.status(200).json(employee);
   } catch (error) {
-    console.error('Join error in getById:', error);
-    res.status(500).json({ message: 'Lỗi khi lấy nhân viên: ' + error.message });
+    console.error("Join error in getById:", error);
+    res
+      .status(500)
+      .json({ message: "Lỗi khi lấy nhân viên: " + error.message });
   }
 };
 
 const createEmployee = async (req, res) => {
   try {
-    const { MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT } = req.body;
-    const HinhAnh = req.file ? `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}` : null;
+    const parsed = employeeSchema.safeParse(req.body);
+    if (!parsed.success) {
+      const errors = parsed.error.issues.map((issue) => ({
+        field: issue.path[0],
+        message: issue.message,
+      }));
+      return res.status(400).json({ errors });
+    }
+
+    const { MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT } = parsed.data;
+    const HinhAnh = req.file
+      ? `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`
+      : null;
 
     const department = await Department.findByPk(MaPB);
     if (!department) {
-      return res.status(400).json({ message: 'Mã phòng ban không tồn tại' });
+      return res.status(400).json({ message: "Mã phòng ban không tồn tại" });
     }
 
     const employee = await Employee.create({
-      MaNV, MaPB, HoVaTen, GioiTinh, NgaySinh, DiaChi, NgayVaoLam, SDT, HinhAnh
+      MaNV,
+      MaPB,
+      HoVaTen,
+      GioiTinh,
+      NgaySinh,
+      DiaChi,
+      NgayVaoLam,
+      SDT,
+      HinhAnh,
     });
     res.status(201).json(employee);
   } catch (error) {
-    res.status(400).json({ message: 'Lỗi khi tạo nhân viên: ' + error.message });
+    res
+      .status(400)
+      .json({ message: "Lỗi khi tạo nhân viên: " + error.message });
   }
 };
 
@@ -185,18 +240,29 @@ const updateEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByPk(req.params.id);
     if (!employee) {
-      return res.status(404).json({ message: 'Nhân viên không tồn tại' });
+      return res.status(404).json({ message: "Nhân viên không tồn tại" });
     }
 
-    const updateData = { ...req.body };
+    const parsed = employeeSchema.omit({ MaNV: true }).safeParse(req.body);
+    if (!parsed.success) {
+      const errors = parsed.error.issues.map((issue) => ({
+        field: issue.path[0],
+        message: issue.message,
+      }));
+      return res.status(400).json({ errors });
+    }
+
+    const updateData = { ...parsed.data };
     if (req.file) {
-      updateData.HinhAnh = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+      updateData.HinhAnh = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
     }
 
     await employee.update(updateData);
     res.status(200).json(employee);
   } catch (error) {
-    res.status(400).json({ message: 'Lỗi khi cập nhật nhân viên: ' + error.message });
+    res
+      .status(400)
+      .json({ message: "Lỗi khi cập nhật nhân viên: " + error.message });
   }
 };
 
@@ -204,13 +270,23 @@ const deleteEmployee = async (req, res) => {
   try {
     const employee = await Employee.findByPk(req.params.id);
     if (!employee) {
-      return res.status(404).json({ message: 'Nhân viên không tồn tại' });
+      return res.status(404).json({ message: "Nhân viên không tồn tại" });
     }
     await employee.destroy();
-    res.status(200).json({ message: 'Xóa nhân viên thành công' });
+    res.status(200).json({ message: "Xóa nhân viên thành công" });
   } catch (error) {
-    res.status(500).json({ message: 'Lỗi khi xóa nhân viên: ' + error.message });
+    res
+      .status(500)
+      .json({ message: "Lỗi khi xóa nhân viên: " + error.message });
   }
 };
 
-export { getAllEmployees, getEmployeeById, createEmployee, updateEmployee, deleteEmployee, searchEmployees, exportEmployeesToExcel };
+export {
+  getAllEmployees,
+  getEmployeeById,
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+  searchEmployees,
+  exportEmployeesToExcel,
+};
