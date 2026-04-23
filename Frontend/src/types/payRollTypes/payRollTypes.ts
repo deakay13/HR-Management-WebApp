@@ -5,7 +5,7 @@ export const PayRollInputSchema = z.object({
   MaBL: z
     .string()
     .min(1, "Mã bảng lương không được để trống")
-    .regex(/^BL\d{3}$/, "Mã phải dạng BLxxx"),
+    .regex(/^BL\d{3,}$/, "Mã phải bắt đầu bằng BL và có ít nhất 3 chữ số"),
 
   MaNV: z.string().min(1, "Mã nhân viên không được để trống"),
 

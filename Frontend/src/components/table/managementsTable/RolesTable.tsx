@@ -38,6 +38,12 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  RoleInputSchema,
+  type RoleInput,
+} from "@/types/permissionTypes/rolesTypes";
 
 import { columns } from "../columns/managements/RolesTableColumns";
 import type { RoleWithPermissions } from "@/types/permissionTypes/roleGrantPermissionsTypes";
@@ -66,12 +72,24 @@ export function RolesTable({
   const { createRoles } = useRolesStore();
   const { role } = useAuthorizeStore();
   const isAdmin = role?.MaVT === "VT001";
-  const [formData, setFormData] = React.useState({ MaVT: "", TenVaiTro: "" });
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<RoleInput>({
+    resolver: zodResolver(RoleInputSchema),
+    defaultValues: { MaVT: "", TenVaiTro: "" },
+  });
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await createRoles(formData);
-    setFormData({ MaVT: "", TenVaiTro: "" });
+  const onSubmit: SubmitHandler<RoleInput> = async (data) => {
+    try {
+      await createRoles(data);
+      reset();
+    } catch {
+      // toast is handled in store
+    }
   };
 
   const [pagination, setPagination] = React.useState({
@@ -127,14 +145,14 @@ export function RolesTable({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setFormData({ MaVT: "", TenVaiTro: "" })}
+                  onClick={() => reset()}
                 >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleCreate} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle>{t("Tạo vai trò")}</DialogTitle>
                     <DialogDescription className="text-sm text-muted-foreground">
@@ -146,27 +164,25 @@ export function RolesTable({
                       <Label htmlFor="MaVT">{t("Mã Vai Trò")}</Label>
                       <Input
                         id="MaVT"
-                        name="MaVT"
-                        defaultValue="VTxxx"
-                        value={formData.MaVT}
-                        onChange={(e) =>
-                          setFormData({ ...formData, MaVT: e.target.value })
-                        }
+                        placeholder={t("VD: VT001")}
+                        className={`h-10 ${errors.MaVT ? "border-red-500" : ""}`}
+                        {...register("MaVT")}
                       />
+                      {errors.MaVT && (
+                        <p className="text-red-500 text-xs">{t(errors.MaVT.message || "")}</p>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="TenVaiTro">{t("Tên Vai Trò")}</Label>
                       <Input
                         id="TenVaiTro"
-                        name="TenVaiTro"
-                        value={formData.TenVaiTro}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            TenVaiTro: e.target.value,
-                          })
-                        }
+                        placeholder={t("VD: Quản trị viên")}
+                        className={`h-10 ${errors.TenVaiTro ? "border-red-500" : ""}`}
+                        {...register("TenVaiTro")}
                       />
+                      {errors.TenVaiTro && (
+                        <p className="text-red-500 text-xs">{t(errors.TenVaiTro.message || "")}</p>
+                      )}
                     </Field>
                   </FieldGroup>
                   <DialogFooter className="gap-2">
@@ -175,7 +191,7 @@ export function RolesTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaVT || !formData.TenVaiTro}
+                      disabled={isSubmitting}
                     >
                       {t("Thêm")}
                     </Button>
@@ -202,9 +218,9 @@ export function RolesTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>

@@ -114,12 +114,12 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                     <Input
                       id="LoaiKT"
                       placeholder={t("VD: Thuế TNCN")}
-                      className="h-10"
+                      className={`h-10 ${errors.LoaiKT ? "border-red-500" : ""}`}
                       {...register("LoaiKT")}
                     />
                     {errors.LoaiKT && (
-                      <p className="text-red-500 text-sm">
-                        {errors.LoaiKT.message}
+                      <p className="text-red-500 text-xs">
+                        {t(errors.LoaiKT.message || "")}
                       </p>
                     )}
                   </Field>
@@ -130,12 +130,12 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                       id="PhanTram"
                       type="number"
                       placeholder={t("VD: 10")}
-                      className="h-10"
-                      {...register("PhanTram")}
+                      className={`h-10 ${errors.PhanTram ? "border-red-500" : ""}`}
+                      {...register("PhanTram", { valueAsNumber: true })}
                     />
                     {errors.PhanTram && (
-                      <p className="text-red-500 text-sm">
-                        {errors.PhanTram.message}
+                      <p className="text-red-500 text-xs">
+                        {t(errors.PhanTram.message || "")}
                       </p>
                     )}
                   </Field>

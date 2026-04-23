@@ -12,10 +12,14 @@ export type GrantPermission = z.infer<typeof GrantPermissionsSchema>;
 
 export const ChangePermissionSchema = z.object({
   MaVT: z.string(),
-  oldQuyen: z.string(),
-  newQuyen: z.string(),
+  oldQuyen: z.string().min(1, "Vui lòng chọn quyền cũ"),
+  newQuyen: z.string().min(1, "Vui lòng chọn quyền mới"),
 });
-export type ChangePermissionPayload = z.infer<typeof ChangePermissionSchema>;
+
+export const RemovePermissionSchema = z.object({
+  MaVT: z.string(),
+  MaQuyen: z.array(z.string()).min(1, "Vui lòng chọn ít nhất một quyền để xoá"),
+});
 
 export const AssignPermissionSchema = z.object({
   MaVT: z.string(),
@@ -23,6 +27,8 @@ export const AssignPermissionSchema = z.object({
 });
 
 export type AssignPermissionPayload = z.infer<typeof AssignPermissionSchema>;
+export type ChangePermissionPayload = z.infer<typeof ChangePermissionSchema>;
+export type RemovePermissionPayload = z.infer<typeof RemovePermissionSchema>;
 
 export interface GrantPermissionsTypes {
   GrantPermissions: GrantPermission[];

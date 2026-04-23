@@ -259,6 +259,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                       }))
                     }
                   />
+                  {errors.ChucDanh && (
+                    <span className="text-xs text-red-500">
+                      {t(errors.ChucDanh || "")}
+                    </span>
+                  )}
                 </Field>
 
                 <Field>
@@ -274,6 +279,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                       }))
                     }
                   />
+                  {errors.MaPB && (
+                    <span className="text-xs text-red-500">
+                      {t(errors.MaPB || "")}
+                    </span>
+                  )}
                 </Field>
 
                 <Field>
@@ -289,6 +299,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                       }))
                     }
                   />
+                  {errors.MaLCB && (
+                    <span className="text-xs text-red-500">
+                      {t(errors.MaLCB || "")}
+                    </span>
+                  )}
                 </Field>
 
                 <Field>
@@ -304,6 +319,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                       }))
                     }
                   />
+                  {errors.MaPC && (
+                    <span className="text-xs text-red-500">
+                      {t(errors.MaPC || "")}
+                    </span>
+                  )}
                 </Field>
 
                 <Field>
@@ -318,6 +338,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                       }))
                     }
                   />
+                  {errors.HinhThucTraLuong && (
+                    <span className="text-xs text-red-500">
+                      {t(errors.HinhThucTraLuong || "")}
+                    </span>
+                  )}
                 </Field>
 
                 <Field>
@@ -332,6 +357,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                       }))
                     }
                   />
+                  {errors.TinhTrang && (
+                    <span className="text-xs text-red-500">
+                      {t(errors.TinhTrang || "")}
+                    </span>
+                  )}
                 </Field>
 
                 <Field>

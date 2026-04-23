@@ -37,7 +37,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  AllowanceInputSchema,
+  type AllowanceInput,
+} from "@/types/payRollTypes/allowanceTypes";
 import { columns } from "../columns/workspace/allowancesColumns";
 import type { Allowance } from "@/types/payRollTypes/allowanceTypes";
 import { useAllowanceStore } from "@/stores/payRollStores/allowanceStore";
@@ -67,18 +72,22 @@ export function AllowanceTable({
   const { createAllowance } = useAllowanceStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [formData, setFormData] = React.useState({
-    MaPC: "",
-    LoaiPC: "",
-    SoTien: 0,
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+  } = useForm<AllowanceInput>({
+    resolver: zodResolver(AllowanceInputSchema),
+    defaultValues: { MaPC: "", LoaiPC: "", SoTien: 0 },
   });
 
-  const handleCreate = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit: SubmitHandler<AllowanceInput> = async (data) => {
     try {
-      await createAllowance(formData);
+      await createAllowance(data);
       setCreateOpen(false);
-      setFormData({ MaPC: "", LoaiPC: "", SoTien: 0 });
+      reset();
     } catch {
       // store handles toast
     }
@@ -138,7 +147,7 @@ export function AllowanceTable({
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setFormData({ MaPC: "", LoaiPC: "", SoTien: 0 });
+                    reset();
                     setCreateOpen(true);
                   }}
                 >
@@ -148,7 +157,7 @@ export function AllowanceTable({
               </DialogTrigger>
 
               <DialogContent className="sm:max-w-md">
-                <form onSubmit={handleCreate} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
                   <DialogHeader>
                     <DialogTitle className="text-lg font-semibold">
                       {t("Tạo phụ cấp")}
@@ -163,12 +172,12 @@ export function AllowanceTable({
                       <Input
                         id="MaPC"
                         placeholder={t("VD: PC001")}
-                        className="h-10"
-                        value={formData.MaPC}
-                        onChange={(e) =>
-                          setFormData({ ...formData, MaPC: e.target.value })
-                        }
+                        className={`h-10 ${errors.MaPC ? "border-red-500" : ""}`}
+                        {...register("MaPC")}
                       />
+                      {errors.MaPC && (
+                        <p className="text-red-500 text-xs">{t(errors.MaPC.message || "")}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -176,12 +185,12 @@ export function AllowanceTable({
                       <Input
                         id="LoaiPC"
                         placeholder={t("VD: Phụ cấp ăn trưa")}
-                        className="h-10"
-                        value={formData.LoaiPC}
-                        onChange={(e) =>
-                          setFormData({ ...formData, LoaiPC: e.target.value })
-                        }
+                        className={`h-10 ${errors.LoaiPC ? "border-red-500" : ""}`}
+                        {...register("LoaiPC")}
                       />
+                      {errors.LoaiPC && (
+                        <p className="text-red-500 text-xs">{t(errors.LoaiPC.message || "")}</p>
+                      )}
                     </Field>
 
                     <Field className="flex flex-col gap-2">
@@ -190,15 +199,12 @@ export function AllowanceTable({
                         id="SoTien"
                         type="number"
                         placeholder={t("VD: 500000")}
-                        className="h-10"
-                        value={formData.SoTien}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            SoTien: Number(e.target.value),
-                          })
-                        }
+                        className={`h-10 ${errors.SoTien ? "border-red-500" : ""}`}
+                        {...register("SoTien", { valueAsNumber: true })}
                       />
+                      {errors.SoTien && (
+                        <p className="text-red-500 text-xs">{t(errors.SoTien.message || "")}</p>
+                      )}
                     </Field>
                   </FieldGroup>
 
@@ -210,11 +216,7 @@ export function AllowanceTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={
-                        !formData.MaPC ||
-                        !formData.LoaiPC ||
-                        formData.SoTien <= 0
-                      }
+                      disabled={isSubmitting}
                     >
                       {t("Tạo mới")}
                     </Button>
@@ -241,9 +243,9 @@ export function AllowanceTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>

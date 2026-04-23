@@ -117,12 +117,12 @@ export function BaseSalaryActionCell({
                     <Input
                       id="LuongCB"
                       type="number"
-                      className="h-10"
-                      {...register("LuongCB")}
+                      className={`h-10 ${errors.LuongCB ? "border-red-500" : ""}`}
+                      {...register("LuongCB", { valueAsNumber: true })}
                     />
                     {errors.LuongCB && (
-                      <p className="text-red-500 text-sm">
-                        {errors.LuongCB.message}
+                      <p className="text-red-500 text-xs">
+                        {t(errors.LuongCB.message || "")}
                       </p>
                     )}
                   </Field>

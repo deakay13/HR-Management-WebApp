@@ -204,7 +204,7 @@ export function ContractTable({
                       />
                       {errors.MaHopDong && (
                         <span className="text-xs text-red-500">
-                          {errors.MaHopDong}
+                          {t(errors.MaHopDong || "")}
                         </span>
                       )}
                     </Field>
@@ -218,7 +218,7 @@ export function ContractTable({
                       />
                       {errors.MaNV && (
                         <span className="text-xs text-red-500">
-                          {errors.MaNV}
+                          {t(errors.MaNV || "")}
                         </span>
                       )}
                     </Field>
@@ -232,7 +232,7 @@ export function ContractTable({
                       />
                       {errors.LoaiHD && (
                         <span className="text-xs text-red-500">
-                          {errors.LoaiHD}
+                          {t(errors.LoaiHD || "")}
                         </span>
                       )}
                     </Field>
@@ -246,7 +246,7 @@ export function ContractTable({
                       />
                       {errors.NgayBatDau && (
                         <span className="text-xs text-red-500">
-                          {errors.NgayBatDau}
+                          {t(errors.NgayBatDau || "")}
                         </span>
                       )}
                     </Field>
@@ -260,7 +260,7 @@ export function ContractTable({
                       />
                       {errors.NgayKetThuc && (
                         <span className="text-xs text-red-500">
-                          {errors.NgayKetThuc}
+                          {t(errors.NgayKetThuc || "")}
                         </span>
                       )}
                     </Field>
@@ -284,8 +284,13 @@ export function ContractTable({
                         id="ChucDanh"
                         name="ChucDanh"
                         placeholder={t("Nhập chức danh")}
-                        className="h-10"
+                        className={`h-10 ${errors.ChucDanh ? "border-red-500" : ""}`}
                       />
+                      {errors.ChucDanh && (
+                        <span className="text-xs text-red-500">
+                          {t(errors.ChucDanh || "")}
+                        </span>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaPB">{t("Mã Phòng Ban")}</Label>
@@ -293,8 +298,13 @@ export function ContractTable({
                         id="MaPB"
                         name="MaPB"
                         placeholder={t("VD: PB001")}
-                        className="uppercase h-10"
+                        className={`uppercase h-10 ${errors.MaPB ? "border-red-500" : ""}`}
                       />
+                      {errors.MaPB && (
+                        <span className="text-xs text-red-500">
+                          {t(errors.MaPB || "")}
+                        </span>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaLCB">{t("Mã Lương CB")}</Label>
@@ -302,8 +312,13 @@ export function ContractTable({
                         id="MaLCB"
                         name="MaLCB"
                         placeholder={t("VD: LCB001")}
-                        className="uppercase h-10"
+                        className={`uppercase h-10 ${errors.MaLCB ? "border-red-500" : ""}`}
                       />
+                      {errors.MaLCB && (
+                        <span className="text-xs text-red-500">
+                          {t(errors.MaLCB || "")}
+                        </span>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaPC">{t("Mã Phụ Cấp")}</Label>
@@ -311,8 +326,13 @@ export function ContractTable({
                         id="MaPC"
                         name="MaPC"
                         placeholder={t("VD: PC001")}
-                        className="uppercase h-10"
+                        className={`uppercase h-10 ${errors.MaPC ? "border-red-500" : ""}`}
                       />
+                      {errors.MaPC && (
+                        <span className="text-xs text-red-500">
+                          {t(errors.MaPC || "")}
+                        </span>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="HinhThucTraLuong">{t("Hình Thức Trả Lương")}</Label>
@@ -320,8 +340,13 @@ export function ContractTable({
                         id="HinhThucTraLuong"
                         name="HinhThucTraLuong"
                         placeholder={t("VD: Chuyển khoản")}
-                        className="h-10"
+                        className={`h-10 ${errors.HinhThucTraLuong ? "border-red-500" : ""}`}
                       />
+                      {errors.HinhThucTraLuong && (
+                        <span className="text-xs text-red-500">
+                          {t(errors.HinhThucTraLuong || "")}
+                        </span>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="TinhTrang">{t("Tình Trạng")}</Label>
@@ -329,8 +354,13 @@ export function ContractTable({
                         id="TinhTrang"
                         name="TinhTrang"
                         placeholder={t("VD: Còn hiệu lực")}
-                        className="h-10"
+                        className={`h-10 ${errors.TinhTrang ? "border-red-500" : ""}`}
                       />
+                      {errors.TinhTrang && (
+                        <span className="text-xs text-red-500">
+                          {t(errors.TinhTrang || "")}
+                        </span>
+                      )}
                     </Field>
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="HinhAnhHopDong">
@@ -345,7 +375,7 @@ export function ContractTable({
                       />
                       {errors.HinhAnhHopDong && (
                         <span className="text-xs text-red-500">
-                          {errors.HinhAnhHopDong}
+                          {t(errors.HinhAnhHopDong || "")}
                         </span>
                       )}
                     </Field>

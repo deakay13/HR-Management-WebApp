@@ -112,12 +112,12 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     <Label htmlFor="LoaiPC">{t("Loại Phụ Cấp")}</Label>
                     <Input
                       id="LoaiPC"
-                      className="h-10"
+                      className={`h-10 ${errors.LoaiPC ? "border-red-500" : ""}`}
                       {...register("LoaiPC")}
                     />
                     {errors.LoaiPC && (
-                      <p className="text-red-500 text-sm">
-                        {errors.LoaiPC.message}
+                      <p className="text-red-500 text-xs">
+                        {t(errors.LoaiPC.message || "")}
                       </p>
                     )}
                   </Field>
@@ -127,12 +127,12 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                     <Input
                       id="SoTien"
                       type="number"
-                      className="h-10"
-                      {...register("SoTien")}
+                      className={`h-10 ${errors.SoTien ? "border-red-500" : ""}`}
+                      {...register("SoTien", { valueAsNumber: true })}
                     />
                     {errors.SoTien && (
-                      <p className="text-red-500 text-sm">
-                        {errors.SoTien.message}
+                      <p className="text-red-500 text-xs">
+                        {t(errors.SoTien.message || "")}
                       </p>
                     )}
                   </Field>

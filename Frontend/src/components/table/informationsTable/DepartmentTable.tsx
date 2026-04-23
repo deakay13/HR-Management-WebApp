@@ -170,7 +170,7 @@ export function DepartmentTable({
                       />
                       {errors.MaPB && (
                         <span className="text-xs text-red-500">
-                          {errors.MaPB}
+                          {t(errors.MaPB || "")}
                         </span>
                       )}
                     </Field>
@@ -179,7 +179,7 @@ export function DepartmentTable({
                       <Input id="TenPB" name="TenPB" className="h-10" />
                       {errors.TenPB && (
                         <span className="text-xs text-red-500">
-                          {errors.TenPB}
+                          {t(errors.TenPB || "")}
                         </span>
                       )}
                     </Field>
