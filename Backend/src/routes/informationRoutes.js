@@ -22,6 +22,8 @@ import {
   createContract,
   updateContract,
   deleteContract,
+  searchContracts,
+  exportContractsToExcel,
 } from "../controllers/information/contractControllers.js";
 import upload from "../config/multerConfig.js";
 
@@ -54,6 +56,8 @@ router.put(
 router.delete("/employees/:id", authorize(["Xoá"]), deleteEmployee);
 
 /* Routes for HopDong */
+router.get("/contracts/search", authorize(["Đọc"]), searchContracts);
+router.get("/contracts/export", authorize(["Đọc"]), exportContractsToExcel);
 router.get("/contracts", authorize(["Đọc"]), getAllContracts);
 
 router.get("/contracts/:id", authorize(["Đọc"]), getContractById);

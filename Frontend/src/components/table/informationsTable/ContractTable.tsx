@@ -1,5 +1,9 @@
 import * as React from "react";
-import { IconPlus } from "@tabler/icons-react";
+import { IconPlus, IconSearch, IconFileSpreadsheet } from "@tabler/icons-react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { ContractServices } from "@/services/informationServices/contractServices";
 import {
   flexRender,
   getCoreRowModel,
@@ -37,7 +41,6 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
 import { getContractValidationSchema } from "@/types/informationTypes/contractTypes";
 import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
 import { TablePagination } from "@/components/table/shared/TablePagination";
@@ -53,28 +56,106 @@ import { canCreate } from "@/utils/authorizeUtils";
 export function ContractTable({
   data = [],
   loading,
+  isEmployee = false,
 }: {
   data: Contract[];
   loading?: boolean;
+  isEmployee?: boolean;
 }) {
   const { t } = useTranslation();
+  const { createContract, searchContracts } = useContractStore();
+  const { employees, getEmployees } = useEmployeeStore();
+  const { permissions } = useAuthorizeStore();
 
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [filters, setFilters] = React.useState({
+    keyword: "",
+    MaPB: "",
+    TinhTrang: "",
+  });
 
   const [openCreate, setOpenCreate] = React.useState(false);
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
-  const { employees, getEmployees } = useEmployeeStore();
-  const { permissions } = useAuthorizeStore();
+
+  const employeeCodes = React.useMemo(() => employees.map((emp) => emp.MaNV.toUpperCase()), [employees]);
+  const existingCodes = React.useMemo(() => data.map((item) => item.MaHopDong), [data]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors: formErrors, isSubmitting },
+    reset,
+  } = useForm({
+    resolver: zodResolver(getContractValidationSchema(existingCodes, employeeCodes)),
+    defaultValues: {
+      MaHopDong: "",
+      MaNV: "",
+      LoaiHD: "",
+      NgayBatDau: "",
+      NgayKetThuc: "",
+      NgayKy: "",
+      ChucDanh: "",
+      MaPB: "",
+      MaLCB: "",
+      MaPC: "",
+      HinhThucTraLuong: "",
+      TinhTrang: "",
+    },
+  });
+
+  // Debounce auto-search
+  React.useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      searchContracts(filters);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [filters, searchContracts]);
+
+  const handleExport = async () => {
+    try {
+      const blob = await ContractServices.exportContract();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `danh_sach_hop_dong.xlsx`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      toast.success(t("Xuất file excel thành công"));
+    } catch (error) {
+      console.error("Lỗi export excel:", error);
+      toast.error(t("Không thể xuất file excel"));
+    }
+  };
+
+  const onSubmit: SubmitHandler<any> = async (formData) => {
+    try {
+      const dataToSubmit = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value) dataToSubmit.append(key, value as string);
+      });
+      // Handle file separately if needed, but our schema/form uses typical inputs
+      const fileInput = document.getElementById("HinhAnhHopDong") as HTMLInputElement;
+      if (fileInput?.files?.[0]) {
+        dataToSubmit.append("HinhAnhHopDong", fileInput.files[0]);
+      }
+
+      await createContract(dataToSubmit);
+      setOpenCreate(false);
+      reset();
+    } catch (error) {
+      console.error("Lỗi khi tạo hợp đồng:", error);
+    }
+  };
+  React.useEffect(() => {
+    getEmployees();
+  }, [getEmployees]);
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Contract>({
@@ -102,58 +183,6 @@ export function ContractTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   });
 
-  const { createContract } = useContractStore();
-  React.useEffect(() => {
-    getEmployees();
-  }, [getEmployees]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const employeeCodes = employees.map((emp) => emp.MaNV.toUpperCase());
-    const existingCodes = data.map((item) => item.MaHopDong);
-
-    const formValues = {
-      MaHopDong: formData.get("MaHopDong") as string,
-      MaNV: formData.get("MaNV") as string,
-      LoaiHD: formData.get("LoaiHD") as string,
-      NgayBatDau: formData.get("NgayBatDau") as string,
-      NgayKetThuc: formData.get("NgayKetThuc") as string,
-      NgayKy: formData.get("NgayKy") as string,
-      ChucDanh: formData.get("ChucDanh") as string,
-      MaPB: formData.get("MaPB") as string,
-      MaLCB: formData.get("MaLCB") as string,
-      MaPC: formData.get("MaPC") as string,
-      HinhThucTraLuong: formData.get("HinhThucTraLuong") as string,
-      TinhTrang: formData.get("TinhTrang") as string,
-      HinhAnhHopDong: formData.get("HinhAnhHopDong"),
-    };
-
-    try {
-      const validatedData = getContractValidationSchema(
-        existingCodes,
-        employeeCodes,
-      ).parse(formValues);
-
-      formData.set("MaHopDong", validatedData.MaHopDong);
-      formData.set("MaNV", validatedData.MaNV);
-
-      setErrors({});
-      await createContract(formData);
-      setOpenCreate(false);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.issues.forEach((err) => {
-          if (err.path[0]) {
-            newErrors[err.path[0].toString()] = err.message;
-          }
-        });
-        setErrors(newErrors);
-      }
-    }
-  };
-
   if (loading)
     return <p className="text-center py-4">{t("Đang tải dữ liệu...")}</p>;
 
@@ -165,46 +194,71 @@ export function ContractTable({
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Hợp Đồng")} />
 
-        {/* Action buttons */}
-        <div className="flex items-center gap-2">
+        {/* Toolbar */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative flex items-center gap-2">
+            <div className="relative">
+              <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder={t("Search...")}
+                className="h-9 w-[160px] pl-9"
+                value={filters.keyword}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, keyword: e.target.value }))
+                }
+              />
+            </div>
+            {!isEmployee && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExport}
+                className="h-9 w-9 p-0"
+                title={t("Xuất Excel")}
+              >
+                <IconFileSpreadsheet size={18} />
+              </Button>
+            )}
+          </div>
+
           {/* Default Table Column Filter */}
           <TableColumnFilter table={table} />
 
           {/* Create new contract button */}
-          {canCreate(permissions) && (
+          {!isEmployee && canCreate(permissions) && (
             <Dialog
               open={openCreate}
               onOpenChange={(open) => {
                 setOpenCreate(open);
-                if (!open) setErrors({});
+                if (!open) reset();
               }}
             >
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" className="h-9">
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+              <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                   <DialogTitle>{t("Tạo Hợp Đồng Mới")}</DialogTitle>
                   <DialogDescription className="text-sm text-muted-foreground">
                     {t("Nhập thông tin chi tiết để tạo mới.")}
                   </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} encType="multipart/form-data">
-                  <FieldGroup className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data" className="space-y-6">
+                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Field className="flex flex-col gap-2">
                       <Label htmlFor="MaHopDong">{t("Mã Hợp Đồng")}</Label>
                       <Input
                         id="MaHopDong"
-                        name="MaHopDong"
+                        {...register("MaHopDong")}
                         placeholder={t("VD: HD001")}
                         className="uppercase h-10"
                       />
-                      {errors.MaHopDong && (
+                      {formErrors.MaHopDong && (
                         <span className="text-xs text-red-500">
-                          {t(errors.MaHopDong || "")}
+                          {t(formErrors.MaHopDong.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -212,13 +266,13 @@ export function ContractTable({
                       <Label htmlFor="MaNV">{t("Mã Nhân Viên")}</Label>
                       <Input
                         id="MaNV"
-                        name="MaNV"
+                        {...register("MaNV")}
                         placeholder={t("VD: NV001")}
                         className="uppercase h-10"
                       />
-                      {errors.MaNV && (
+                      {formErrors.MaNV && (
                         <span className="text-xs text-red-500">
-                          {t(errors.MaNV || "")}
+                          {t(formErrors.MaNV.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -226,13 +280,13 @@ export function ContractTable({
                       <Label htmlFor="LoaiHD">{t("Loại Hợp Đồng")}</Label>
                       <Input
                         id="LoaiHD"
-                        name="LoaiHD"
+                        {...register("LoaiHD")}
                         placeholder={t("VD: Có thời hạn")}
                         className="h-10"
                       />
-                      {errors.LoaiHD && (
+                      {formErrors.LoaiHD && (
                         <span className="text-xs text-red-500">
-                          {t(errors.LoaiHD || "")}
+                          {t(formErrors.LoaiHD.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -240,13 +294,13 @@ export function ContractTable({
                       <Label htmlFor="NgayBatDau">{t("Ngày Bắt Đầu")}</Label>
                       <Input
                         id="NgayBatDau"
-                        name="NgayBatDau"
                         type="date"
+                        {...register("NgayBatDau")}
                         className="h-10"
                       />
-                      {errors.NgayBatDau && (
+                      {formErrors.NgayBatDau && (
                         <span className="text-xs text-red-500">
-                          {t(errors.NgayBatDau || "")}
+                          {t(formErrors.NgayBatDau.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -254,13 +308,13 @@ export function ContractTable({
                       <Label htmlFor="NgayKetThuc">{t("Ngày Kết Thúc")}</Label>
                       <Input
                         id="NgayKetThuc"
-                        name="NgayKetThuc"
                         type="date"
+                        {...register("NgayKetThuc")}
                         className="h-10"
                       />
-                      {errors.NgayKetThuc && (
+                      {formErrors.NgayKetThuc && (
                         <span className="text-xs text-red-500">
-                          {t(errors.NgayKetThuc || "")}
+                          {t(formErrors.NgayKetThuc.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -268,13 +322,13 @@ export function ContractTable({
                       <Label htmlFor="NgayKy">{t("Ngày Ký")}</Label>
                       <Input
                         id="NgayKy"
-                        name="NgayKy"
                         type="date"
+                        {...register("NgayKy")}
                         className="h-10"
                       />
-                      {errors.NgayKy && (
+                      {formErrors.NgayKy && (
                         <span className="text-xs text-red-500">
-                          {errors.NgayKy}
+                          {t(formErrors.NgayKy.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -282,13 +336,13 @@ export function ContractTable({
                       <Label htmlFor="ChucDanh">{t("Chức Danh")}</Label>
                       <Input
                         id="ChucDanh"
-                        name="ChucDanh"
+                        {...register("ChucDanh")}
                         placeholder={t("Nhập chức danh")}
-                        className={`h-10 ${errors.ChucDanh ? "border-red-500" : ""}`}
+                        className={`h-10 ${formErrors.ChucDanh ? "border-red-500" : ""}`}
                       />
-                      {errors.ChucDanh && (
+                      {formErrors.ChucDanh && (
                         <span className="text-xs text-red-500">
-                          {t(errors.ChucDanh || "")}
+                          {t(formErrors.ChucDanh.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -296,13 +350,13 @@ export function ContractTable({
                       <Label htmlFor="MaPB">{t("Mã Phòng Ban")}</Label>
                       <Input
                         id="MaPB"
-                        name="MaPB"
+                        {...register("MaPB")}
                         placeholder={t("VD: PB001")}
-                        className={`uppercase h-10 ${errors.MaPB ? "border-red-500" : ""}`}
+                        className={`uppercase h-10 ${formErrors.MaPB ? "border-red-500" : ""}`}
                       />
-                      {errors.MaPB && (
+                      {formErrors.MaPB && (
                         <span className="text-xs text-red-500">
-                          {t(errors.MaPB || "")}
+                          {t(formErrors.MaPB.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -310,13 +364,13 @@ export function ContractTable({
                       <Label htmlFor="MaLCB">{t("Mã Lương CB")}</Label>
                       <Input
                         id="MaLCB"
-                        name="MaLCB"
+                        {...register("MaLCB")}
                         placeholder={t("VD: LCB001")}
-                        className={`uppercase h-10 ${errors.MaLCB ? "border-red-500" : ""}`}
+                        className={`uppercase h-10 ${formErrors.MaLCB ? "border-red-500" : ""}`}
                       />
-                      {errors.MaLCB && (
+                      {formErrors.MaLCB && (
                         <span className="text-xs text-red-500">
-                          {t(errors.MaLCB || "")}
+                          {t(formErrors.MaLCB.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -324,13 +378,13 @@ export function ContractTable({
                       <Label htmlFor="MaPC">{t("Mã Phụ Cấp")}</Label>
                       <Input
                         id="MaPC"
-                        name="MaPC"
+                        {...register("MaPC")}
                         placeholder={t("VD: PC001")}
-                        className={`uppercase h-10 ${errors.MaPC ? "border-red-500" : ""}`}
+                        className={`uppercase h-10 ${formErrors.MaPC ? "border-red-500" : ""}`}
                       />
-                      {errors.MaPC && (
+                      {formErrors.MaPC && (
                         <span className="text-xs text-red-500">
-                          {t(errors.MaPC || "")}
+                          {t(formErrors.MaPC.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -338,13 +392,13 @@ export function ContractTable({
                       <Label htmlFor="HinhThucTraLuong">{t("Hình Thức Trả Lương")}</Label>
                       <Input
                         id="HinhThucTraLuong"
-                        name="HinhThucTraLuong"
+                        {...register("HinhThucTraLuong")}
                         placeholder={t("VD: Chuyển khoản")}
-                        className={`h-10 ${errors.HinhThucTraLuong ? "border-red-500" : ""}`}
+                        className={`h-10 ${formErrors.HinhThucTraLuong ? "border-red-500" : ""}`}
                       />
-                      {errors.HinhThucTraLuong && (
+                      {formErrors.HinhThucTraLuong && (
                         <span className="text-xs text-red-500">
-                          {t(errors.HinhThucTraLuong || "")}
+                          {t(formErrors.HinhThucTraLuong.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -352,13 +406,13 @@ export function ContractTable({
                       <Label htmlFor="TinhTrang">{t("Tình Trạng")}</Label>
                       <Input
                         id="TinhTrang"
-                        name="TinhTrang"
+                        {...register("TinhTrang")}
                         placeholder={t("VD: Còn hiệu lực")}
-                        className={`h-10 ${errors.TinhTrang ? "border-red-500" : ""}`}
+                        className={`h-10 ${formErrors.TinhTrang ? "border-red-500" : ""}`}
                       />
-                      {errors.TinhTrang && (
+                      {formErrors.TinhTrang && (
                         <span className="text-xs text-red-500">
-                          {t(errors.TinhTrang || "")}
+                          {t(formErrors.TinhTrang.message as string || "")}
                         </span>
                       )}
                     </Field>
@@ -373,11 +427,6 @@ export function ContractTable({
                         accept=".pdf"
                         className="h-10"
                       />
-                      {errors.HinhAnhHopDong && (
-                        <span className="text-xs text-red-500">
-                          {t(errors.HinhAnhHopDong || "")}
-                        </span>
-                      )}
                     </Field>
                   </FieldGroup>
                   <DialogFooter className="mt-4 gap-2">
@@ -409,9 +458,9 @@ export function ContractTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>
