@@ -85,7 +85,8 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -100,9 +101,9 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
             <DialogContent className="sm:max-w-sm">
               <DialogHeader>
                 <DialogTitle>{t("Sửa Tài Khoản")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                <DialogDescription className="text-sm text-muted-foreground">
+                  {t("Nhập thông tin chi tiết để cập nhật.")}
+                </DialogDescription>
               </DialogHeader>
               <FieldGroup>
                 <Field>
@@ -157,20 +158,25 @@ export function AccountsActionCell({ acc }: { acc: Account }) {
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   variant="destructive"
-                  onSelect={(e) => e.preventDefault()}>
+                  onSelect={(e) => e.preventDefault()}
+                >
                   {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
                   <DialogTitle>{t("Xoá Tài Khoản")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t(
+                      "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                    )}
+                  </DialogDescription>
                 </DialogHeader>
                 <FieldGroup>
                   <Field>
-                    <Label>{t("Bạn có chắc muốn xoá tài khoản đã chọn?")}</Label>
+                    <Label>
+                      {t("Bạn có chắc muốn xoá tài khoản đã chọn?")}
+                    </Label>
                   </Field>
                 </FieldGroup>
                 <DialogFooter>

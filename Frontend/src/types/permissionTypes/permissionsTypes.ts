@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const PermissionSchema = z.object({
   MaQuyen: z.string(),
-  TenQuyen:  z.string(),
+  TenQuyen: z.string(),
 });
 
 export type Permission = z.infer<typeof PermissionSchema>;

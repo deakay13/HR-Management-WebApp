@@ -163,7 +163,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!">
+              className="data-[slot=sidebar-menu-button]:p-1.5!"
+            >
               <Link to="/PortalPage/DashBoard">
                 <MyIcon className="size-5!" />
                 <span className="text-base font-semibold">HR-Systerm</span>
@@ -174,9 +175,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={workspaceItems} />
-        {managementItems.length > 0 && (
-          <NavDocuments items={managementItems} />
-        )}
+        {managementItems.length > 0 && <NavDocuments items={managementItems} />}
         <NavSecondary items={data.navSystems} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
@@ -185,4 +184,3 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     </Sidebar>
   );
 }
-

@@ -57,8 +57,14 @@ export function HoursTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
-  const [formData, setFormData] = React.useState({ MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 });
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [formData, setFormData] = React.useState({
+    MaGL: "",
+    SoGioLam: 0,
+    SoNgayLam: 26,
+    TongSoGio: 0,
+  });
   const { createHours } = useHoursStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
@@ -74,15 +80,26 @@ export function HoursTable({
     }
   };
 
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Hours>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaGL.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -103,7 +120,10 @@ export function HoursTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Giờ Làm")} />
 
@@ -118,9 +138,15 @@ export function HoursTable({
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    setFormData({ MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 });
+                    setFormData({
+                      MaGL: "",
+                      SoGioLam: 0,
+                      SoNgayLam: 26,
+                      TongSoGio: 0,
+                    });
                     setCreateOpen(true);
-                  }}>
+                  }}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
@@ -144,7 +170,9 @@ export function HoursTable({
                         placeholder={t("VD: GL001")}
                         className="h-10"
                         value={formData.MaGL}
-                        onChange={(e) => setFormData({ ...formData, MaGL: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaGL: e.target.value })
+                        }
                       />
                     </Field>
 
@@ -158,17 +186,19 @@ export function HoursTable({
                         value={formData.SoGioLam}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          setFormData({ 
-                            ...formData, 
+                          setFormData({
+                            ...formData,
                             SoGioLam: val,
-                            TongSoGio: val * formData.SoNgayLam
+                            TongSoGio: val * formData.SoNgayLam,
                           });
                         }}
                       />
                     </Field>
 
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="SoNgayLam">{t("Số Ngày Công Chuẩn")}</Label>
+                      <Label htmlFor="SoNgayLam">
+                        {t("Số Ngày Công Chuẩn")}
+                      </Label>
                       <Input
                         id="SoNgayLam"
                         type="number"
@@ -177,17 +207,19 @@ export function HoursTable({
                         value={formData.SoNgayLam}
                         onChange={(e) => {
                           const val = Number(e.target.value);
-                          setFormData({ 
-                            ...formData, 
+                          setFormData({
+                            ...formData,
                             SoNgayLam: val,
-                            TongSoGio: formData.SoGioLam * val
+                            TongSoGio: formData.SoGioLam * val,
                           });
                         }}
                       />
                     </Field>
 
                     <Field className="flex flex-col gap-2">
-                      <Label htmlFor="TongSoGio">{t("Tổng Giờ Chuẩn/Tháng")}</Label>
+                      <Label htmlFor="TongSoGio">
+                        {t("Tổng Giờ Chuẩn/Tháng")}
+                      </Label>
                       <Input
                         id="TongSoGio"
                         type="number"
@@ -206,7 +238,8 @@ export function HoursTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaGL || formData.SoGioLam <= 0}>
+                      disabled={!formData.MaGL || formData.SoGioLam <= 0}
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -220,17 +253,21 @@ export function HoursTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -239,10 +276,16 @@ export function HoursTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -251,7 +294,8 @@ export function HoursTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

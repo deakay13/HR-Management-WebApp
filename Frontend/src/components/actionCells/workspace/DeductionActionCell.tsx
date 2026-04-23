@@ -76,7 +76,8 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
         <Button
           variant="ghost"
           className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-          size="icon">
+          size="icon"
+        >
           <IconDotsVertical />
         </Button>
       </DropdownMenuTrigger>
@@ -90,7 +91,8 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                   e.preventDefault();
                   handleOpenEdit();
                   setEditOpen(true);
-                }}>
+                }}
+              >
                 {t("Sửa")}
               </DropdownMenuItem>
             </DialogTrigger>
@@ -101,9 +103,9 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                   <DialogTitle className="text-lg font-semibold">
                     {t("Sửa Khấu Trừ")}
                   </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để cập nhật.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t("Nhập thông tin chi tiết để cập nhật.")}
+                  </DialogDescription>
                 </DialogHeader>
 
                 <FieldGroup className="space-y-4">
@@ -164,7 +166,8 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
               <DialogTrigger asChild>
                 <DropdownMenuItem
                   variant="destructive"
-                  onSelect={(e) => e.preventDefault()}>
+                  onSelect={(e) => e.preventDefault()}
+                >
                   {t("Xoá")}
                 </DropdownMenuItem>
               </DialogTrigger>
@@ -172,9 +175,11 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
               <DialogContent className="sm:max-w-sm" showCloseButton={false}>
                 <DialogHeader>
                   <DialogTitle>{t("Xoá Khấu Trừ")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.")}
-                    </DialogDescription>
+                  <DialogDescription className="text-sm text-muted-foreground">
+                    {t(
+                      "Vui lòng xác nhận hành động này. Không thể phục hồi sau khi xoá.",
+                    )}
+                  </DialogDescription>
                 </DialogHeader>
                 <div className="text-sm space-y-1 text-muted-foreground">
                   <p>{t("Bạn có chắc muốn xoá không?")}</p>
@@ -199,7 +204,8 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                   </DialogClose>
                   <Button
                     variant="destructive"
-                    onClick={() => deleteDeduction(deduction.MaKT)}>
+                    onClick={() => deleteDeduction(deduction.MaKT)}
+                  >
                     {t("Xoá")}
                   </Button>
                 </DialogFooter>

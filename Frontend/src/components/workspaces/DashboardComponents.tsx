@@ -24,7 +24,14 @@ const DashboardComponents = () => {
     getPayRolls();
     getHours();
     getAccounts();
-  }, [getEmployees, getContracts, getDepartments, getPayRolls, getHours, getAccounts]);
+  }, [
+    getEmployees,
+    getContracts,
+    getDepartments,
+    getPayRolls,
+    getHours,
+    getAccounts,
+  ]);
 
   return (
     <div className="@container/main flex flex-1 flex-col gap-2">

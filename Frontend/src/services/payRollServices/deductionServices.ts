@@ -14,7 +14,10 @@ export const DeductionServices = {
     });
     return true;
   },
-  updateDeduction: async (ID: string, deductionData: Record<string, unknown>) => {
+  updateDeduction: async (
+    ID: string,
+    deductionData: Record<string, unknown>,
+  ) => {
     const res = await api.put(`/api/payroll/deductions/${ID}`, deductionData, {
       withCredentials: true,
     });

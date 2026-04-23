@@ -7,13 +7,9 @@ export const AllowanceInputSchema = z.object({
     .min(1, "Mã phụ cấp không được để trống")
     .regex(/^PC\d{3}$/, "Mã phải dạng PCxxx"),
 
-  LoaiPC: z
-    .string()
-    .min(1, "Loại phụ cấp không được để trống"),
+  LoaiPC: z.string().min(1, "Loại phụ cấp không được để trống"),
 
-  SoTien: z.coerce
-    .number() 
-    .min(10000, "Số tiền phải lớn hơn 0"),
+  SoTien: z.coerce.number().min(10000, "Số tiền phải lớn hơn 0"),
 });
 
 /* OUTPUT (DATA TỪ API)*/
@@ -34,4 +30,3 @@ export interface AllowanceTypes {
   createAllowance: (data: AllowanceInput) => Promise<void>;
   updateAllowance: (ID: string, data: AllowanceInput) => Promise<void>;
 }
-

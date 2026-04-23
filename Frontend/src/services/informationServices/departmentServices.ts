@@ -24,7 +24,10 @@ export const DepartmentServices = {
     return res.data;
   },
 
-  updateDepartment: async (ID: string, data: Department): Promise<Department> => {
+  updateDepartment: async (
+    ID: string,
+    data: Department,
+  ): Promise<Department> => {
     const res = await api.put(`/api/information/departments/${ID}`, data, {
       withCredentials: true,
     });

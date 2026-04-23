@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { GrantPermissionsServices } from "@/services/permissionServices/grantPermissionsServices";
@@ -20,10 +21,10 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         // Refresh lại danh sách quyền
         await get().getGrantPermissions();
 
-        toast.success("Cấp quyền thành công");
+        toast.success(i18n.t("Cấp quyền thành công"));
       } catch (error) {
         console.error("Lỗi khi cấp quyền", error);
-        toast.error("Không thể cấp quyền");
+        toast.error(i18n.t("Không thể cấp quyền"));
       } finally {
         set({ initializing: false });
       }
@@ -35,7 +36,7 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         set({ GrantPermissions: data });
       } catch (error) {
         console.error("Lỗi khi lấy danh sách quyền", error);
-        toast.error("Không thể lấy danh sách quyền");
+        toast.error(i18n.t("Không thể lấy danh sách quyền"));
       } finally {
         set({ initializing: false });
       }
@@ -52,10 +53,10 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         // Refresh lại danh sách quyền
         await get().getGrantPermissions();
 
-        toast.success("Thay đổi Quyền thành công");
+        toast.success(i18n.t("Thay đổi Quyền thành công"));
       } catch (error) {
         console.error("Lỗi khi cập nhật Quyền", error);
-        toast.error("Không thể cập nhật Quyền");
+        toast.error(i18n.t("Không thể cập nhật Quyền"));
       }
     },
     deleteAllGrantPermissions: async (ID: string) => {
@@ -63,10 +64,10 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         await GrantPermissionsServices.deleteAllGrantPermissions(ID);
         // Refresh to get updated data from server
         await get().getGrantPermissions();
-        toast.success("Xoá tất cả quyền được cấp thành công");
+        toast.success(i18n.t("Xoá tất cả quyền được cấp thành công"));
       } catch (error) {
         console.error("Lỗi khi xoá Vai trò được cấp quyền", error);
-        toast.error("Không thể xoá Vai trò được cấp quyền");
+        toast.error(i18n.t("Không thể xoá Vai trò được cấp quyền"));
       }
     },
     deleteOneGrantPermissions: async (IDR: string, IDP: string) => {
@@ -82,7 +83,7 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         });
       } catch (error) {
         console.error("Lỗi khi xoá quyền khỏi vai trò", error);
-        toast.error("Không thể xoá quyền khỏi vai trò");
+        toast.error(i18n.t("Không thể xoá quyền khỏi vai trò"));
       }
     },
   }),

@@ -6,18 +6,20 @@
  */
 export const getImageUrl = (imagePath: string | null | undefined): string => {
   if (!imagePath) return "";
-  
+
   // If it's already a Data URL (Base64), return it as is
   if (imagePath.startsWith("data:image/")) {
     return imagePath;
   }
-  
+
   // If it's a relative path from the server
   if (imagePath.startsWith("/uploads/")) {
-    const baseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
+    const baseUrl = (
+      import.meta.env.VITE_API_URL || "http://localhost:5000"
+    ).replace(/\/$/, "");
     return `${baseUrl}${imagePath}`;
   }
-  
+
   return imagePath;
 };
 
@@ -27,7 +29,7 @@ export const getImageUrl = (imagePath: string | null | undefined): string => {
  */
 export const openBase64InNewTab = (base64Data: string) => {
   fetch(base64Data)
-    .then((res) => res.blob())  
+    .then((res) => res.blob())
     .then((blob) => {
       const url = URL.createObjectURL(blob);
       const win = window.open(url, "_blank");

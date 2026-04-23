@@ -4,11 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "createDB": "sequelize-cli db:create --config config/config.js",
+    "dropDB": "sequelize-cli db:drop --config config/config.js",
     "seed": "sequelize-cli db:seed:all --config config/config.js",
     "migrate": "sequelize-cli db:migrate --config config/config.js",
+    "undoSeed": "sequelize-cli db:seed:undo:all --config config/config.js",
+    "undoMigrate": "sequelize-cli db:migrate:undo:all --config config/config.js",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
+    "test": "cross-env NODE_NO_WARNINGS=1 node --experimental-vm-modules node_modules/jest/bin/jest.js --verbose"
   },
   "keywords": [],
   "author": "",
@@ -31,10 +35,10 @@
   },
   "devDependencies": {
     "@jest/globals": "^30.3.0",
+    "cross-env": "^10.1.0",
     "exceljs": "^4.4.0",
     "jest": "^30.3.0",
     "nodemon": "^3.1.11",
-    "sequelize-cli": "^6.6.5",
-    "supertest": "^7.2.2"
+    "sequelize-cli": "^6.6.5"
   }
 }

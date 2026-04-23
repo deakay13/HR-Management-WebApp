@@ -4,42 +4,26 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { DeductionActionCell } from "@/components/actionCells/workspace/DeductionActionCell";
 import { useTranslation } from "react-i18next";
 
-function HeaderMaKT() {
+function H({ k }: { k: string }) {
   const { t } = useTranslation();
-  return <div className="w-20 text-center">{t("Mã Khấu Trừ")}</div>;
-}
-
-function HeaderLoaiKT() {
-  const { t } = useTranslation();
-  return <div className="w-20 text-center">{t("Loại Khấu Trừ")}</div>;
-}
-
-function HeaderPhanTram() {
-  const { t } = useTranslation();
-  return <div className="w-20 text-center">{t("Phần Trăm")}</div>;
+  return <>{t(k)}</>;
 }
 
 export const columns: ColumnDef<Deduction>[] = [
   {
     accessorKey: "MaKT",
-    header: () => <HeaderMaKT />,
-    cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.MaKT}</div>
-    ),
+    header: () => <H k="Mã Khấu Trừ" />,
+    cell: ({ row }) => <>{row.original.MaKT}</>,
   },
   {
     accessorKey: "LoaiKT",
-    header: () => <HeaderLoaiKT />,
-    cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.LoaiKT}</div>
-    ),
+    header: () => <H k="Loại Khấu Trừ" />,
+    cell: ({ row }) => <>{row.original.LoaiKT}</>,
   },
   {
     accessorKey: "PhanTram",
-    header: () => <HeaderPhanTram />,
-    cell: ({ row }) => (
-      <div className="w-20 text-center h-8">{row.original.PhanTram}%</div>
-    ),
+    header: () => <H k="Phần Trăm" />,
+    cell: ({ row }) => <>{row.original.PhanTram}%</>,
   },
   {
     id: "actions",

@@ -25,12 +25,57 @@ export const contractColumns: ColumnDef<Contract>[] = [
     header: () => <H k="Loại HĐ" />,
   },
   {
+    accessorKey: "NgayKy",
+    header: () => <H k="Ngày Ký" />,
+  },
+  {
     accessorKey: "NgayBatDau",
     header: () => <H k="Ngày Bắt Đầu" />,
   },
   {
     accessorKey: "NgayKetThuc",
     header: () => <H k="Ngày Kết Thúc" />,
+    cell: ({ row }) => {
+      const date = row.original.NgayKetThuc;
+      return <span>{date ? date : "—"}</span>;
+    },
+  },
+  {
+    accessorKey: "MaPB",
+    header: () => <H k="Phòng Ban" />,
+  },
+  {
+    accessorKey: "ChucDanh",
+    header: () => <H k="Chức Danh" />,
+  },
+  {
+    accessorKey: "MaLCB",
+    header: () => <H k="Lương Cơ Bản" />,
+  },
+  {
+    accessorKey: "MaPC",
+    header: () => <H k="Phụ Cấp" />,
+  },
+  {
+    accessorKey: "HinhThucTraLuong",
+    header: () => <H k="Hình Thức Trả Lương" />,
+  },
+  {
+    accessorKey: "TinhTrang",
+    header: () => <H k="Tình Trạng" />,
+    cell: ({ row }) => {
+      const status = row.original.TinhTrang;
+      return (
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+            status === "Còn hiệu lực"
+              ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
+              : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+          }`}>
+          {status}
+        </span>
+      );
+    },
   },
   {
     id: "HinhAnhHopDong",
@@ -44,7 +89,6 @@ export const contractColumns: ColumnDef<Contract>[] = [
         if (imgData.startsWith("data:")) {
           openBase64InNewTab(imgData);
         } else {
-          // Legacy path
           window.open(getImageUrl(imgData), "_blank");
         }
       };

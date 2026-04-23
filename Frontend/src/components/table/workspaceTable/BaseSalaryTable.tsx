@@ -57,10 +57,11 @@ export function BaseSalaryTable({
 }) {
   const { t } = useTranslation();
   const [rowSelection, setRowSelection] = React.useState({});
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const { createBaseSalary } = useBaseSalaryStore();
   const { permissions } = useAuthorizeStore();
-  
+
   const [createOpen, setCreateOpen] = React.useState(false);
   const [formData, setFormData] = React.useState({ MaLCB: "", LuongCB: 0 });
 
@@ -75,15 +76,26 @@ export function BaseSalaryTable({
     }
   };
 
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    [],
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<BaseSalary>({
     data,
     columns,
-    state: { sorting, columnVisibility, rowSelection, columnFilters, pagination },
+    state: {
+      sorting,
+      columnVisibility,
+      rowSelection,
+      columnFilters,
+      pagination,
+    },
     getRowId: (row) => row.MaLCB.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -104,7 +116,10 @@ export function BaseSalaryTable({
   }
 
   return (
-    <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
+    <Tabs
+      defaultValue="outline"
+      className="w-full flex-col justify-start gap-6"
+    >
       <div className="flex items-center justify-between px-4 lg:px-6">
         <TableBreadcrumb section={t("Danh Mục")} page={t("Lương Cơ Bản")} />
 
@@ -121,7 +136,8 @@ export function BaseSalaryTable({
                   onClick={() => {
                     setFormData({ MaLCB: "", LuongCB: 0 });
                     setCreateOpen(true);
-                  }}>
+                  }}
+                >
                   <IconPlus />
                   <span className="hidden lg:inline">{t("Tạo mới")}</span>
                 </Button>
@@ -146,7 +162,9 @@ export function BaseSalaryTable({
                         placeholder={t("VD: LCB001")}
                         className="h-10"
                         value={formData.MaLCB}
-                        onChange={(e) => setFormData({ ...formData, MaLCB: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, MaLCB: e.target.value })
+                        }
                       />
                     </Field>
 
@@ -159,7 +177,10 @@ export function BaseSalaryTable({
                         className="h-10"
                         value={formData.LuongCB}
                         onChange={(e) =>
-                          setFormData({ ...formData, LuongCB: Number(e.target.value) })
+                          setFormData({
+                            ...formData,
+                            LuongCB: Number(e.target.value),
+                          })
                         }
                       />
                     </Field>
@@ -173,7 +194,8 @@ export function BaseSalaryTable({
                     </DialogClose>
                     <Button
                       type="submit"
-                      disabled={!formData.MaLCB || formData.LuongCB <= 0}>
+                      disabled={!formData.MaLCB || formData.LuongCB <= 0}
+                    >
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -187,17 +209,21 @@ export function BaseSalaryTable({
       {/* Table */}
       <TabsContent
         value="outline"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
+        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
+      >
         <div className="overflow-hidden rounded-lg border">
           <Table>
             <TableHeader className="sticky top-0 z-10">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
+                    <TableHead key={header.id} colSpan={header.colSpan} className="text-center">
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -206,10 +232,16 @@ export function BaseSalaryTable({
             <TableBody className="**:data-[slot=table-cell]:first:w-8">
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <TableCell key={cell.id} className="text-center align-middle">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -218,7 +250,8 @@ export function BaseSalaryTable({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground">
+                    className="h-24 text-center text-muted-foreground"
+                  >
                     {t("Không có dữ liệu.")}
                   </TableCell>
                 </TableRow>

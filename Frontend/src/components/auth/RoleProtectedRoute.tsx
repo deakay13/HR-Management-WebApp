@@ -12,7 +12,14 @@ const RoleProtectedRoute = ({ allowedRoles }: RoleProtectedRouteProps) => {
   // Wait until role is resolved before making a decision
   if (initializing) {
     return (
-      <div style={{ display: "flex", height: "100vh", alignItems: "center", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          height: "100vh",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         Đang tải...
       </div>
     );

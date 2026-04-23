@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { BaseSalaryServices } from "@/services/payRollServices/baseSalaryServices";
@@ -17,7 +18,7 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set, get) => ({
       set({ BaseSalaries: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách BaseSalaries", error);
-      toast.error("Không thể tải danh sách lương cơ bản");
+      toast.error(i18n.t("Không thể tải danh sách lương cơ bản"));
     } finally {
       set({ initializing: false });
     }
@@ -28,10 +29,10 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set, get) => ({
       set({
         BaseSalaries: get().BaseSalaries.filter((d) => d.MaLCB !== ID),
       });
-      toast.success("Xoá Lương cơ bản thành công");
+      toast.success(i18n.t("Xoá Lương cơ bản thành công"));
     } catch (error) {
       console.error("Lỗi khi xoá Lương cơ bản", error);
-      toast.error("Không thể xoá Lương cơ bản");
+      toast.error(i18n.t("Không thể xoá Lương cơ bản"));
     }
   },
   // CREATE
@@ -41,10 +42,10 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set, get) => ({
       set({
         BaseSalaries: [...get().BaseSalaries, newItem],
       });
-      toast.success("Thêm Lương cơ bản thành công");
+      toast.success(i18n.t("Thêm Lương cơ bản thành công"));
     } catch (error) {
       console.error("Lỗi khi thêm Lương cơ bản", error);
-      toast.error("Không thể thêm Lương cơ bản");
+      toast.error(i18n.t("Không thể thêm Lương cơ bản"));
       throw error;
     }
   },
@@ -58,10 +59,10 @@ export const useBaseSalaryStore = create<BaseSalaryTypes>((set, get) => ({
           d.MaLCB === ID ? updated : d,
         ),
       });
-      toast.success("Lưu thay đổi lương cơ bản thành công");
+      toast.success(i18n.t("Lưu thay đổi lương cơ bản thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật Lương cơ bản", error);
-      toast.error("Không thể lưu thay đổi lương cơ bản");
+      toast.error(i18n.t("Không thể lưu thay đổi lương cơ bản"));
       throw error;
     }
   },

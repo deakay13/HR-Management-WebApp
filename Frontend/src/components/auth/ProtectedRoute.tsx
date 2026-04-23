@@ -13,7 +13,7 @@ const ProtectedRoute = () => {
           useAuthStore.getState();
 
         if (!accessToken) {
-          await refresh();
+          await refresh(false);
         }
 
         // Re-read state after refresh

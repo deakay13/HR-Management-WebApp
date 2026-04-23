@@ -1,3 +1,4 @@
+import i18n from "@/i18n";
 import { create } from "zustand";
 import { toast } from "sonner";
 import { accountsServices } from "@/services/userServices/accountsServices";
@@ -14,10 +15,10 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       set({ initializing: true });
       await accountsServices.createAccount(data);
       await get().getAccounts();
-      toast.success("Tạo tài khoản thành công");
+      toast.success(i18n.t("Tạo tài khoản thành công"));
     } catch (error) {
       console.error("Lỗi khi tạo tài khoản:", error);
-      toast.error("Không thể tạo tài khoản");
+      toast.error(i18n.t("Không thể tạo tài khoản"));
       throw error;
     } finally {
       set({ initializing: false });
@@ -30,7 +31,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       set({ accounts: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách tài khoản", error);
-      toast.error("Không thể lấy danh sách tài khoản");
+      toast.error(i18n.t("Không thể lấy danh sách tài khoản"));
     } finally {
       set({ initializing: false });
     }
@@ -38,10 +39,10 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
   exportAccounts: async () => {
     try {
       await accountsServices.exportAccounts();
-      toast.success("Xuất file Excel thành công");
+      toast.success(i18n.t("Xuất file Excel thành công"));
     } catch (error) {
       console.error("Lỗi khi xuất file Excel", error);
-      toast.error("Không thể xuất file Excel");
+      toast.error(i18n.t("Không thể xuất file Excel"));
     }
   },
   updateAccount: async (ID: string, data: Partial<Account>) => {
@@ -49,10 +50,10 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       set({ initializing: true });
       await accountsServices.updateAccount(ID, data);
       await get().getAccounts();
-      toast.success("Cập nhật tài khoản thành công");
+      toast.success(i18n.t("Cập nhật tài khoản thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật tài khoản:", error);
-      toast.error("Không thể cập nhật tài khoản");
+      toast.error(i18n.t("Không thể cập nhật tài khoản"));
       throw error;
     } finally {
       set({ initializing: false });
@@ -64,10 +65,10 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       set({
         accounts: get().accounts.filter((a) => a.MaTK !== ID),
       });
-      toast.success("Xoá tài khoản thành công");
+      toast.success(i18n.t("Xoá tài khoản thành công"));
     } catch (error) {
       console.error("Lỗi khi xoá tài khoản", error);
-      toast.error("Không thể xoá tài khoản");
+      toast.error(i18n.t("Không thể xoá tài khoản"));
     }
   },
 }));

@@ -3,46 +3,46 @@ import { Op, Sequelize } from "sequelize";
 export const buildWhereClause = (query, config) => {
   const where = {};
 
-  //  keyword search nhiều field
+  /* Keyword search across multiple fields */
   if (query.keyword && config.searchFields) {
-    where[Op.or] = config.searchFields.map(field => {
-      // Nếu field nằm trong danh sách cần cast (VD: số)
+    where[Op.or] = config.searchFields.map((field) => {
+      /* If field is in list */
       if (config.numericFields?.includes(field)) {
         return {
           [Op.and]: [
             Sequelize.where(Sequelize.cast(Sequelize.col(field), "VARCHAR"), {
-              [Op.like]: `%${query.keyword}%`
-            })
-          ]
+              [Op.like]: `%${query.keyword}%`,
+            }),
+          ],
         };
       }
       return { [field]: { [Op.like]: `%${query.keyword}%` } };
     });
   }
 
-  //  filter chính xác (equal)
+  /* Exact filter (equal) */
   if (config.exactFields) {
-    config.exactFields.forEach(field => {
+    config.exactFields.forEach((field) => {
       if (query[field]) {
         where[field] = query[field];
       }
     });
   }
 
-  //  filter like (tháng, ngày…)
+  /* Like filter (month, day, etc.) */
   if (config.likeFields) {
-    config.likeFields.forEach(field => {
+    config.likeFields.forEach((field) => {
       if (query[field]) {
         where[field] = {
-          [Op.like]: `%${query[field]}%`
+          [Op.like]: `%${query[field]}%`,
         };
       }
     });
   }
 
-  //  range (min max)
+  /* Range (min max) */
   if (config.rangeFields) {
-    config.rangeFields.forEach(field => {
+    config.rangeFields.forEach((field) => {
       const min = query[`min${field}`];
       const max = query[`max${field}`];
 
@@ -63,8 +63,10 @@ export const searchService = async (model, query, pagination, config = {}) => {
 
   const where = buildWhereClause(query, config);
 
-  // Merge forcedWhere — cannot be overridden by user query (used for role-based filtering)
-  const finalWhere = config.forcedWhere ? { ...where, ...config.forcedWhere } : where;
+  /* Merge forcedWhere - cannot be overridden */
+  const finalWhere = config.forcedWhere
+    ? { ...where, ...config.forcedWhere }
+    : where;
 
   const { count, rows } = await model.findAndCountAll({
     where: finalWhere,
@@ -72,7 +74,7 @@ export const searchService = async (model, query, pagination, config = {}) => {
     offset: limit !== null ? offset : undefined,
     order: config.order || [["createdAt", "DESC"]],
     include: config.include || [],
-    ...(config.subQuery !== undefined && { subQuery: config.subQuery })
+    ...(config.subQuery !== undefined && { subQuery: config.subQuery }),
   });
 
   return {
@@ -80,6 +82,6 @@ export const searchService = async (model, query, pagination, config = {}) => {
     totalPages: limit ? Math.ceil(count / finalSize) : 1,
     currentPage: page,
     pageSize: finalSize,
-    data: rows
+    data: rows,
   };
 };
