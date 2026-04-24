@@ -7,9 +7,23 @@ import type { Account, AccountTypes } from "@/types/authTypes/accountTypes";
 export const useAccountsStore = create<AccountTypes>((set, get) => ({
   accounts: [],
   initializing: true,
+  totalItems: 0,
+  totalPages: 1,
+  currentPage: 1,
+  pageSize: 10,
+  searchParams: { keyword: "", page: 1, size: 10 },
+
   clearState: () => {
-    set({ accounts: [] });
+    set({
+      accounts: [],
+      totalItems: 0,
+      totalPages: 1,
+      currentPage: 1,
+      pageSize: 10,
+      searchParams: { keyword: "", page: 1, size: 10 },
+    });
   },
+
   createAccount: async (data: Account) => {
     try {
       set({ initializing: true });
@@ -25,10 +39,19 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
     }
   },
 
-  getAccounts: async (search?: string) => {
+  getAccounts: async () => {
     try {
-      const data = await accountsServices.getAccounts(search);
-      set({ accounts: data });
+      const { searchParams } = get();
+      const response = await accountsServices.searchAccounts(searchParams);
+      if (response && "data" in response) {
+        set({
+          accounts: response.data,
+          totalItems: response.totalItems,
+          totalPages: response.totalPages,
+          currentPage: response.currentPage,
+          pageSize: response.pageSize,
+        });
+      }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách tài khoản", error);
       toast.error(i18n.t("Không thể lấy danh sách tài khoản"));
@@ -36,6 +59,26 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       set({ initializing: false });
     }
   },
+
+  searchAccounts: async (params) => {
+    try {
+      const currentParams = get().searchParams;
+      const newParams = { ...currentParams, ...params };
+      const response = await accountsServices.searchAccounts(newParams);
+      set({
+        accounts: response.data,
+        totalItems: response.totalItems,
+        totalPages: response.totalPages,
+        currentPage: response.currentPage,
+        pageSize: response.pageSize,
+        searchParams: newParams,
+      });
+    } catch (error) {
+      console.error("Lỗi khi tìm kiếm tài khoản:", error);
+      toast.error(i18n.t("Không thể thực hiện tìm kiếm"));
+    }
+  },
+
   exportAccounts: async () => {
     try {
       await accountsServices.exportAccounts();
@@ -45,6 +88,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       toast.error(i18n.t("Không thể xuất file Excel"));
     }
   },
+
   updateAccount: async (ID: string, data: Partial<Account>) => {
     try {
       set({ initializing: true });
@@ -59,6 +103,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       set({ initializing: false });
     }
   },
+
   deleteAccount: async (ID: string) => {
     try {
       await accountsServices.deleteAccount(ID);

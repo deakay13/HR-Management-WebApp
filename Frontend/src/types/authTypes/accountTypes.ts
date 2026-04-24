@@ -55,10 +55,16 @@ export type Account = z.infer<typeof AccountSchema> & {
 export interface AccountTypes {
   accounts: Account[];
   initializing: boolean;
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  searchParams: { keyword?: string; page: number; size: number };
   clearState: () => void;
   createAccount: (data: Account) => Promise<void>;
   updateAccount: (ID: string, data: Partial<Account>) => Promise<void>;
-  getAccounts: (search?: string) => Promise<void>;
+  getAccounts: () => Promise<void>;
+  searchAccounts: (params: { keyword?: string; page?: number; size?: number }) => Promise<void>;
   exportAccounts: () => Promise<void>;
   deleteAccount: (ID: string) => Promise<void>;
 }
