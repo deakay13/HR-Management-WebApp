@@ -1,6 +1,6 @@
 import * as React from "react";
-import { useEffect } from "react";
-import { IconPlus, IconDownload, IconSearch } from "@tabler/icons-react";
+import { useEffect, useCallback } from "react";
+import { IconPlus, IconSearch, IconFileSpreadsheet } from "@tabler/icons-react";
 import {
   flexRender,
   getCoreRowModel,
@@ -86,18 +86,37 @@ export function AccountsTable({
     pageIndex: 0,
     pageSize: 10,
   });
+
   const { permissions } = useAuthorizeStore();
   const [searchTerm, setSearchTerm] = React.useState("");
-  const { createAccount, exportAccounts, getAccounts } = useAccountsStore();
 
-  /* Debounce search */
+  const {
+    createAccount,
+    exportAccounts,
+    searchAccounts,
+    getAccounts,
+    totalItems,
+    totalPages,
+    currentPage,
+    pageSize,
+  } = useAccountsStore();
+
+  /* Debounce search — gọi server khi keyword thay đổi */
   useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      getAccounts(searchTerm);
+    const timer = setTimeout(() => {
+      searchAccounts({ keyword: searchTerm, page: 1, size: pageSize });
     }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    return () => clearTimeout(delayDebounceFn);
-  }, [searchTerm, getAccounts]);
+  /* Đổi trang */
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      searchAccounts({ page: newPage, size: pageSize });
+    },
+    [searchAccounts, pageSize],
+  );
+
   /* eslint-disable-next-line react-hooks/incompatible-library */
   const table = useReactTable<Account>({
     data,
@@ -122,6 +141,8 @@ export function AccountsTable({
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
+    manualPagination: true,
+    pageCount: totalPages,
   });
 
   const { Roles, getRoles } = useRolesStore();
@@ -172,24 +193,26 @@ export function AccountsTable({
         <TableBreadcrumb section={t("Phân Quyền")} page={t("Tài Khoản")} />
 
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Search */}
           <div className="relative flex items-center gap-2">
             <IconSearch className="absolute left-2.5 top-2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder={t("Search...")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="h-9 w-[160px] pl-9"
+              className="h-9 w-[200px] pl-9"
             />
           </div>
 
+          {/* Export Excel */}
           <Button
             variant="outline"
-            size="icon"
+            size="sm"
             onClick={() => exportAccounts()}
-            className="size-9"
+            className="h-9 w-9 p-0"
             title={t("Xuất Excel")}
           >
-            <IconDownload className="h-4 w-4" />
+            <IconFileSpreadsheet size={18} />
           </Button>
 
           <TableColumnFilter table={table} />
@@ -295,10 +318,7 @@ export function AccountsTable({
                     <DialogClose asChild>
                       <Button variant="outline">{t("Huỷ")}</Button>
                     </DialogClose>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
+                    <Button type="submit" disabled={isSubmitting}>
                       {t("Tạo mới")}
                     </Button>
                   </DialogFooter>
@@ -362,7 +382,34 @@ export function AccountsTable({
             </TableBody>
           </Table>
         </div>
-        <TablePagination table={table} />
+
+        {/* Server-side Pagination — giống Payroll */}
+        <div className="flex items-center justify-between px-2">
+          <p className="text-sm text-muted-foreground">
+            {t("Tổng")}: <strong>{totalItems}</strong> {t("tài khoản")}
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage <= 1}
+            >
+              {t("Trước")}
+            </Button>
+            <span className="text-sm">
+              {currentPage} / {totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage >= totalPages}
+            >
+              {t("Sau")}
+            </Button>
+          </div>
+        </div>
       </TabsContent>
     </Tabs>
   );

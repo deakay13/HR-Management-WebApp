@@ -136,6 +136,65 @@ export const readAllAccount = async (req, res) => {
     return res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
+export const searchAccount = async (req, res) => {
+  try {
+    const { keyword, page = 1, size = 10 } = req.query;
+    const pageNum = parseInt(page);
+    const sizeNum = parseInt(size);
+    const offset = (pageNum - 1) * sizeNum;
+
+    const whereClause = keyword
+      ? {
+          [Op.or]: [
+            { MaTK: { [Op.like]: `%${keyword}%` } },
+            { MaNV: { [Op.like]: `%${keyword}%` } },
+            { TenTaiKhoan: { [Op.like]: `%${keyword}%` } },
+            { "$NhanVien.HoVaTen$": { [Op.like]: `%${keyword}%` } },
+            { "$VaiTro.TenVaiTro$": { [Op.like]: `%${keyword}%` } },
+          ],
+        }
+      : {};
+
+    const { count, rows } = await TaiKhoan.findAndCountAll({
+      where: whereClause,
+      include: [
+        { model: NhanVien, as: "NhanVien", attributes: ["HoVaTen"] },
+        { model: VaiTro, as: "VaiTro", attributes: ["TenVaiTro"] },
+      ],
+      limit: sizeNum,
+      offset,
+      distinct: true,
+    });
+
+    const activeSessions = await Session.findAll();
+    const activeMaTKs = new Set(activeSessions.map((s) => s.MaTK));
+
+    const data = rows.map((acc) => ({
+      MaTK: acc.MaTK,
+      MaNV: acc.MaNV,
+      HoVaTen: acc.NhanVien?.HoVaTen || "N/A",
+      MaVT: acc.MaVT,
+      TenVaiTro: acc.VaiTro?.TenVaiTro || "N/A",
+      TenTaiKhoan: acc.TenTaiKhoan,
+      MatKhau: acc.MatKhau,
+      TrangThai: activeMaTKs.has(acc.MaTK) ? "Online" : "Offline",
+      createdAt: formatVNDateTime(acc.createdAt),
+      updatedAt: formatVNDateTime(acc.updatedAt),
+    }));
+
+    return res.status(200).json({
+      totalItems: count,
+      totalPages: Math.ceil(count / sizeNum),
+      currentPage: pageNum,
+      pageSize: sizeNum,
+      data,
+    });
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm tài khoản", error);
+    return res.status(500).json({ message: "Lỗi hệ thống" });
+  }
+};
+
 export const readAccountById = async (req, res) => {
   try {
     const { ID } = req.params;

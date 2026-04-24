@@ -5,6 +5,9 @@ import { sequelize } from "../../models/index.js";
 import { Pagination } from "../../utils/paginations.js";
 
 export const assignPermission_Role = async (req, res) => {
+  if (!req.body) {
+    return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
+  }
   const transaction = await sequelize.transaction();
   try {
     const { MaVT, MaQuyen } = req.body;

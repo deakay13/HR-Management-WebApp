@@ -5,6 +5,7 @@ import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
 export const createHour = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
     const parsed = hoursSchema.omit({ SoNgayLam: true }).safeParse(req.body);
     if (!parsed.success) {
@@ -98,6 +99,7 @@ export const getHourById = async (req, res) => {
   }
 };
 export const updateHour = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
     const { ID } = req.params;
 

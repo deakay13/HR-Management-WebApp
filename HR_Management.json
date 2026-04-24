@@ -1,0 +1,2188 @@
+{
+  "info": {
+    "_postman_id": "856a0be8-affc-42d4-9618-b8219c665f8f",
+    "name": "HR_Management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47219077",
+    "_collection_link": "https://go.postman.co/collection/47219077-856a0be8-affc-42d4-9618-b8219c665f8f?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "signIn",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "",
+                  "var token = jsonData.token || ",
+                  "            jsonData.accessToken || ",
+                  "            (jsonData.data && jsonData.data.token) || ",
+                  "            (jsonData.data && jsonData.data.accessToken) ||",
+                  "            (jsonData.result && jsonData.result.token) ||",
+                  "            (jsonData.result && jsonData.result.accessToken);",
+                  "",
+                  "if (token) {",
+                  "    pm.environment.set(\"token\", token);",
+                  "    console.log(\"Token saved:\", token);",
+                  "}",
+                  "",
+                  "var refreshToken = jsonData.refreshToken || ",
+                  "                   (jsonData.data && jsonData.data.refreshToken) ||",
+                  "                   (jsonData.result && jsonData.result.refreshToken);",
+                  "",
+                  "if (refreshToken) {",
+                  "    pm.environment.set(\"reshToken\", refreshToken);",
+                  "    console.log(\"Refresh token saved:\", refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"TenTaiKhoan\":\"letvhrm\",\r\n    \"MatKhau\":\"Nhanvien123456!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/signin",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "signin"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "account",
+      "item": [
+        {
+          "name": "Create Account",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"MaTK\":\"TK101\",\r\n    \"MaNV\":\"NV001\", \r\n    \"MaVT\":\"VT001\", \r\n    \"TenTaiKhoan\":\"demo12\", \r\n    \"MatKhau\":\"Nhanvien123456!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/account/Accounts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "Accounts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read Account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/account/Accounts/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "Accounts",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read Account by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/account/Accounts/TK018",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "Accounts",
+                "TK101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Account by ID",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n   \"MaNV\":\"NV002\", \r\n    \"MaVT\":\"VT001\", \r\n    \"TenTaiKhoan\":\"demo33\", \r\n    \"MatKhau\":\"Nhanvien123456!\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/account/Accounts/TK018",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "Accounts",
+                "TK020"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete account by ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/account/Accounts/TK018",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "Accounts",
+                "TK098"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "export excel account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/account/Accounts/export",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "Accounts",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "search account",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/account/Accounts/search?keyword=sinh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "account",
+                "Accounts"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "sinh"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "permission",
+      "item": [
+        {
+          "name": "Create Permission",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"MaQuyen\":\"MQ101\",\r\n    \"TenQuyen\":\"quyen\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permissions/permission",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "permission"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read Permission",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/permission",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "permission"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read Permission by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/permission/MQ101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "permission",
+                "MQ101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Permission by ID",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n  \"TenQuyen\": \"Đếm\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permissions/permission/MQ101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "permission",
+                "MQ101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Permisson by ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/permission/MQ101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "permission",
+                "MQ101"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "role",
+      "item": [
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n    \"MaVT\":\"VT202\", \r\n    \"TenVaiTro\":\"quyen\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permissions/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Read Role by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/roles/VT202",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "roles",
+                "VT202"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Role by ID",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{  \r\n    \"TenVaiTro\":\"quyen dep zai\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/permissions/roles/VT202",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "roles",
+                "VT202"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Role by ID",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/roles/VT202",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "roles",
+                "VT202"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "payRoll",
+      "item": [
+        {
+          "name": "baseSalary",
+          "item": [
+            {
+              "name": "create baseSalary",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"MaLCB\": \"LCB123\",\r\n    \"LuongCB\": \"12000000\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/basesalary",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "basesalary"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read baseSalary",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/basesalary?page=1&size=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "basesalary"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchBaseSalary",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/basesalary/search?keyword=LCB001",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "basesalary",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "keyword",
+                      "value": "LCB001"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "exportBaseSalariesToExcel",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/basesalary/export",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "basesalary",
+                    "export"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read basesalary by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/basesalary/LCB001",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "basesalary",
+                    "LCB001"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update baseSalary by ID",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"LuongCB\": \"18000000\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/basesalary/LCB123",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "basesalary",
+                    "LCB123"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete baseSalary by ID",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/basesalary/LCB123",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "basesalary",
+                    "LCB123"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "deduction",
+          "item": [
+            {
+              "name": "create deduction",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"MaKT\":\"\",\r\n  \"LoaiKT\":\"\",\r\n  \"PhanTram\": \"\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/deductions",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "deductions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read deduction",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/deductions?page=1&size=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "deductions"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchDeduction",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/deductions/search?keyword=BHXH",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "deductions",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "keyword",
+                      "value": "BHXH"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "exportDeductionsToExcel",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/deductions/export",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "deductions",
+                    "export"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read deduction by ID",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"MaKT\":\"KT112\",\r\n  \"LoaiKT\":\"khuyet tat\",\r\n  \"PhanTram\":\"\" \r\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/deductions/KT111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "deductions",
+                    "KT111"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update deduction",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"LoaiKT\":\"that hoc\",\r\n  \"PhanTram\": 12\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/deductions/KT111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "deductions",
+                    "KT111"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete deduction by ID",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/deductions/KT112",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "deductions",
+                    "KT112"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "allowance",
+          "item": [
+            {
+              "name": "createAllowance",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \r\n    \"MaPC\":\"PC111\",\r\n    \"LoaiPC\":\"com\",\r\n    \"SoTien\": 200000\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/allowances",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "allowances"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read Allowance",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/allowances?page=1&size=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "allowances"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchAllowance",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/allowances/search?keyword=sinh",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "allowances",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "keyword",
+                      "value": "sinh"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "exportAllowancesToExcel",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/allowances/export",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "allowances",
+                    "export"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read Allowance by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/allowances/PC111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "allowances",
+                    "PC111"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update Allowance by ID",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"LoaiPC\":\"xang\",\r\n    \"SoTien\":1000000\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/allowances/PC111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "allowances",
+                    "PC111"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete allowance by ID",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/allowances/PC111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "allowances",
+                    "PC111"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "hours",
+          "item": [
+            {
+              "name": "create Hour",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"MaGL\":\"GL111\",\r\n    \"SoGioLam\":\"2\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/hours",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "hours"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read Hours",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/hours?page=1&size=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "hours"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchHours",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/hours/search?keyword=4",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "hours",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "keyword",
+                      "value": "4"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "exportHoursToExcel",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/hours/export",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "hours",
+                    "export"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read Hour by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/hours/GL111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "hours",
+                    "GL111"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "update Hour by ID",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"SoGioLam\":12\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/hours/GL111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "hours",
+                    "GL111"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete Hour by ID",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/hours/GL111",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "hours",
+                    "GL111"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "payRoll",
+          "item": [
+            {
+              "name": "calculate payRoll",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"MaBL\": \"BL1500\",\r\n  \"MaNV\": \"NV001\",\r\n  \"MaLCB\": \"LCB001\",\r\n  \"MaPC\": \"PC001\",\r\n  \"MaKT\": \"KT001\",\r\n  \"MaGL\": \"GL002\",\r\n  \"Thang\": \"2026-02-01\",\r\n  \"SoNgayLam\": 26\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read payRolls",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls?page=2&size=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "2"
+                    },
+                    {
+                      "key": "size",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "searchPayroll",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls/search?keyword=Hoàng",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls",
+                    "search"
+                  ],
+                  "query": [
+                    {
+                      "key": "keyword",
+                      "value": "Hoàng"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "exportPayrollsToExcel",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls/export",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls",
+                    "export"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read payRoll by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls/BL002",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls",
+                    "BL002"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read payRoll by month",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls/month/2026-02",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls",
+                    "month",
+                    "2026-02"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "read payRoll by Manv",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls/employee/NV002",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls",
+                    "employee",
+                    "NV002"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "delete payRoll by ID",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/api/payroll/payrolls/BL051",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "api",
+                    "payroll",
+                    "payrolls",
+                    "BL1500"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "contract",
+      "item": [
+        {
+          "name": "create Contract",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"MaHopDong\":\"HD101\",\r\n    \"MaNV\":\"NV002\",\r\n    \"LoaiHD\":\"Fulltime\",\r\n    \"NgayBatDau\":\"12-2-2026\",\r\n    \"NgayKetThuc\":\"12-2-2030\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/information/contracts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "contracts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read all Contract",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/contracts",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "contracts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "searchContracts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/contracts/search?keyword=Kế",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "contracts",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "Kế"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "exportContractsToExcel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/contracts/export",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "contracts",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read Contract by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/contracts/HD101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "contracts",
+                "HD101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update Contract",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"MaHopDong\":\"HD101\",\r\n    \"MaNV\":\"NV003\",\r\n    \"LoaiHD\":\"Fulltime\",\r\n    \"NgayBatDau\":\"12-2-2026\",\r\n    \"NgayKetThuc\":\"12-2-2030\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/information/contracts/HD101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "contracts",
+                "HD101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete Contract",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/information/contracts/HD101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "contracts",
+                "HD101"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "department",
+      "item": [
+        {
+          "name": "Create Department",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"MaPB\":\"PB\",\r\n    \"TenPB\":\"Phong bang baos thur\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/information/departments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "departments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read all Department",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/departments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "departments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "searchDepartments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/departments/search?keyword=Công",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "departments",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "Công"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "exportDepartmentsToExcel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/departments/export",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "departments",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read Department by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/departments/PB",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "departments",
+                "PB"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update Department",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"TenPB\":\"Phong bang baos\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/information/departments/PB",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "departments",
+                "PB"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete Department",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/departments/PB",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "departments",
+                "PB"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "employee",
+      "item": [
+        {
+          "name": "create Employee",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"MaNV\":\"NV101\",\r\n    \"MaPB\":\"PB001\",\r\n    \"HoVaTen\":\"Duong Quoc Dat\",\r\n    \"GioiTinh\":\"Nam\",\r\n    \"NgaySinh\":\"12-2-2006\",\r\n    \"DiaChi\":\"Tan Phu\",\r\n    \"NgayVaoLam\":\"2-2-2026\",\r\n    \"SDT\":\"0123456789\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/information/employees",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "employees"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read all Employee",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/employees",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "employees"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "searchEmployees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/employees/search?keyword=Hoàng",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "employees",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "keyword",
+                  "value": "Hoàng"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "exportEmployeesToExcel",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/employees/export",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "employees",
+                "export"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "read Emplyee by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/employees/NV101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "employees",
+                "NV101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update Emplyee",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"MaPB\":\"PB001\",\r\n    \"HoVaTen\":\"Duong Quoc Dat\",\r\n    \"GioiTinh\":\"Nu\",\r\n    \"NgaySinh\":\"12-2-2006\",\r\n    \"DiaChi\":\"Tan Phu\",\r\n    \"NgayVaoLam\":\"2-2-2026\",\r\n    \"SDT\":\"0123456789\" \r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/information/employees/NV101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "employees",
+                "NV101"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete Emplyee",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/information/employees/NV101",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "information",
+                "employees",
+                "NV101"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Permission_Role",
+      "item": [
+        {
+          "name": "assignPermission_Role",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/Permission_Role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "Permission_Role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getPermission_Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/Permission_Role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "Permission_Role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getPermission_RoleById",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/Permission_Role/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "Permission_Role",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updatePermission_Role",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/Permission_Role/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "Permission_Role",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteAllPermission_Role",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/Permission_Role/:IDR",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "Permission_Role",
+                ":IDR"
+              ],
+              "variable": [
+                {
+                  "key": "IDR",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deletePermission_RoleOnePermission",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/permissions/Permission_Role/:IDR/:IDP",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "permissions",
+                "Permission_Role",
+                ":IDR",
+                ":IDP"
+              ],
+              "variable": [
+                {
+                  "key": "IDR",
+                  "value": ""
+                },
+                {
+                  "key": "IDP",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "curentRole",
+      "item": [
+        {
+          "name": "currentAccount",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/current/currentA",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "current",
+                "currentA"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "signOut",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/auth/signout",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "auth",
+            "signout"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          "// --- CẤU HÌNH ---\r",
+          "const baseUrl = pm.environment.get(\"base_url\");\r",
+          "const username = pm.environment.get(\"TenTaiKhoan\");\r",
+          "const password = pm.environment.get(\"MatKhau\");\r",
+          "\r",
+          "// --- HÀM HỖ TRỢ ---\r",
+          "// Giải mã JWT để kiểm tra thời hạn\r",
+          "function isTokenExpired(token) {\r",
+          "    if (!token) return true;\r",
+          "    try {\r",
+          "        const base64Url = token.split('.')[1];\r",
+          "        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');\r",
+          "        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => \r",
+          "            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)\r",
+          "        ).join(''));\r",
+          "        const { exp } = JSON.parse(jsonPayload);\r",
+          "        // Trừ 15 giây dự phòng trễ mạng\r",
+          "        return (Date.now() >= (exp * 1000) - 15000); \r",
+          "    } catch (e) { return true; }\r",
+          "}\r",
+          "\r",
+          "const currentToken = pm.environment.get(\"token\");\r",
+          "\r",
+          "// --- LOGIC KIỂM TRA & ĐĂNG NHẬP ---\r",
+          "if (!currentToken || isTokenExpired(currentToken)) {\r",
+          "    console.log(\"Token vắng mặt hoặc hết hạn. Đang thực hiện Đăng nhập tự động...\");\r",
+          "\r",
+          "    pm.sendRequest({\r",
+          "        url: baseUrl + \"/api/auth/signin\",\r",
+          "        method: \"POST\",\r",
+          "        header: { \"Content-Type\": \"application/json\" },\r",
+          "        body: {\r",
+          "            mode: \"raw\",\r",
+          "            raw: JSON.stringify({ TenTaiKhoan: username, MatKhau: password })\r",
+          "        }\r",
+          "    }, function (err, res) {\r",
+          "        if (err || res.code !== 200) {\r",
+          "            console.error(\"LỖI ĐĂNG NHẬP TRONG RUNNER:\", err || res.text());\r",
+          "        } else {\r",
+          "            const data = res.json();\r",
+          "            pm.environment.set(\"token\", data.accessToken);\r",
+          "            console.log(\"✅ Đã cập nhật Token mới thành công!\");\r",
+          "        }\r",
+          "    });\r",
+          "} else {\r",
+          "    // Token vẫn còn hạn, dùng tiếp để giữ tốc độ\r",
+          "    console.log(\"Token vẫn còn hiệu lực. Tiếp tục chạy...\");\r",
+          "}\r",
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "{{base_url}}",
+      "value": ""
+    }
+  ]
+}

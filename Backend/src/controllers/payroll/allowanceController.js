@@ -5,6 +5,7 @@ import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
 export const createAllowance = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
     const parsed = allowanceSchema.safeParse({
       MaPC: req.body.MaPC,
@@ -105,6 +106,7 @@ export const getAllowanceById = async (req, res) => {
   }
 };
 export const updateAllowance = async (req, res) => {
+  if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
     const parsed = allowanceSchema.omit({ MaPC: true }).safeParse({
       LoaiPC: req.body.LoaiPC,

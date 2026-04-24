@@ -1,9 +1,30 @@
 import api from "@/lib/axios";
 import type { Account } from "@/types/authTypes/accountTypes";
 
+export interface AccountSearchParams {
+  keyword?: string;
+  page?: number;
+  size?: number;
+}
+
+export interface AccountSearchResponse {
+  totalItems: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  data: Account[];
+}
+
 export const accountsServices = {
   createAccount: async (data: Account) => {
     const res = await api.post("/api/account/Accounts", data, {
+      withCredentials: true,
+    });
+    return res.data;
+  },
+  searchAccounts: async (params: AccountSearchParams): Promise<AccountSearchResponse> => {
+    const res = await api.get("/api/account/Accounts/search", {
+      params,
       withCredentials: true,
     });
     return res.data;
