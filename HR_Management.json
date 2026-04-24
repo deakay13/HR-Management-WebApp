@@ -87,7 +87,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"MaTK\":\"TK101\",\r\n    \"MaNV\":\"NV001\", \r\n    \"MaVT\":\"VT001\", \r\n    \"TenTaiKhoan\":\"demo\", \r\n    \"MatKhau\":\"Nhanvien123456!\"\r\n}",
+              "raw": "{\r\n    \"MaTK\":\"TK101\",\r\n    \"MaNV\":\"NV001\", \r\n    \"MaVT\":\"VT001\", \r\n    \"TenTaiKhoan\":\"demo12\", \r\n    \"MatKhau\":\"Nhanvien123456!\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -142,7 +142,7 @@
                 "api",
                 "account",
                 "Accounts",
-                "TK018"
+                "TK101"
               ]
             }
           },
@@ -155,7 +155,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n   \"MaNV\":\"NV002\", \r\n    \"MaVT\":\"VT001\", \r\n    \"TenTaiKhoan\":\"demo\", \r\n    \"MatKhau\":\"Nhanvien123456!\"\r\n}",
+              "raw": "{\r\n   \"MaNV\":\"NV002\", \r\n    \"MaVT\":\"VT001\", \r\n    \"TenTaiKhoan\":\"demo33\", \r\n    \"MatKhau\":\"Nhanvien123456!\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -171,14 +171,14 @@
                 "api",
                 "account",
                 "Accounts",
-                "TK018"
+                "TK020"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Account by ID",
+          "name": "Delete account by ID",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -191,7 +191,7 @@
                 "api",
                 "account",
                 "Accounts",
-                "TK018"
+                "TK098"
               ]
             }
           },
@@ -203,14 +203,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/account/Account/export",
+              "raw": "{{base_url}}/api/account/Accounts/export",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "account",
-                "Account",
+                "Accounts",
                 "export"
               ]
             }
@@ -223,7 +223,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/account/Accounts?search=sinh",
+              "raw": "{{base_url}}/api/account/Accounts/search?keyword=sinh",
               "host": [
                 "{{base_url}}"
               ],
@@ -321,7 +321,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{ \r\n    \"MaQuyen\": \"MQ001\",\r\n    \"TenQuyen   \": \"Đếm\"\r\n}",
+              "raw": "{ \r\n  \"TenQuyen\": \"Đếm\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -329,7 +329,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/permissions/permission/MQ001",
+              "raw": "{{base_url}}/api/permissions/permission/MQ101",
               "host": [
                 "{{base_url}}"
               ],
@@ -337,14 +337,14 @@
                 "api",
                 "permissions",
                 "permission",
-                "MQ001"
+                "MQ101"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Permisson by ID",
+          "name": "Delete Permisson by ID",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -465,7 +465,7 @@
           "response": []
         },
         {
-          "name": "Role by ID",
+          "name": "Delete Role by ID",
           "request": {
             "method": "DELETE",
             "header": [],
@@ -1221,7 +1221,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n  \"MaBL\": \"BL051\",\r\n  \"MaNV\": \"NV001\",\r\n  \"MaLCB\": \"LCB001\",\r\n  \"MaPC\": \"PC001\",\r\n  \"MaKT\": \"KT001\",\r\n  \"MaGL\": \"GL002\",\r\n  \"Thang\": \"2026-02-01\"\r\n}",
+                  "raw": "{\r\n  \"MaBL\": \"BL1500\",\r\n  \"MaNV\": \"NV001\",\r\n  \"MaLCB\": \"LCB001\",\r\n  \"MaPC\": \"PC001\",\r\n  \"MaKT\": \"KT001\",\r\n  \"MaGL\": \"GL002\",\r\n  \"Thang\": \"2026-02-01\",\r\n  \"SoNgayLam\": 26\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1393,7 +1393,7 @@
                     "api",
                     "payroll",
                     "payrolls",
-                    "BL051"
+                    "BL1500"
                   ]
                 }
               },
