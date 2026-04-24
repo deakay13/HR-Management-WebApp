@@ -923,7 +923,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/api/payroll/allowances/search?search=sinh",
+                  "raw": "{{base_url}}/api/payroll/allowances/search?keyword=sinh",
                   "host": [
                     "{{base_url}}"
                   ],
@@ -935,7 +935,7 @@
                   ],
                   "query": [
                     {
-                      "key": "search",
+                      "key": "keyword",
                       "value": "sinh"
                     }
                   ]
@@ -1277,7 +1277,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/api/payroll/payrolls/search?search=Hoàng",
+                  "raw": "{{base_url}}/api/payroll/payrolls/search?keyword=Hoàng",
                   "host": [
                     "{{base_url}}"
                   ],
@@ -1289,7 +1289,7 @@
                   ],
                   "query": [
                     {
-                      "key": "search",
+                      "key": "keyword",
                       "value": "Hoàng"
                     }
                   ]
@@ -1459,7 +1459,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/information/contracts/search?search=Kế",
+              "raw": "{{base_url}}/api/information/contracts/search?keyword=Kế",
               "host": [
                 "{{base_url}}"
               ],
@@ -1471,7 +1471,7 @@
               ],
               "query": [
                 {
-                  "key": "search",
+                  "key": "keyword",
                   "value": "Kế"
                 }
               ]
@@ -1635,7 +1635,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/information/departments/search?search=Công",
+              "raw": "{{base_url}}/api/information/departments/search?keyword=Công",
               "host": [
                 "{{base_url}}"
               ],
@@ -1647,7 +1647,7 @@
               ],
               "query": [
                 {
-                  "key": "search",
+                  "key": "keyword",
                   "value": "Công"
                 }
               ]
@@ -1802,7 +1802,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/information/employees/search?search=Hoàng",
+              "raw": "{{base_url}}/api/information/employees/search?keyword=Hoàng",
               "host": [
                 "{{base_url}}"
               ],
@@ -1814,7 +1814,7 @@
               ],
               "query": [
                 {
-                  "key": "search",
+                  "key": "keyword",
                   "value": "Hoàng"
                 }
               ]
@@ -2046,6 +2046,30 @@
                   "key": "IDP",
                   "value": ""
                 }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "curentRole",
+      "item": [
+        {
+          "name": "currentAccount",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/current/currentA",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "current",
+                "currentA"
               ]
             }
           },
