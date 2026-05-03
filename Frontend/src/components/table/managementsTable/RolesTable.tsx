@@ -16,7 +16,6 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -26,32 +25,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  RoleInputSchema,
-  type RoleInput,
-} from "@/types/permissionTypes/rolesTypes";
-
+import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { useRolesStore } from "@/stores/permissionStores/rolesStore";
 import { columns } from "../columns/managements/RolesTableColumns";
 import type { RoleWithPermissions } from "@/types/permissionTypes/roleGrantPermissionsTypes";
-import { useRolesStore } from "@/stores/permissionStores/rolesStore";
-import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
+import { CreateRoleDialog } from "./dialogs/CreateRoleDialog";
 
 export function RolesTable({
   data,
@@ -69,28 +50,11 @@ export function RolesTable({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const { createRoles } = useRolesStore();
+  useRolesStore(); // keeps store initialized
   const { role } = useAuthorizeStore();
   const isAdmin = role?.MaVT === "VT001";
   
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<RoleInput>({
-    resolver: zodResolver(RoleInputSchema),
-    defaultValues: { MaVT: "", TenVaiTro: "" },
-  });
-
-  const onSubmit: SubmitHandler<RoleInput> = async (data) => {
-    try {
-      await createRoles(data);
-      reset();
-    } catch {
-      // toast is handled in store
-    }
-  };
+  const [createOpen, setCreateOpen] = React.useState(false);
 
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -140,65 +104,20 @@ export function RolesTable({
 
           {/* Button create */}
           {isAdmin && (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => reset()}
-                >
-                  <IconPlus />
-                  <span className="hidden lg:inline">{t("Tạo mới")}</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
-                  <DialogHeader>
-                    <DialogTitle>{t("Tạo vai trò")}</DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để tạo mới.")}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <FieldGroup>
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaVT">{t("Mã Vai Trò")}</Label>
-                      <Input
-                        id="MaVT"
-                        placeholder={t("VD: VT001")}
-                        className={`h-10 ${errors.MaVT ? "border-red-500" : ""}`}
-                        {...register("MaVT")}
-                      />
-                      {errors.MaVT && (
-                        <p className="text-red-500 text-xs">{t(errors.MaVT.message || "")}</p>
-                      )}
-                    </Field>
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="TenVaiTro">{t("Tên Vai Trò")}</Label>
-                      <Input
-                        id="TenVaiTro"
-                        placeholder={t("VD: Quản trị viên")}
-                        className={`h-10 ${errors.TenVaiTro ? "border-red-500" : ""}`}
-                        {...register("TenVaiTro")}
-                      />
-                      {errors.TenVaiTro && (
-                        <p className="text-red-500 text-xs">{t(errors.TenVaiTro.message || "")}</p>
-                      )}
-                    </Field>
-                  </FieldGroup>
-                  <DialogFooter className="gap-2">
-                    <DialogClose asChild>
-                      <Button variant="outline">{t("Huỷ")}</Button>
-                    </DialogClose>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {t("Thêm")}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCreateOpen(true)}
+              >
+                <IconPlus />
+                <span className="hidden lg:inline">{t("Tạo mới")}</span>
+              </Button>
+              <CreateRoleDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+              />
+            </>
           )}
         </div>
       </div>

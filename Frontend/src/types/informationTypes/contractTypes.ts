@@ -57,7 +57,7 @@ export const ContractSchema = z.object({
   NhanVien: z
     .object({
       MaNV: z.string(),
-      TenNV: z.string().optional(),
+      HoVaTen: z.string().optional(),
     })
     .optional(),
 });

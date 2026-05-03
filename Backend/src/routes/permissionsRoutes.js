@@ -14,6 +14,7 @@ import {
   deletePermission,
 } from "../controllers/permission/permissionsControllers.js";
 import { authorize } from "../middlewares/authorize.js";
+import cacheMiddleware from "../middlewares/cacheMiddleware.js";
 import {
   assignPermission_Role,
   getPermission_Role,
@@ -27,14 +28,14 @@ const router = express.Router();
 
 /* Router Role */
 router.post("/roles", authorize(["Tạo"]), createRole);
-router.get("/roles", authorize(["Đọc"]), getRoles);
+router.get("/roles", authorize(["Đọc"]), cacheMiddleware(3600), getRoles);
 router.get("/roles/:ID", authorize(["Đọc"]), getRolesById);
 router.put("/roles/:ID", authorize(["Sửa"]), updateRole);
 router.delete("/roles/:ID", authorize(["Xoá"]), deleteRole);
 
 /* Router permissions */
 router.post("/permission", authorize(["Tạo"]), createPermission);
-router.get("/permission", authorize(["Đọc"]), getPermissions);
+router.get("/permission", authorize(["Đọc"]), cacheMiddleware(3600), getPermissions);
 router.get("/permission/:ID", authorize(["Đọc"]), getPermissionsById);
 router.put("/permission/:ID", authorize(["Sửa"]), updatePermission);
 router.delete("/permission/:ID", authorize(["Xoá"]), deletePermission);

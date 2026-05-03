@@ -25,6 +25,22 @@ services:
     networks:
       - hr-network
 
+  # ==================== Redis Cache ====================
+  redis:
+    image: redis:alpine
+    container_name: hr-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - hr-network
+
   # ==================== Backend (Node.js + Express) ====================
   backend:
     build:
@@ -42,12 +58,17 @@ services:
       - CLIENT_URL=http://localhost
       - ACCESS_TOKEN_SECRET=${ACCESS_TOKEN_SECRET:-access_secret_key}
       - REFRESH_TOKEN_SECRET=${REFRESH_TOKEN_SECRET:-refresh_secret_key}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     ports:
       - "5000:5000"
     volumes:
       - backend-uploads:/app/uploads
+    restart: unless-stopped
     depends_on:
       mssql:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - hr-network
@@ -60,6 +81,7 @@ services:
     container_name: hr-frontend
     ports:
       - "80:80"
+    restart: unless-stopped
     depends_on:
       - backend
     networks:
@@ -68,6 +90,7 @@ services:
 volumes:
   mssql-data:
   backend-uploads:
+  redis-data:
 
 networks:
   hr-network:

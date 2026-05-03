@@ -4,6 +4,7 @@ import { Pagination } from "../../utils/paginations.js";
 import { searchService } from "../../utils/search.js";
 import ExcelJS from "exceljs";
 import sequelize from "../../config/dbconnect.js";
+import { clearPattern } from "../../utils/redisClient.js";
 
 const getAllDepartments = async (req, res) => {
   try {
@@ -66,6 +67,10 @@ const createDepartment = async (req, res) => {
     }
     const { MaPB, TenPB } = parsed.data;
     const department = await Department.create({ MaPB, TenPB });
+    
+    // Clear cache
+    await clearPattern("cache:/api/information/departments*");
+    
     res.status(201).json(department);
   } catch (error) {
     res
@@ -88,6 +93,10 @@ const updateDepartment = async (req, res) => {
       return res.status(400).json({ errors });
     }
     await department.update(parsed.data);
+    
+    // Clear cache
+    await clearPattern("cache:/api/information/departments*");
+    
     res.status(200).json(department);
   } catch (error) {
     res
@@ -102,6 +111,10 @@ const deleteDepartment = async (req, res) => {
       return res.status(404).json({ message: "Phòng ban không tồn tại" });
     }
     await department.destroy();
+    
+    // Clear cache
+    await clearPattern("cache:/api/information/departments*");
+    
     res.status(200).json({ message: "Xóa phòng ban thành công" });
   } catch (error) {
     res

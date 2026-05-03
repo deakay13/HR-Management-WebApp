@@ -5,6 +5,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Debug output files
+*.txt
+
 # Dependencies
 node_modules/
 
@@ -23,3 +26,6 @@ dist-ssr/
 .idea
 .DS_Store
 *.swp
+
+# Tests
+coverage/

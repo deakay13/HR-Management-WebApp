@@ -41,14 +41,16 @@ describe('Department Controllers', () => {
     test('trả về danh sách phòng ban 200', async () => {
       const req = mockRequest();
       const res = mockResponse();
-      
-      departmentMock.findAll.mockResolvedValue([
-        { MaPB: 'PB01' }
-      ]);
+
+      // Controller dùng findAndCountAll, không phải findAll
+      departmentMock.findAndCountAll.mockResolvedValue({
+        count: 1,
+        rows: [{ MaPB: 'PB01' }]
+      });
 
       await departmentsControllers.getAllDepartments(req, res);
-      
-      expect(departmentMock.findAll).toHaveBeenCalled();
+
+      expect(departmentMock.findAndCountAll).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalled();
     });
@@ -61,11 +63,12 @@ describe('Department Controllers', () => {
     test('lỗi 500 nếu database error', async () => {
       const req = mockRequest();
       const res = mockResponse();
-      
-      departmentMock.findAll.mockRejectedValue(new Error('DB Error'));
+
+      // Controller dùng findAndCountAll nên mock đúng hàm
+      departmentMock.findAndCountAll.mockRejectedValue(new Error('DB Error'));
 
       await departmentsControllers.getAllDepartments(req, res);
-      
+
       expect(res.status).toHaveBeenCalledWith(500);
     });
   });

@@ -2,7 +2,7 @@ import api from "@/lib/axios";
 import type { Department } from "@/types/informationTypes/departmentTypes";
 
 export const DepartmentServices = {
-  getDepartments: async (params?: any) => {
+  getDepartments: async (params?: Record<string, unknown>) => {
     const res = await api.get("/api/information/departments", {
       params: { size: 10, ...params },
       withCredentials: true,
@@ -10,7 +10,7 @@ export const DepartmentServices = {
     return res.data;
   },
 
-  searchDepartment: async (params: any) => {
+  searchDepartment: async (params: Record<string, unknown>) => {
     const res = await api.get("/api/information/departments/search", {
       params: { size: 10, ...params },
       withCredentials: true,

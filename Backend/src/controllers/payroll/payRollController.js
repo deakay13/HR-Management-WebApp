@@ -12,6 +12,7 @@ import ExcelJS from "exceljs";
 import { payRollSchema } from "../../utils/validationSchemas.js";
 import { Op } from "sequelize";
 import sequelize from "../../config/dbconnect.js";
+import { clearPattern } from "../../utils/redisClient.js";
 
 export const calculatePayroll = async (req, res) => {
   try {
@@ -73,6 +74,7 @@ export const calculatePayroll = async (req, res) => {
       TongLuong: totalSalary,
     });
 
+    await clearPattern("cache:/api/payroll/payrolls*");
     return res.status(201).json({
       message: "Tính lương thành công",
       payroll,
@@ -150,7 +152,7 @@ export const updatePayroll = async (req, res) => {
       SoNgayLam: newSoNgayLam,
       TongLuong: totalSalary,
     });
-
+    await clearPattern("cache:/api/payroll/payrolls*");
     return res.status(200).json({
       message: "Cập nhật bảng lương thành công",
       payroll,
@@ -240,7 +242,7 @@ export const deletePayroll = async (req, res) => {
     }
 
     await payroll.destroy();
-
+    await clearPattern("cache:/api/payroll/payrolls*");
     return res.status(200).json({
       message: "Xóa bảng lương thành công",
     });

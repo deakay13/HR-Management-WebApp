@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import { z } from "zod";
 import TaiKhoan from "../../models/auth/TaiKhoan.js";
 import Session from "../../models/auth/Session.js";
+import { setCache } from "../../utils/redisClient.js";
 
 const ACCESS_TOKEN_TTL = "30m";
 const REFRESH_TOKEN_TTL = 7 * 24 * 60 * 60 * 1000;
@@ -99,6 +100,20 @@ export const signIn = async (req, res) => {
 };
 export const signOut = async (req, res) => {
   try {
+    // Lấy AccessToken từ Header để đưa vào Blacklist
+    const authHeader = req.headers["authorization"];
+    const accessToken = authHeader && authHeader.split(" ")[1];
+    if (accessToken) {
+      const decoded = jwt.decode(accessToken);
+      if (decoded && decoded.exp) {
+        const ttl = decoded.exp - Math.floor(Date.now() / 1000);
+        if (ttl > 0) {
+          // Lưu vào Redis blacklist
+          await setCache(`bl_${accessToken}`, "blacklisted", ttl);
+        }
+      }
+    }
+
     //get token from cookie
     const delToken = req.cookies?.refreshToken;
 

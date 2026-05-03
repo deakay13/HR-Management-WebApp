@@ -16,7 +16,6 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -26,36 +25,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  DeductionInputSchema,
-  type DeductionInput,
-} from "@/types/payRollTypes/deductionTypes";
-
 import { columns } from "../columns/workspace/deductionColumns";
 import type { Deduction } from "@/types/payRollTypes/deductionTypes";
-import { useDeductionStore } from "@/stores/payRollStores/deductionStore";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { CreateDeductionDialog } from "./dialogs/CreateDeductionDialog";
 import { canCreate } from "@/utils/authorizeUtils";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 import { DeductionServices } from "@/services/payRollServices/deductionServices";
 import { toast } from "sonner";
-import { useEffect } from "react";
 
 export function DeductionTable({
   data,
@@ -72,18 +52,14 @@ export function DeductionTable({
     [],
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const { createDeduction, searchDeduction } = useDeductionStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [filters, setFilters] = React.useState({ keyword: "" });
-
-  // Debounce auto-search
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      searchDeduction(filters);
-    }, 500);
-    return () => clearTimeout(delayDebounceFn);
-  }, [filters, searchDeduction]);
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   const handleExport = async () => {
     try {
@@ -101,30 +77,6 @@ export function DeductionTable({
       toast.error(t("Không thể xuất file excel"));
     }
   };
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 10,
-  });
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<DeductionInput>({
-    resolver: zodResolver(DeductionInputSchema),
-    defaultValues: { MaKT: "", LoaiKT: "", PhanTram: 0 },
-  });
-
-  const onSubmit: SubmitHandler<DeductionInput> = async (data) => {
-    try {
-      await createDeduction(data);
-      setCreateOpen(false);
-      reset();
-    } catch {
-      // store handles toast
-    }
-  };
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable<Deduction>({
@@ -135,8 +87,10 @@ export function DeductionTable({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
       pagination,
     },
+    onGlobalFilterChange: setGlobalFilter,
     getRowId: (row) => row.MaKT.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -171,10 +125,8 @@ export function DeductionTable({
               <Input
                 placeholder={t("Search...")}
                 className="h-9 w-[160px] pl-9"
-                value={filters.keyword}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, keyword: e.target.value }))
-                }
+                value={globalFilter ?? ""}
+                onChange={(e) => setGlobalFilter(e.target.value)}
               />
             </div>
             <Button
@@ -192,89 +144,20 @@ export function DeductionTable({
 
           {/* Create button */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    reset();
-                    setCreateOpen(true);
-                  }}
-                >
-                  <IconPlus />
-                  <span className="hidden lg:inline">{t("Tạo mới")}</span>
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent className="sm:max-w-md">
-                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg font-semibold">
-                      {t("Tạo khấu trừ")}
-                    </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để tạo mới.")}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <FieldGroup className="space-y-4">
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaKT">{t("Mã Khấu Trừ")}</Label>
-                      <Input
-                        id="MaKT"
-                        placeholder={t("VD: KT001")}
-                        className={`h-10 ${errors.MaKT ? "border-red-500" : ""}`}
-                        {...register("MaKT")}
-                      />
-                      {errors.MaKT && (
-                        <p className="text-red-500 text-xs">{t(errors.MaKT.message || "")}</p>
-                      )}
-                    </Field>
-
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="LoaiKT">{t("Loại Khấu Trừ")}</Label>
-                      <Input
-                        id="LoaiKT"
-                        placeholder={t("VD: Thuế TNCN")}
-                        className={`h-10 ${errors.LoaiKT ? "border-red-500" : ""}`}
-                        {...register("LoaiKT")}
-                      />
-                      {errors.LoaiKT && (
-                        <p className="text-red-500 text-xs">{t(errors.LoaiKT.message || "")}</p>
-                      )}
-                    </Field>
-
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="PhanTram">{t("Phần Trăm (%)")}</Label>
-                      <Input
-                        id="PhanTram"
-                        type="number"
-                        placeholder={t("VD: 10")}
-                        className={`h-10 ${errors.PhanTram ? "border-red-500" : ""}`}
-                        {...register("PhanTram", { valueAsNumber: true })}
-                      />
-                      {errors.PhanTram && (
-                        <p className="text-red-500 text-xs">{t(errors.PhanTram.message || "")}</p>
-                      )}
-                    </Field>
-                  </FieldGroup>
-
-                  <DialogFooter className="gap-2">
-                    <DialogClose asChild>
-                      <Button type="button" variant="outline">
-                        {t("Huỷ")}
-                      </Button>
-                    </DialogClose>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {t("Tạo mới")}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCreateOpen(true)}
+              >
+                <IconPlus />
+                <span className="hidden lg:inline">{t("Tạo mới")}</span>
+              </Button>
+              <CreateDeductionDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+              />
+            </>
           )}
         </div>
       </div>

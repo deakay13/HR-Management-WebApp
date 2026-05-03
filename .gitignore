@@ -1,27 +1,39 @@
-# ✅ Bỏ qua file môi trường
+# Bỏ qua file môi trường
 **/.env
 **/.env.*
 /.agent
 /GEMINI.md
 
-# ✅ Bỏ qua thư mục node_modules
+# Bỏ qua thư mục node_modules
 **/node_modules/
 
-# ✅ Bỏ qua file log
+# Bỏ qua file log
 *.log
+npm-debug.log*
 
-# ✅ Compile outputs
+# Compile outputs
 **/dist/
 **/build/
 
-# ✅ IDE & OS
+# IDE & OS
 .vscode/
 .idea/
 .DS_Store
 *.swp
 
-# ✅ Lưu ý: KHÔNG NÊN bỏ qua package-lock.json vì nó dùng để đồng bộ phiên bản thư viện giữa các máy và khi build Docker.
+# Lưu ý: KHÔNG NÊN bỏ qua package-lock.json vì nó dùng để đồng bộ phiên bản thư viện.
 # package-lock.json
 
 **/.docker/
 **/tmp/
+
+# Artifacts & sensitive files không nên commit
+env.json
+
+# Test outputs & coverage logs
+**/coverage/
+**/test_output.txt
+**/missing_coverage.txt
+
+# Dev-only scripts
+Backend/generate_tests.cjs

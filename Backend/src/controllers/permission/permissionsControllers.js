@@ -1,6 +1,7 @@
 import Quyen from "../../models/auth/Quyen.js";
 import { Pagination } from "../../utils/paginations.js";
 import { permissionSchema } from "../../utils/validationSchemas.js";
+import { clearPattern } from "../../utils/redisClient.js";
 export const createPermission = async (req, res) => {
   try {
     //validate input
@@ -28,6 +29,7 @@ export const createPermission = async (req, res) => {
     }
 
     const permission = await Quyen.create({ MaQuyen, TenQuyen });
+    await clearPattern("cache:/api/permissions/permission*");
 
     //respon status 200
     return res
@@ -112,6 +114,7 @@ export const updatePermission = async (req, res) => {
     }
 
     await permission.update({ TenQuyen: parsed.data.TenQuyen });
+    await clearPattern("cache:/api/permissions/permission*");
     res.status(200).json({ message: "Cập nhật thành công", permission });
   } catch (error) {
     console.error("Lỗi khi gọi", error);
@@ -132,6 +135,7 @@ export const deletePermission = async (req, res) => {
 
     //Delete account
     await permission.destroy();
+    await clearPattern("cache:/api/permissions/permission*");
 
     //respon status 200
     return res.status(200).json({ message: "Xoá Quyền thành công" });

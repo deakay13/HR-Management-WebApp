@@ -41,15 +41,10 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
 
   getAccounts: async () => {
     try {
-      const { searchParams } = get();
-      const response = await accountsServices.searchAccounts(searchParams);
-      if (response && "data" in response) {
+      const response = await accountsServices.getAccounts();
+      if (response) {
         set({
-          accounts: response.data,
-          totalItems: response.totalItems,
-          totalPages: response.totalPages,
-          currentPage: response.currentPage,
-          pageSize: response.pageSize,
+          accounts: response,
         });
       }
     } catch (error) {

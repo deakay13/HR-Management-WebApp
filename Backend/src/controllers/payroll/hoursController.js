@@ -4,6 +4,7 @@ import { hoursSchema } from "../../utils/validationSchemas.js";
 import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
+import { clearPattern } from "../../utils/redisClient.js";
 export const createHour = async (req, res) => {
   if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
@@ -31,7 +32,7 @@ export const createHour = async (req, res) => {
       MaGL,
       SoGioLam,
     });
-
+    await clearPattern("cache:/api/payroll/hours*");
     return res.status(201).json({
       message: "Tạo giờ làm thành công",
       hour,
@@ -125,7 +126,7 @@ export const updateHour = async (req, res) => {
     }
 
     await hour.update(parsed.data);
-
+    await clearPattern("cache:/api/payroll/hours*");
     return res.status(200).json({
       message: "Cập nhật giờ làm thành công",
       hour,
@@ -151,7 +152,7 @@ export const deleteHour = async (req, res) => {
     }
 
     await hour.destroy();
-
+    await clearPattern("cache:/api/payroll/hours*");
     return res.status(200).json({
       message: "Xóa giờ làm thành công",
     });

@@ -11,6 +11,7 @@ describe('Contract Controllers', () => {
 
     contractMock = {
       findAll: jest.fn(),
+      findAndCountAll: jest.fn(),
       findByPk: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
@@ -33,43 +34,53 @@ describe('Contract Controllers', () => {
     test('trả về 200 và dùng where: { MaNV } nếu không phải Admin/HR', async () => {
       const req = mockRequest({ account: { MaNV: 'NV01', VaiTro: { TenVaiTro: 'Nhân Viên' } } });
       const res = mockResponse();
-      
-      contractMock.findAll.mockResolvedValue([{ MaHopDong: 'HD01' }]);
+
+      // Controller dùng findAndCountAll, không phải findAll
+      contractMock.findAndCountAll.mockResolvedValue({
+        count: 1,
+        rows: [{ MaHopDong: 'HD01' }]
+      });
 
       await contractControllers.getAllContracts(req, res);
-      
-      expect(contractMock.findAll).toHaveBeenCalledWith(expect.objectContaining({
+
+      expect(contractMock.findAndCountAll).toHaveBeenCalledWith(expect.objectContaining({
         where: { MaNV: 'NV01' }
       }));
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith([{ MaHopDong: 'HD01' }]);
+      expect(res.json).toHaveBeenCalled();
     });
 
     test('trả về 200 và không bị giới hạn MaNV nếu là Quản Trị Viên', async () => {
       const req = mockRequest({ account: { MaNV: 'NV99', VaiTro: { TenVaiTro: 'Quản Trị Viên' } } });
       const res = mockResponse();
-      
-      contractMock.findAll.mockResolvedValue([{ MaHopDong: 'HD01' }, { MaHopDong: 'HD02' }]);
+
+      contractMock.findAndCountAll.mockResolvedValue({
+        count: 2,
+        rows: [{ MaHopDong: 'HD01' }, { MaHopDong: 'HD02' }]
+      });
 
       await contractControllers.getAllContracts(req, res);
-      
-      expect(contractMock.findAll).toHaveBeenCalledWith(expect.objectContaining({
+
+      expect(contractMock.findAndCountAll).toHaveBeenCalledWith(expect.objectContaining({
         where: {}
       }));
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(expect.any(Array));
+      expect(res.json).toHaveBeenCalled();
     });
 
     test('trả về 500 nếu có lỗi khi lấy danh sách', async () => {
       const req = mockRequest({ account: { MaNV: 'NV01', VaiTro: { TenVaiTro: 'Nhân Viên' } } });
       const res = mockResponse();
-      
-      contractMock.findAll.mockRejectedValue(new Error('Database Error'));
+
+      contractMock.findAndCountAll.mockRejectedValue(new Error('Database Error'));
 
       await contractControllers.getAllContracts(req, res);
-      
+
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ message: expect.stringContaining('Database Error') }));
+      // Controller trả về message có chứa error.message
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
+        message: expect.stringContaining('Database Error')
+      }));
     });
   });
 

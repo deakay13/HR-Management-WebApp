@@ -6,6 +6,7 @@ import { searchService } from "../../utils/search.js";
 import { Pagination } from "../../utils/paginations.js";
 import ExcelJS from "exceljs";
 import { employeeSchema } from "../../utils/validationSchemas.js";
+import { clearPattern } from "../../utils/redisClient.js";
 
 const getAllEmployees = async (req, res) => {
   try {
@@ -228,6 +229,8 @@ const createEmployee = async (req, res) => {
       SDT,
       HinhAnh,
     });
+    // Clear cache sau khi tạo mới
+    await clearPattern("cache:/api/information/employees*");
     res.status(201).json(employee);
   } catch (error) {
     res
@@ -258,6 +261,8 @@ const updateEmployee = async (req, res) => {
     }
 
     await employee.update(updateData);
+    // Clear cache sau khi cập nhật
+    await clearPattern("cache:/api/information/employees*");
     res.status(200).json(employee);
   } catch (error) {
     res
@@ -273,6 +278,8 @@ const deleteEmployee = async (req, res) => {
       return res.status(404).json({ message: "Nhân viên không tồn tại" });
     }
     await employee.destroy();
+    // Clear cache sau khi xóa
+    await clearPattern("cache:/api/information/employees*");
     res.status(200).json({ message: "Xóa nhân viên thành công" });
   } catch (error) {
     res

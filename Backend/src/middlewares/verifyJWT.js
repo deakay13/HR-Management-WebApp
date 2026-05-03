@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { TaiKhoan, VaiTro, Quyen, NhanVien } from "../models/index.js";
+import { getCache } from "../utils/redisClient.js";
 
 /* Verify Account */
 export const protectedRoute = async (req, res, next) => {
@@ -11,6 +12,13 @@ export const protectedRoute = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ message: "Không tìm thấy accesssToken." });
     }
+
+    // Kiểm tra Redis xem token có nằm trong blacklist (đã logout) không
+    const isBlacklisted = await getCache(`bl_${token}`);
+    if (isBlacklisted) {
+      return res.status(401).json({ message: "Token đã bị vô hiệu hóa (Blacklisted)." });
+    }
+
 
     /* Verify token (using Promise instead of callback) */
     const decodedAccount = await new Promise((resolve, reject) => {

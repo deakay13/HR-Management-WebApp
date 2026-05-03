@@ -16,7 +16,6 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -26,31 +25,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  PermissionSchema,
-  type Permission,
-} from "@/types/permissionTypes/permissionsTypes";
-
+import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 import { columns } from "../columns/managements/PermissionsTableColumns";
-import { usePermissionsStore } from "@/stores/permissionStores/permissionsStore";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
-import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { usePermissionsStore } from "@/stores/permissionStores/permissionsStore";
+import type { Permission } from "@/types/permissionTypes/permissionsTypes";
+import { CreatePermissionDialog } from "./dialogs/CreatePermissionDialog";
 
 export function PermissionsTable({
   data,
@@ -68,28 +50,13 @@ export function PermissionsTable({
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const { createPermissions } = usePermissionsStore();
+
+  usePermissionsStore(); // initialize store
   const { role } = useAuthorizeStore();
   const isAdmin = role?.MaVT === "VT001";
-  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<Permission>({
-    resolver: zodResolver(PermissionSchema),
-    defaultValues: { MaQuyen: "", TenQuyen: "" },
-  });
 
-  const onSubmit: SubmitHandler<Permission> = async (data) => {
-    try {
-      await createPermissions(data);
-      reset();
-    } catch {
-      // toast is handled in store
-    }
-  };
+
+  const [createOpen, setCreateOpen] = React.useState(false);
 
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -139,65 +106,20 @@ export function PermissionsTable({
 
           {/* Button create - Admin only */}
           {isAdmin && (
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => reset()}
-                >
-                  <IconPlus />
-                  <span className="hidden lg:inline">{t("Tạo mới")}</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-sm">
-                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
-                  <DialogHeader>
-                    <DialogTitle>{t("Tạo quyền")}</DialogTitle>
-                    <DialogDescription>
-                      {t("Hãy nhập thông tin và nhấn Thêm để tạo Quyền")}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <FieldGroup>
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaQuyen">{t("Mã Quyền")}</Label>
-                      <Input
-                        id="MaQuyen"
-                        placeholder={t("VD: MQ001")}
-                        className={`h-10 ${errors.MaQuyen ? "border-red-500" : ""}`}
-                        {...register("MaQuyen")}
-                      />
-                      {errors.MaQuyen && (
-                        <p className="text-red-500 text-xs">{t(errors.MaQuyen.message || "")}</p>
-                      )}
-                    </Field>
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="TenQuyen">{t("Tên Quyền")}</Label>
-                      <Input
-                        id="TenQuyen"
-                        placeholder={t("VD: Đọc, Tạo")}
-                        className={`h-10 ${errors.TenQuyen ? "border-red-500" : ""}`}
-                        {...register("TenQuyen")}
-                      />
-                      {errors.TenQuyen && (
-                        <p className="text-red-500 text-xs">{t(errors.TenQuyen.message || "")}</p>
-                      )}
-                    </Field>
-                  </FieldGroup>
-                  <DialogFooter className="gap-2">
-                    <DialogClose asChild>
-                      <Button variant="outline">{t("Huỷ")}</Button>
-                    </DialogClose>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {t("Thêm")}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCreateOpen(true)}
+              >
+                <IconPlus />
+                <span className="hidden lg:inline">{t("Tạo mới")}</span>
+              </Button>
+              <CreatePermissionDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+              />
+            </>
           )}
         </div>
       </div>

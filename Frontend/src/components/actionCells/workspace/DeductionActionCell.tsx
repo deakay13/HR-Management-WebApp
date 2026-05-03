@@ -21,7 +21,8 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useDeductionStore } from "@/stores/payRollStores/deductionStore";
+import { useUpdateDeductionMutation, useDeleteDeductionMutation } from "@/hooks/queries/usePayrollQueries";
+import { toast } from "sonner";
 import type { Deduction } from "@/types/payRollTypes/deductionTypes";
 
 import { useForm } from "react-hook-form";
@@ -37,7 +38,8 @@ import React from "react";
 
 export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
   const { t } = useTranslation();
-  const { deleteDeduction, updateDeduction } = useDeductionStore();
+  const { mutateAsync: updateDeduction } = useUpdateDeductionMutation();
+  const { mutateAsync: deleteDeduction } = useDeleteDeductionMutation();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
   const {
@@ -66,8 +68,24 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
   };
 
   const onSubmit = async (data: DeductionInput) => {
-    await updateDeduction(deduction.MaKT, data);
-    setEditOpen(false);
+    try {
+      await updateDeduction({ id: deduction.MaKT, data: data as Record<string, unknown> });
+      toast.success(t("Sửa khấu trừ thành công"));
+      setEditOpen(false);
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Sửa khấu trừ thất bại"));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteDeduction(deduction.MaKT);
+      toast.success(t("Xoá khấu trừ thành công"));
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Xoá khấu trừ thất bại"));
+    }
   };
 
   return (
@@ -204,7 +222,7 @@ export function DeductionActionCell({ deduction }: { deduction: Deduction }) {
                   </DialogClose>
                   <Button
                     variant="destructive"
-                    onClick={() => deleteDeduction(deduction.MaKT)}
+                    onClick={handleDelete}
                   >
                     {t("Xoá")}
                   </Button>

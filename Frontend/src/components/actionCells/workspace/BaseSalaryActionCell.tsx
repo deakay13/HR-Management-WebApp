@@ -21,7 +21,8 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStore";
+import { useUpdateBaseSalaryMutation, useDeleteBaseSalaryMutation } from "@/hooks/queries/usePayrollQueries";
+import { toast } from "sonner";
 import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
 
 import { useForm } from "react-hook-form";
@@ -41,7 +42,8 @@ export function BaseSalaryActionCell({
   baseSalary: BaseSalary;
 }) {
   const { t } = useTranslation();
-  const { deleteBaseSalary, updateBaseSalary } = useBaseSalaryStore();
+  const { mutateAsync: updateBaseSalary } = useUpdateBaseSalaryMutation();
+  const { mutateAsync: deleteBaseSalary } = useDeleteBaseSalaryMutation();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
   const {
@@ -68,8 +70,24 @@ export function BaseSalaryActionCell({
   };
 
   const onSubmit = async (data: BaseSalaryInput) => {
-    await updateBaseSalary(baseSalary.MaLCB, data);
-    setEditOpen(false);
+    try {
+      await updateBaseSalary({ id: baseSalary.MaLCB, data: data as any });
+      toast.success(t("Sửa lương cơ bản thành công"));
+      setEditOpen(false);
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Sửa lương cơ bản thất bại"));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteBaseSalary(baseSalary.MaLCB);
+      toast.success(t("Xoá lương cơ bản thành công"));
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Xoá lương cơ bản thất bại"));
+    }
   };
 
   return (
@@ -188,7 +206,7 @@ export function BaseSalaryActionCell({
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteBaseSalary(baseSalary.MaLCB)}
+                  onClick={handleDelete}
                 >
                   {t("Xoá")}
                 </Button>

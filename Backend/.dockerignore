@@ -12,5 +12,8 @@ tests/
 __tests__/
 *.test.js
 coverage/
+*.txt
 Dockerfile
 README.md
+generate_tests.cjs
+jest.config.js

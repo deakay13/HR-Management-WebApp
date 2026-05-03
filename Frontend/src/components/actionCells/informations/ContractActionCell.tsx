@@ -21,11 +21,14 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-import { useContractStore } from "@/stores/informationStores/contractStore";
+import {
+  useUpdateContractMutation,
+  useDeleteContractMutation,
+} from "@/hooks/queries/useContractsQuery";
+import { useEmployeesQuery } from "@/hooks/queries/useEmployeesQuery";
 import { useEffect, useState } from "react";
 import type { Contract } from "@/types/informationTypes/contractTypes";
 import { getContractValidationSchema } from "@/types/informationTypes/contractTypes";
-import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
 import { z } from "zod";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
 import { canUpdate, canDelete, canWrite } from "@/utils/authorizeUtils";
@@ -33,10 +36,12 @@ import { useTranslation } from "react-i18next";
 
 export function ContractActionCell({ contract }: { contract: Contract }) {
   const { t } = useTranslation();
-  const { deleteContract, updateContract } = useContractStore();
+  const updateContractMutation = useUpdateContractMutation();
+  const deleteContractMutation = useDeleteContractMutation();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = useState(false);
-  const { employees } = useEmployeeStore();
+  const { data: employeesData } = useEmployeesQuery({ size: 0 });
+  const employees = employeesData?.data || [];
   const [formDataState, setFormDataState] = useState<Contract>(contract);
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -92,7 +97,10 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
       formData.append("MaHopDong", validatedData.MaHopDong);
       if (file) formData.append("HinhAnhHopDong", file);
 
-      await updateContract(contract.MaHopDong, formData);
+      await updateContractMutation.mutateAsync({
+        id: contract.MaHopDong,
+        data: formData as any,
+      });
       setEditOpen(false);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -157,7 +165,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     className="uppercase"
                     value={formDataState.MaNV}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         MaNV: e.target.value,
                       }))
@@ -174,7 +182,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     id="LoaiHD"
                     value={formDataState.LoaiHD}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         LoaiHD: e.target.value,
                       }))
@@ -194,7 +202,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     type="date"
                     value={formDataState.NgayBatDau}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         NgayBatDau: e.target.value,
                       }))
@@ -214,7 +222,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     type="date"
                     value={formDataState.NgayKetThuc || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         NgayKetThuc: e.target.value,
                       }))
@@ -234,7 +242,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     type="date"
                     value={formDataState.NgayKy || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         NgayKy: e.target.value,
                       }))
@@ -253,7 +261,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     id="ChucDanh"
                     value={formDataState.ChucDanh || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         ChucDanh: e.target.value,
                       }))
@@ -273,7 +281,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     className="uppercase"
                     value={formDataState.MaPB || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         MaPB: e.target.value,
                       }))
@@ -293,7 +301,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     className="uppercase"
                     value={formDataState.MaLCB || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         MaLCB: e.target.value,
                       }))
@@ -313,7 +321,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     className="uppercase"
                     value={formDataState.MaPC || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         MaPC: e.target.value,
                       }))
@@ -332,7 +340,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     id="HinhThucTraLuong"
                     value={formDataState.HinhThucTraLuong || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         HinhThucTraLuong: e.target.value,
                       }))
@@ -351,7 +359,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                     id="TinhTrang"
                     value={formDataState.TinhTrang || ""}
                     onChange={(e) =>
-                      setFormDataState((prev) => ({
+                      setFormDataState((prev: Contract) => ({
                         ...prev,
                         TinhTrang: e.target.value,
                       }))
@@ -433,10 +441,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
                 <DialogClose asChild>
                   <Button variant="outline">{t("Huỷ")}</Button>
                 </DialogClose>
-                <Button
-                  variant="destructive"
-                  onClick={() => deleteContract(contract.MaHopDong)}
-                >
+                  <Button
+                    variant="destructive"
+                    onClick={() => deleteContractMutation.mutateAsync(contract.MaHopDong)}
+                    disabled={deleteContractMutation.isPending}
+                  >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

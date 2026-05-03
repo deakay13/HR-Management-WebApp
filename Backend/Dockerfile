@@ -2,17 +2,14 @@ FROM node:22-alpine
 
 WORKDIR /app
 
-# Cài dependencies trước để tận dụng Docker cache
+# Cài dependencies — chỉ production để giảm image size
 COPY package.json package-lock.json* ./
-RUN if [ -f package-lock.json ]; then npm ci; else npm install; fi
+RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev; fi
 
-# Copy source code
+# Copy source code (bao gồm entrypoint.sh)
 COPY . .
+RUN chmod +x /app/entrypoint.sh
 
 EXPOSE 5000
-
-# Script khởi động: chạy migration + seed rồi start server
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
 
 CMD ["/app/entrypoint.sh"]
