@@ -18,10 +18,10 @@ describe('Pagination', () => {
     expect(result.limit).toBe(20);
   });
 
-  test('size=0 trả hết bản ghi (limit=null)', () => {
+  test('size=0 trả hết bản ghi (limit=2000)', () => {
     const result = Pagination({ page: '1', size: '0' });
-    expect(result.limit).toBeNull();
-    expect(result.finalSize).toBe(0);
+    expect(result.limit).toBe(2000);
+    expect(result.finalSize).toBe(10);
     expect(result.offset).toBe(0);
   });
 
@@ -32,8 +32,10 @@ describe('Pagination', () => {
 
   test('page=3, size=30 tính offset đúng', () => {
     const result = Pagination({ page: '3', size: '30' });
-    expect(result.offset).toBe(60); // (3-1)*30
+    // size=30 nằm trong allowedSizes, finalSize=30, offset=(3-1)*30=60
+    expect(result.offset).toBe(60);
     expect(result.limit).toBe(30);
+    expect(result.finalSize).toBe(30);
   });
 
   test('page không hợp lệ thì về 1', () => {

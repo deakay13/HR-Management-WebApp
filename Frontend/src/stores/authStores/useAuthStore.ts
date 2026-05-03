@@ -12,7 +12,7 @@ export const useAuthStore = create<AuthTypes>((set, get) => ({
   avatarUrl: null,
   initializing: true,
   setAccessToken: (accessToken) => {
-    set({ accessToken });
+    set({ accessToken: accessToken || null });
   },
   setAvatarUrl: (url) => {
     set({ avatarUrl: url });

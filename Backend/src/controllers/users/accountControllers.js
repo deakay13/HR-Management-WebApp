@@ -8,6 +8,7 @@ import { formatVNDateTime } from "../../utils/dateFormat.js";
 import VaiTro from "../../models/auth/VaiTro.js";
 import Session from "../../models/auth/Session.js";
 import { accountSchema, accountUpdateSchema } from "../../utils/validationSchemas.js";
+import { clearPattern } from "../../utils/redisClient.js";
 
 export const createAccount = async (req, res) => {
   try {
@@ -66,6 +67,7 @@ export const createAccount = async (req, res) => {
       TenTaiKhoan,
       MatKhau: HashedPassword,
     });
+    await clearPattern("cache:/api/accounts/Accounts*");
 
     return res.status(201).json({ message: "Tạo Tài Khoản thành công" });
   } catch (error) {
@@ -264,6 +266,7 @@ export const updateAccountById = async (req, res) => {
       MatKhau: updatedPassword,
       MaVT: MaVT || account.MaVT,
     });
+    await clearPattern("cache:/api/accounts/Accounts*");
 
     return res.status(200).json({ message: "Cập nhật thành công", account });
   } catch (error) {
@@ -285,6 +288,7 @@ export const deleteAccount = async (req, res) => {
 
     //Delete account
     await account.destroy();
+    await clearPattern("cache:/api/accounts/Accounts*");
 
     //respon status 200
     return res.status(200).json({ message: "Xoá Tài Khoản thành công" });

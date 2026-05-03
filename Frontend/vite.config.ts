@@ -3,7 +3,6 @@ import { loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
-import svgr from "vite-plugin-svgr";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -12,7 +11,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     envDir: '../',
-    plugins: [react(), tailwindcss(), svgr()],
+    plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -22,10 +21,30 @@ export default defineConfig(({ mode }) => {
       port: Number(env.FRONTEND_PORT) || 3000,
     },
     test: {
+      exclude: ['e2e/*', 'node_modules/**/*'],
       globals: true,
       environment: "jsdom",
       setupFiles: "./src/test/setup.ts",
       css: false,
+      coverage: {
+        provider: 'v8',
+        all: true,
+        include: ['src/**/*.ts', 'src/**/*.tsx'],
+        exclude: [
+          'src/test/**/*', 
+          'src/main.tsx', 
+          'src/vite-env.d.ts', 
+          'src/components/ui/**/*', // Không test code sinh ra từ thư viện shadcn/ui
+          'src/types/**/*',         // Không test Type definitions
+        ],
+        reporter: ['text', 'json', 'html'],
+        thresholds: {
+          lines: 99,
+          functions: 99,
+          branches: 99,
+          statements: 99,
+        },
+      },
     },
   };
 });

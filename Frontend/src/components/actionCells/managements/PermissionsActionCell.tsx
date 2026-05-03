@@ -44,7 +44,7 @@ export function PermissionActionCell({ permis }: { permis: Permission }) {
     formState: { errors, isSubmitting },
     reset,
   } = useForm<PermissionInput>({
-    resolver: zodResolver(PermissionSchema) as any,
+    resolver: zodResolver(PermissionSchema),
     defaultValues: {
       MaQuyen: permis.MaQuyen,
       TenQuyen: permis.TenQuyen,

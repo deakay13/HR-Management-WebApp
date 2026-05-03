@@ -16,7 +16,6 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -26,36 +25,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  BaseSalaryInputSchema,
-  type BaseSalaryInput,
-} from "@/types/payRollTypes/baseSalaryTypes";
-
 import { columns } from "../columns/workspace/baseSalaryColumns";
 import type { BaseSalary } from "@/types/payRollTypes/baseSalaryTypes";
-import { useBaseSalaryStore } from "@/stores/payRollStores/baseSalaryStore";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { CreateBaseSalaryDialog } from "./dialogs/CreateBaseSalaryDialog";
 import { canCreate } from "@/utils/authorizeUtils";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 import { BaseSalaryServices } from "@/services/payRollServices/baseSalaryServices";
 import { toast } from "sonner";
-import { useEffect } from "react";
 
 export function BaseSalaryTable({
   data,
@@ -68,19 +48,10 @@ export function BaseSalaryTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const { createBaseSalary, searchBaseSalary } = useBaseSalaryStore();
   const { permissions } = useAuthorizeStore();
 
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [filters, setFilters] = React.useState({ keyword: "" });
-
-  // Debounce auto-search
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      searchBaseSalary(filters);
-    }, 500);
-    return () => clearTimeout(delayDebounceFn);
-  }, [filters, searchBaseSalary]);
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const handleExport = async () => {
     try {
@@ -96,26 +67,6 @@ export function BaseSalaryTable({
     } catch (error) {
       console.error("Lỗi export excel:", error);
       toast.error(t("Không thể xuất file excel"));
-    }
-  };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<BaseSalaryInput>({
-    resolver: zodResolver(BaseSalaryInputSchema),
-    defaultValues: { MaLCB: "", LuongCB: 0 },
-  });
-
-  const onSubmit: SubmitHandler<BaseSalaryInput> = async (data) => {
-    try {
-      await createBaseSalary(data);
-      setCreateOpen(false);
-      reset();
-    } catch {
-      // store handles toast
     }
   };
 
@@ -137,8 +88,10 @@ export function BaseSalaryTable({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
       pagination,
     },
+    onGlobalFilterChange: setGlobalFilter,
     getRowId: (row) => row.MaLCB.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -173,10 +126,8 @@ export function BaseSalaryTable({
               <Input
                 placeholder={t("Search...")}
                 className="h-9 w-[160px] pl-9"
-                value={filters.keyword}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, keyword: e.target.value }))
-                }
+                value={globalFilter ?? ""}
+                onChange={(e) => setGlobalFilter(e.target.value)}
               />
             </div>
             <Button
@@ -194,77 +145,20 @@ export function BaseSalaryTable({
 
           {/* Create button */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    reset();
-                    setCreateOpen(true);
-                  }}
-                >
-                  <IconPlus />
-                  <span className="hidden lg:inline">{t("Tạo mới")}</span>
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent className="sm:max-w-md">
-                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg font-semibold">
-                      {t("Tạo lương cơ bản")}
-                    </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để tạo mới.")}
-                    </DialogDescription>
-                  </DialogHeader>
-
-                  <FieldGroup className="space-y-4">
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaLCB">{t("Mã Lương Cơ Bản")}</Label>
-                      <Input
-                        id="MaLCB"
-                        placeholder={t("VD: LCB001")}
-                        className={`h-10 ${errors.MaLCB ? "border-red-500" : ""}`}
-                        {...register("MaLCB")}
-                      />
-                      {errors.MaLCB && (
-                        <p className="text-red-500 text-xs">{t(errors.MaLCB.message || "")}</p>
-                      )}
-                    </Field>
-
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="LuongCB">{t("Lương Cơ Bản")}</Label>
-                      <Input
-                        id="LuongCB"
-                        type="number"
-                        placeholder={t("VD: 5000000")}
-                        className={`h-10 ${errors.LuongCB ? "border-red-500" : ""}`}
-                        {...register("LuongCB", { valueAsNumber: true })}
-                      />
-                      {errors.LuongCB && (
-                        <p className="text-red-500 text-xs">{t(errors.LuongCB.message || "")}</p>
-                      )}
-                    </Field>
-                  </FieldGroup>
-
-                  <DialogFooter className="gap-2">
-                    <DialogClose asChild>
-                      <Button type="button" variant="outline">
-                        {t("Huỷ")}
-                      </Button>
-                    </DialogClose>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {t("Tạo mới")}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCreateOpen(true)}
+              >
+                <IconPlus />
+                <span className="hidden lg:inline">{t("Tạo mới")}</span>
+              </Button>
+              <CreateBaseSalaryDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+              />
+            </>
           )}
         </div>
       </div>

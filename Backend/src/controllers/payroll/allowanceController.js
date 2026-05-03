@@ -4,6 +4,7 @@ import { allowanceSchema } from "../../utils/validationSchemas.js";
 import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
+import { clearPattern } from "../../utils/redisClient.js";
 export const createAllowance = async (req, res) => {
   if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
@@ -42,6 +43,7 @@ export const createAllowance = async (req, res) => {
       LoaiPC,
       SoTien,
     });
+    await clearPattern("cache:/api/payroll/allowances*");
 
     return res.status(201).json({
       message: "Tạo phụ cấp thành công",
@@ -136,6 +138,7 @@ export const updateAllowance = async (req, res) => {
       LoaiPC: parsed.data.LoaiPC,
       SoTien: parsed.data.SoTien,
     });
+    await clearPattern("cache:/api/payroll/allowances*");
 
     return res.status(200).json({
       message: "Cập nhật phụ cấp thành công",
@@ -162,6 +165,7 @@ export const deleteAllowance = async (req, res) => {
     }
 
     await phuCap.destroy();
+    await clearPattern("cache:/api/payroll/allowances*");
 
     return res.status(200).json({
       message: "Xóa phụ cấp thành công",

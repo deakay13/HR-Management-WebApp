@@ -4,6 +4,7 @@ import { deductionSchema } from "../../utils/validationSchemas.js";
 import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
+import { clearPattern } from "../../utils/redisClient.js";
 export const createDeduction = async (req, res) => {
   if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu (Body)" });
   try {
@@ -34,7 +35,7 @@ export const createDeduction = async (req, res) => {
     }
 
     const deduction = await KhauTru.create({ MaKT, LoaiKT, PhanTram });
-
+    await clearPattern("cache:/api/payroll/deductions*");
     return res.status(201).json({
       message: "Tạo khấu trừ thành công",
       deduction,
@@ -136,6 +137,7 @@ export const updateDeduction = async (req, res) => {
       LoaiKT: parsed.data.LoaiKT,
       PhanTram: parsed.data.PhanTram,
     });
+    await clearPattern("cache:/api/payroll/deductions*");
 
     res.status(200).json({
       message: "Cập nhật khấu trừ thành công",
@@ -161,6 +163,7 @@ export const deleteDeduction = async (req, res) => {
     }
 
     await deduction.destroy();
+    await clearPattern("cache:/api/payroll/deductions*");
 
     return res.status(200).json({
       message: "Xóa khấu trừ thành công",

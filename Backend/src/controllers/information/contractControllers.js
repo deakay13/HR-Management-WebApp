@@ -7,6 +7,7 @@ import { Pagination } from "../../utils/paginations.js";
 import { searchService } from "../../utils/search.js";
 import ExcelJS from "exceljs";
 import sequelize from "../../config/dbconnect.js";
+import { clearPattern } from "../../utils/redisClient.js";
 
 const getAllContracts = async (req, res) => {
   try {
@@ -103,21 +104,11 @@ const createContract = async (req, res) => {
       return res.status(400).json({ message: "Mã nhân viên không tồn tại" });
 
     const contract = await Contract.create({
-
-      MaHopDong,
-      MaNV,
-      LoaiHD,
-      NgayBatDau,
-      NgayKetThuc,
-      NgayKy,
-      ChucDanh,
-      MaPB,
-      MaLCB,
-      MaPC,
-      HinhThucTraLuong,
-      TinhTrang,
-      HinhAnhHopDong,
+      MaHopDong, MaNV, LoaiHD, NgayBatDau, NgayKetThuc,
+      NgayKy, ChucDanh, MaPB, MaLCB, MaPC, HinhThucTraLuong, TinhTrang, HinhAnhHopDong,
     });
+    // Clear cache sau khi tạo mới
+    await clearPattern("cache:/api/information/contracts*");
     res.status(201).json(contract);
   } catch (error) {
     res.status(400).json({ message: "Lỗi khi tạo hợp đồng: " + error.message });
@@ -148,6 +139,8 @@ const updateContract = async (req, res) => {
         return res.status(400).json({ message: "Mã nhân viên không tồn tại" });
     }
     await contract.update({ ...req.body, HinhAnhHopDong });
+    // Clear cache sau khi cập nhật
+    await clearPattern("cache:/api/information/contracts*");
     res.status(200).json(contract);
   } catch (error) {
     res
@@ -161,6 +154,8 @@ const deleteContract = async (req, res) => {
     if (!contract)
       return res.status(404).json({ message: "Hợp đồng không tồn tại" });
     await contract.destroy();
+    // Clear cache sau khi xóa
+    await clearPattern("cache:/api/information/contracts*");
     res.status(200).json({ message: "Xóa hợp đồng thành công" });
   } catch (error) {
     res.status(500).json({ message: "Lỗi khi xóa hợp đồng: " + error.message });

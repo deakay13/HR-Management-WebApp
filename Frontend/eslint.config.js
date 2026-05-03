@@ -20,4 +20,14 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  // Override rules for test files — `any` is acceptable in test mocks
+  // and test utilities are not React components subject to fast-refresh rules
+  {
+    files: ['src/test/**/*.{ts,tsx}'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'react-refresh/only-export-components': 'off',
+      '@typescript-eslint/no-unused-vars': 'warn',
+    },
+  },
 ])

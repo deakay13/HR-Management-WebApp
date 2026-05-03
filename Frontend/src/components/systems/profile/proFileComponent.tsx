@@ -41,7 +41,7 @@ import {
   IconEdit,
 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
-import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
+import { useUpdateEmployeeMutation } from "@/hooks/queries/useEmployeesQuery";
 import { IconCamera, IconLoader2 } from "@tabler/icons-react";
 import { useRef } from "react";
 import { toast } from "sonner";
@@ -51,7 +51,7 @@ const ProfileComponent = () => {
   const { account, avatarUrl, setAvatarUrl } = useAuthStore();
   const { role } = useAuthorizeStore();
   const { t } = useTranslation();
-  const { updateEmployee } = useEmployeeStore();
+  const { mutateAsync: updateEmployeeMutation } = useUpdateEmployeeMutation();
   const [employee, setEmployee] = useState<Employee | null>(null);
   const [loading, setLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
@@ -121,7 +121,7 @@ const ProfileComponent = () => {
       const formData = new FormData();
       formData.append("HinhAnh", selectedFile);
 
-      await updateEmployee(account.MaNV, formData);
+      await updateEmployeeMutation({ id: account.MaNV, data: formData as any });
 
       // Refresh employee data
       const updatedData = await EmployeeServices.getEmployee(account.MaNV);
@@ -135,7 +135,8 @@ const ProfileComponent = () => {
       toast.success(t("Cập nhật ảnh đại diện thành công!"));
       handleClosePreview();
       /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
       console.error("Failed to upload avatar:", error);
       const message =
         error.response?.data?.message ||
@@ -217,7 +218,7 @@ const ProfileComponent = () => {
         }
       });
 
-      await EmployeeServices.updateEmployee(account.MaNV, formData);
+      await updateEmployeeMutation({ id: account.MaNV, data: formData as any });
 
       // Refresh data
       const updatedData = await EmployeeServices.getEmployee(account.MaNV);

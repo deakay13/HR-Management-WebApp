@@ -16,7 +16,6 @@ import {
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -26,36 +25,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  HoursInputSchema,
-  type HoursInput,
-} from "@/types/payRollTypes/hoursTypes";
-
 import { columns } from "../columns/workspace/hoursColumns";
 import type { Hours } from "@/types/payRollTypes/hoursTypes";
-import { useHoursStore } from "@/stores/payRollStores/hoursStore";
 import { useAuthorizeStore } from "@/stores/authStores/useAuthorizeStore";
+import { CreateHoursDialog } from "./dialogs/CreateHoursDialog";
 import { canCreate } from "@/utils/authorizeUtils";
 import { TablePagination } from "@/components/table/shared/TablePagination";
 import { TableBreadcrumb } from "@/components/table/shared/TableBreadcrumb";
 import { TableColumnFilter } from "@/components/table/shared/TableColumnFilter";
 import { HoursServices } from "@/services/payRollServices/hoursServices";
 import { toast } from "sonner";
-import { useEffect } from "react";
 
 export function HoursTable({
   data,
@@ -68,23 +48,13 @@ export function HoursTable({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const { createHours, searchHours } = useHoursStore();
   const { permissions } = useAuthorizeStore();
   const [createOpen, setCreateOpen] = React.useState(false);
-  const [filters, setFilters] = React.useState({ keyword: "" });
-
-  // Debounce auto-search
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      searchHours(filters);
-    }, 500);
-    return () => clearTimeout(delayDebounceFn);
-  }, [filters, searchHours]);
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const handleExport = async () => {
     try {
-      const response = await useHoursStore.getState().getHours(); // Wait, I need a specific export service
-      // Let's use the service directly if possible or update store
+      // export using service directly
       const blob = await HoursServices.exportHours();
       const url = window.URL.createObjectURL(new Blob([blob]));
       const link = document.createElement("a");
@@ -97,27 +67,6 @@ export function HoursTable({
     } catch (error) {
       console.error("Lỗi export excel:", error);
       toast.error(t("Không thể xuất file excel"));
-    }
-  };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-    watch,
-  } = useForm<HoursInput>({
-    resolver: zodResolver(HoursInputSchema),
-    defaultValues: { MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 },
-  });
-
-  const onSubmit: SubmitHandler<HoursInput> = async (data) => {
-    try {
-      await createHours(data);
-      setCreateOpen(false);
-      reset();
-    } catch {
-      // store handles toast
     }
   };
 
@@ -139,8 +88,10 @@ export function HoursTable({
       columnVisibility,
       rowSelection,
       columnFilters,
+      globalFilter,
       pagination,
     },
+    onGlobalFilterChange: setGlobalFilter,
     getRowId: (row) => row.MaGL.toString(),
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -175,10 +126,8 @@ export function HoursTable({
               <Input
                 placeholder={t("Search...")}
                 className="h-9 w-[160px] pl-9"
-                value={filters.keyword}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, keyword: e.target.value }))
-                }
+                value={globalFilter ?? ""}
+                onChange={(e) => setGlobalFilter(e.target.value)}
               />
             </div>
             <Button
@@ -196,101 +145,20 @@ export function HoursTable({
 
           {/* Create button */}
           {canCreate(permissions) && (
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    reset();
-                    setCreateOpen(true);
-                  }}
-                >
-                  <IconPlus />
-                  <span className="hidden lg:inline">{t("Tạo mới")}</span>
-                </Button>
-              </DialogTrigger>
-
-              <DialogContent className="sm:max-w-md">
-                <form onSubmit={handleSubmit(onSubmit as any)} className="space-y-6">
-                  <DialogHeader>
-                    <DialogTitle className="text-lg font-semibold">
-                      {t("Tạo ca làm việc")}
-                    </DialogTitle>
-                    <DialogDescription className="text-sm text-muted-foreground">
-                      {t("Nhập thông tin chi tiết để tạo mới.")}
-                    </DialogDescription>
-                  </DialogHeader>
-                  <FieldGroup className="space-y-4">
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="MaGL">{t("Mã Giờ Làm")}</Label>
-                      <Input
-                        id="MaGL"
-                        placeholder={t("VD: GL001")}
-                        className={`h-10 ${errors.MaGL ? "border-red-500" : ""}`}
-                        {...register("MaGL")}
-                      />
-                      {errors.MaGL && (
-                        <p className="text-red-500 text-xs">{t(errors.MaGL.message || "")}</p>
-                      )}
-                    </Field>
-
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="SoGioLam">{t("Số Giờ Làm/Ngày")}</Label>
-                      <Input
-                        id="SoGioLam"
-                        type="number"
-                        placeholder={t("VD: 8")}
-                        className={`h-10 ${errors.SoGioLam ? "border-red-500" : ""}`}
-                        {...register("SoGioLam", { valueAsNumber: true })}
-                      />
-                      {errors.SoGioLam && (
-                        <p className="text-red-500 text-xs">{t(errors.SoGioLam.message || "")}</p>
-                      )}
-                    </Field>
-
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="SoNgayLam">{t("Số Ngày Công Bảng Lương (Chuẩn)")}</Label>
-                      <Input
-                        id="SoNgayLam"
-                        type="number"
-                        placeholder={t("VD: 26")}
-                        className={`h-10 ${errors.SoNgayLam ? "border-red-500" : ""}`}
-                        {...register("SoNgayLam", { valueAsNumber: true })}
-                      />
-                      {errors.SoNgayLam && (
-                        <p className="text-red-500 text-xs">{t(errors.SoNgayLam.message || "")}</p>
-                      )}
-                    </Field>
-
-                    <Field className="flex flex-col gap-2">
-                      <Label htmlFor="TongSoGio">{t("Tổng Giờ Công/Tháng")}</Label>
-                      <Input
-                        id="TongSoGio"
-                        type="number"
-                        className="h-10 bg-muted"
-                        value={(watch("SoGioLam") || 0) * (watch("SoNgayLam") || 0)}
-                        disabled
-                      />
-                    </Field>
-                  </FieldGroup>
-
-                  <DialogFooter className="gap-2">
-                    <DialogClose asChild>
-                      <Button type="button" variant="outline">
-                        {t("Huỷ")}
-                      </Button>
-                    </DialogClose>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting}
-                    >
-                      {t("Tạo mới")}
-                    </Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCreateOpen(true)}
+              >
+                <IconPlus />
+                <span className="hidden lg:inline">{t("Tạo mới")}</span>
+              </Button>
+              <CreateHoursDialog
+                open={createOpen}
+                onOpenChange={setCreateOpen}
+              />
+            </>
           )}
         </div>
       </div>

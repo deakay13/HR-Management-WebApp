@@ -21,7 +21,11 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useAllowanceStore } from "@/stores/payRollStores/allowanceStore";
+import {
+  useUpdateAllowanceMutation,
+  useDeleteAllowanceMutation,
+} from "@/hooks/queries/usePayrollQueries";
+import { toast } from "sonner";
 import type { Allowance } from "@/types/payRollTypes/allowanceTypes";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,7 +40,8 @@ import React from "react";
 
 export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
   const { t } = useTranslation();
-  const { deleteAllowance, updateAllowance } = useAllowanceStore();
+  const updateAllowanceMutation = useUpdateAllowanceMutation();
+  const deleteAllowanceMutation = useDeleteAllowanceMutation();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
   const {
@@ -65,8 +70,24 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
   };
 
   const onSubmit = async (data: AllowanceInput) => {
-    await updateAllowance(allowance.MaPC, data);
-    setEditOpen(false);
+    try {
+      await updateAllowanceMutation.mutateAsync({ id: allowance.MaPC, data: data as Record<string, unknown> });
+      toast.success(t("Sửa phụ cấp thành công"));
+      setEditOpen(false);
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Sửa phụ cấp thất bại"));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteAllowanceMutation.mutateAsync(allowance.MaPC);
+      toast.success(t("Xoá phụ cấp thành công"));
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Xoá phụ cấp thất bại"));
+    }
   };
 
   return (
@@ -199,7 +220,8 @@ export function AllowanceActionCell({ allowance }: { allowance: Allowance }) {
                   </DialogClose>
                   <Button
                     variant="destructive"
-                    onClick={() => deleteAllowance(allowance.MaPC)}
+                    onClick={handleDelete}
+                    disabled={deleteAllowanceMutation.isPending}
                   >
                     {t("Xoá")}
                   </Button>

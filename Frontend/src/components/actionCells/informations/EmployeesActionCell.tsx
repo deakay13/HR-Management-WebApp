@@ -28,8 +28,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { useEmployeeStore } from "@/stores/informationStores/employeeStore";
-import { useDepartmentStore } from "@/stores/informationStores/departmentStore";
+import {
+  useUpdateEmployeeMutation,
+  useDeleteEmployeeMutation,
+} from "@/hooks/queries/useEmployeesQuery";
+import { useDepartmentsQuery } from "@/hooks/queries/useDepartmentsQuery";
 import { useEffect, useState } from "react";
 import type { Employee } from "@/types/informationTypes/employeeTypes";
 import { z } from "zod";
@@ -40,8 +43,10 @@ import { useTranslation } from "react-i18next";
 
 export function EmployeesActionCell({ emp }: { emp: Employee }) {
   const { t } = useTranslation();
-  const { deleteEmployee, updateEmployee } = useEmployeeStore();
-  const { departments, getDepartments } = useDepartmentStore();
+  const updateEmployeeMutation = useUpdateEmployeeMutation();
+  const deleteEmployeeMutation = useDeleteEmployeeMutation();
+  const { data: departmentsData } = useDepartmentsQuery({ size: 0 });
+  const departments = departmentsData?.data || [];
   const { permissions } = useAuthorizeStore();
 
   const [editOpen, setEditOpen] = useState(false);
@@ -50,9 +55,6 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
 
   const genders = ["Nam", "Nữ", "Khác"];
 
-  useEffect(() => {
-    getDepartments();
-  }, [getDepartments]);
 
   useEffect(() => {
     if (editOpen) {
@@ -70,9 +72,12 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
 
   const handleUpdate = async () => {
     try {
-      getEmployeeValidationSchema([], true).parse(formData);
+      const validatedData = getEmployeeValidationSchema([], true).parse(formData);
       setErrors({});
-      await updateEmployee(emp.MaNV, formData);
+      await updateEmployeeMutation.mutateAsync({
+        id: emp.MaNV,
+        data: validatedData as any,
+      });
       setEditOpen(false);
     } catch (error) {
       if (error instanceof z.ZodError) {
@@ -321,10 +326,11 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
                 <DialogClose asChild>
                   <Button variant="outline">{t("Huỷ")}</Button>
                 </DialogClose>
-                <Button
-                  variant="destructive"
-                  onClick={() => deleteEmployee(emp.MaNV)}
-                >
+                  <Button
+                    variant="destructive"
+                    onClick={() => deleteEmployeeMutation.mutateAsync(emp.MaNV)}
+                    disabled={deleteEmployeeMutation.isPending}
+                  >
                   {t("Xoá")}
                 </Button>
               </DialogFooter>

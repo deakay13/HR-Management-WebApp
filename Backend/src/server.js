@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import "./jobs/sessionCleanup.js";
+import { connectRedis } from "./utils/redisClient.js";
 
 //import router
 import accountRoutes from "./routes/accountRoutes.js";
@@ -35,6 +36,8 @@ app.use("/api/permissions", permissionRoutes);
 app.use("/api/payroll", payRollRoutes);
 app.use("/api/information", informationRoutes);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server chạy ở cổng ${PORT}`);
+connectRedis().then(() => {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server chạy ở cổng ${PORT}`);
+  });
 });

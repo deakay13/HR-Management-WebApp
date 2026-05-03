@@ -1,6 +1,6 @@
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 import { useEffect, useState } from "react";
-import { Outlet, Navigate } from "react-router";
+import { Outlet, Navigate } from "react-router-dom";
 
 const ProtectedRoute = () => {
   const [starting, setStarting] = useState(true);

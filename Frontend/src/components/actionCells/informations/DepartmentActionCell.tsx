@@ -21,7 +21,10 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-import { useDepartmentStore } from "@/stores/informationStores/departmentStore";
+import {
+  useUpdateDepartmentMutation,
+  useDeleteDepartmentMutation,
+} from "@/hooks/queries/useDepartmentsQuery";
 import { useEffect, useState } from "react";
 import type { Department } from "@/types/informationTypes/departmentTypes";
 import { z } from "zod";
@@ -32,7 +35,8 @@ import { useTranslation } from "react-i18next";
 
 export function DepartmentActionCell({ dept }: { dept: Department }) {
   const { t } = useTranslation();
-  const { deleteDepartment, updateDepartment } = useDepartmentStore();
+  const updateDepartmentMutation = useUpdateDepartmentMutation();
+  const deleteDepartmentMutation = useDeleteDepartmentMutation();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = useState(false);
   const [formData, setFormData] = useState<Department>(dept);
@@ -55,9 +59,11 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
         TenPB: formData.TenPB,
       });
       setErrors({});
-      await updateDepartment(dept.MaPB, {
-        MaPB: formData.MaPB,
-        TenPB: formData.TenPB,
+      await updateDepartmentMutation.mutateAsync({
+        id: dept.MaPB,
+        data: {
+          TenPB: formData.TenPB,
+        },
       });
       setEditOpen(false);
     } catch (error) {
@@ -172,7 +178,8 @@ export function DepartmentActionCell({ dept }: { dept: Department }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteDepartment(dept.MaPB)}
+                  onClick={() => deleteDepartmentMutation.mutateAsync(dept.MaPB)}
+                  disabled={deleteDepartmentMutation.isPending}
                 >
                   {t("Xoá")}
                 </Button>

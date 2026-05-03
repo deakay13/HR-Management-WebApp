@@ -4,6 +4,7 @@ import { baseSalarySchema } from "../../utils/validationSchemas.js";
 import { searchService } from "../../utils/search.js";
 import sequelize from "../../config/dbconnect.js";
 import ExcelJS from "exceljs";
+import { clearPattern } from "../../utils/redisClient.js";
 export const createBaseSalary = async (req, res) => {
   if (!req.body) return res.status(400).json({ message: "Thiếu dữ liệu" });
   try {
@@ -36,6 +37,7 @@ export const createBaseSalary = async (req, res) => {
     }
 
     const luong = await LuongCoBan.create({ MaLCB, LuongCB });
+    await clearPattern("cache:/api/payroll/basesalary*");
 
     // response
     return res.status(201).json({
@@ -82,6 +84,7 @@ export const updateBaseSalary = async (req, res) => {
     await luong.update({
       LuongCB: parsed.data.LuongCB,
     });
+    await clearPattern("cache:/api/payroll/basesalary*");
 
     // Return success response
     res.status(200).json({
@@ -168,6 +171,7 @@ export const deleteBaseSalary = async (req, res) => {
 
     // Delete base salary
     await luong.destroy();
+    await clearPattern("cache:/api/payroll/basesalary*");
 
     // Return success response
     return res.status(200).json({ message: "Xóa lương cơ bản thành công" });

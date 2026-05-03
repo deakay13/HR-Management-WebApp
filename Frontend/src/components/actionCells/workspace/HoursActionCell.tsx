@@ -21,7 +21,8 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useHoursStore } from "@/stores/payRollStores/hoursStore";
+import { useUpdateHourMutation, useDeleteHourMutation } from "@/hooks/queries/usePayrollQueries";
+import { toast } from "sonner";
 import type { Hours } from "@/types/payRollTypes/hoursTypes";
 
 import { useForm } from "react-hook-form";
@@ -37,7 +38,8 @@ import React from "react";
 
 export function HoursActionCell({ hours }: { hours: Hours }) {
   const { t } = useTranslation();
-  const { deleteHours, updateHours } = useHoursStore();
+  const { mutateAsync: updateHours } = useUpdateHourMutation();
+  const { mutateAsync: deleteHours } = useDeleteHourMutation();
   const { permissions } = useAuthorizeStore();
   const [editOpen, setEditOpen] = React.useState(false);
   const {
@@ -70,8 +72,24 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
   };
 
   const onSubmit = async (data: HoursInput) => {
-    await updateHours(hours.MaGL, data);
-    setEditOpen(false);
+    try {
+      await updateHours({ id: hours.MaGL, data: data as any });
+      toast.success(t("Sửa ca làm việc thành công"));
+      setEditOpen(false);
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Sửa ca làm việc thất bại"));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteHours(hours.MaGL);
+      toast.success(t("Xoá ca làm việc thành công"));
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Xoá ca làm việc thất bại"));
+    }
   };
 
   return (
@@ -231,7 +249,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deleteHours(hours.MaGL)}
+                  onClick={handleDelete}
                 >
                   {t("Xoá")}
                 </Button>

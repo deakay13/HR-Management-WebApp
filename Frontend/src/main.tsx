@@ -4,11 +4,14 @@ import "./index.css";
 import App from "./App.tsx";
 import "./i18n";
 import { ThemeProvider } from "./components/systems/ThemeProvider";
+import { ReactQueryProvider } from "./providers/ReactQueryProvider";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider defaultTheme="system" defaultLanguage="vi">
-      <App />
-    </ThemeProvider>
+    <ReactQueryProvider>
+      <ThemeProvider defaultTheme="system" defaultLanguage="vi">
+        <App />
+      </ThemeProvider>
+    </ReactQueryProvider>
   </StrictMode>,
 );

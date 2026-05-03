@@ -1,3 +1,4 @@
+import React from "react";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,7 +22,8 @@ import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { usePayRollStore } from "@/stores/payRollStores/payRollStore";
+import { useUpdatePayrollMutation, useDeletePayrollMutation } from "@/hooks/queries/usePayrollQueries";
+import { toast } from "sonner";
 import type { PayRoll } from "@/types/payRollTypes/payRollTypes";
 
 import { useForm } from "react-hook-form";
@@ -36,8 +38,10 @@ import { useTranslation } from "react-i18next";
 
 export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
   const { t } = useTranslation();
-  const { deletePayRoll, updatePayRoll } = usePayRollStore();
+  const { mutateAsync: updatePayRoll } = useUpdatePayrollMutation();
+  const { mutateAsync: deletePayRoll } = useDeletePayrollMutation();
   const { permissions } = useAuthorizeStore();
+  const [editOpen, setEditOpen] = React.useState(false);
 
   const {
     register,
@@ -75,7 +79,24 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
   };
 
   const onSubmit = async (data: PayRollInput) => {
-    await updatePayRoll(payRoll.MaBL, data);
+    try {
+      await updatePayRoll({ id: payRoll.MaBL, data: data as Record<string, unknown> });
+      toast.success(t("Sửa bảng lương thành công"));
+      setEditOpen(false);
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Sửa bảng lương thất bại"));
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deletePayRoll(payRoll.MaBL);
+      toast.success(t("Xoá bảng lương thành công"));
+    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    catch (error: any) {
+      toast.error(error.response?.data?.message || t("Xoá bảng lương thất bại"));
+    }
   };
 
   return (
@@ -92,12 +113,13 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
 
       <DropdownMenuContent align="end" className="w-32">
         {canUpdate(permissions) && (
-          <Dialog>
+          <Dialog open={editOpen} onOpenChange={setEditOpen}>
             <DialogTrigger asChild>
               <DropdownMenuItem
                 onSelect={(e) => {
                   e.preventDefault();
                   handleOpenEdit();
+                  setEditOpen(true);
                 }}
               >
                 {t("Sửa")}
@@ -261,7 +283,7 @@ export function PayRollActionCell({ payRoll }: { payRoll: PayRoll }) {
                 </DialogClose>
                 <Button
                   variant="destructive"
-                  onClick={() => deletePayRoll(payRoll.MaBL)}
+                  onClick={handleDelete}
                 >
                   {t("Xoá")}
                 </Button>

@@ -2,6 +2,7 @@ import VaiTro from "../../models/auth/VaiTro.js";
 import VaiTro_Quyen from "../../models/auth/VaiTro_Quyen.js";
 import { Pagination } from "../../utils/paginations.js";
 import { roleSchema } from "../../utils/validationSchemas.js";
+import { clearPattern } from "../../utils/redisClient.js";
 
 export const createRole = async (req, res) => {
   try {
@@ -31,6 +32,7 @@ export const createRole = async (req, res) => {
     }
 
     const role = await VaiTro.create({ MaVT, TenVaiTro });
+    await clearPattern("cache:/api/permissions/roles*");
 
     //respon status 200
     return res.status(201).json({ message: "Tạo Vai trò thành công", role });
@@ -104,6 +106,7 @@ export const updateRole = async (req, res) => {
       return res.status(404).json({ message: "không tìm thấy vai trò" });
 
     await role.update({ TenVaiTro: parsed.data.TenVaiTro });
+    await clearPattern("cache:/api/permissions/roles*");
     res.status(200).json({ message: "Cập nhật thành công", role });
   } catch (error) {
     console.error("Lỗi khi gọi", error);
@@ -127,6 +130,7 @@ export const deleteRole = async (req, res) => {
 
     //Delete role
     await role.destroy();
+    await clearPattern("cache:/api/permissions/roles*");
 
     //respon status 200
     return res.status(200).json({ message: "Xoá Vai Trò thành công" });

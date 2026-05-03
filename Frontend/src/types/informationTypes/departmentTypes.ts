@@ -26,11 +26,11 @@ export interface DepartmentTypes {
   totalItems: number;
   totalPages: number;
   currentPage: number;
-  searchParams: any;
+  searchParams: Record<string, unknown>;
   clearState: () => void;
   createDepartment: (data: Department) => Promise<void>;
-  getDepartments: (params?: any) => Promise<void>;
-  searchDepartments: (params?: any) => Promise<void>;
+  getDepartments: (params?: Record<string, unknown>) => Promise<void>;
+  searchDepartments: (params?: Record<string, unknown>) => Promise<void>;
   updateDepartment: (ID: string, data: Department) => Promise<void>;
   deleteDepartment: (ID: string) => Promise<void>;
 }
