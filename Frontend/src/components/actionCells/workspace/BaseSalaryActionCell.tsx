@@ -52,7 +52,7 @@ export function BaseSalaryActionCell({
     formState: { errors, isSubmitting },
     reset,
   } = useForm<BaseSalaryInput>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- zodResolver type mismatch với useForm generic
     resolver: zodResolver(BaseSalaryInputSchema) as any,
     defaultValues: {
       MaLCB: baseSalary.MaLCB,
@@ -71,12 +71,12 @@ export function BaseSalaryActionCell({
 
   const onSubmit = async (data: BaseSalaryInput) => {
     try {
-      await updateBaseSalary({ id: baseSalary.MaLCB, data: data as any });
+      await updateBaseSalary({ id: baseSalary.MaLCB, data: data as Record<string, unknown> });
       toast.success(t("Sửa lương cơ bản thành công"));
       setEditOpen(false);
-    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    catch (error: any) {
-      toast.error(error.response?.data?.message || t("Sửa lương cơ bản thất bại"));
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || t("Sửa lương cơ bản thất bại"));
     }
   };
 
@@ -84,9 +84,9 @@ export function BaseSalaryActionCell({
     try {
       await deleteBaseSalary(baseSalary.MaLCB);
       toast.success(t("Xoá lương cơ bản thành công"));
-    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    catch (error: any) {
-      toast.error(error.response?.data?.message || t("Xoá lương cơ bản thất bại"));
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || t("Xoá lương cơ bản thất bại"));
     }
   };
 

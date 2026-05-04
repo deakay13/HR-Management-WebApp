@@ -65,24 +65,17 @@ export function ChartAreaInteractive() {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
   const [mode, setMode] = React.useState<"salary" | "hours">("salary");
-  const [range, setRange] = React.useState("12m");
-
-  // Set range to 3m on mobile
-  React.useEffect(() => {
-    if (isMobile) setRange("3m");
-  }, [isMobile]);
+  // Dùng isMobile làm initial value thay vì set trong useEffect
+  const [range, setRange] = React.useState(() => isMobile ? "3m" : "12m");
 
   const { data: payrollData } = usePayrollsQuery({ page: 1, limit: 10000 });
   const { data: hoursData } = useHoursQuery({ page: 1, limit: 10000 });
 
-  const PayRolls = payrollData?.data || [];
-  const Hours = hoursData?.data || [];
-
   // Build monthly data from PayRolls
   const salaryByMonth = React.useMemo(() => {
+    const PayRolls = payrollData?.data || [];
     const map: Record<string, number> = {};
     PayRolls.forEach((p: Record<string, unknown>) => {
-      // Try to parse a month key from Thang/ThangLuong/NgayLap or fallback
       const raw =
         (p as Record<string, unknown>).Thang ||
         (p as Record<string, unknown>).ThangLuong ||
@@ -94,10 +87,11 @@ export function ChartAreaInteractive() {
       map[key] = (map[key] || 0) + (Number(p.TongLuong) || 0);
     });
     return map;
-  }, [PayRolls]);
+  }, [payrollData]);
 
   // Build monthly data from Hours
   const hoursByMonth = React.useMemo(() => {
+    const Hours = hoursData?.data || [];
     const map: Record<string, number> = {};
     Hours.forEach((h) => {
       const raw =
@@ -116,7 +110,7 @@ export function ChartAreaInteractive() {
         ) || 0);
     });
     return map;
-  }, [Hours]);
+  }, [hoursData]);
 
   // Anchor to the latest available month in real data (or system date as fallback)
   const anchorDate = React.useMemo(() => {

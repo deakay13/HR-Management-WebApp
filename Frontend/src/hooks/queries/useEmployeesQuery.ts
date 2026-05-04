@@ -56,7 +56,7 @@ export const useEmployeesQuery = (params: Record<string, unknown> = {}) => {
 export const useCreateEmployeeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: FormData) =>
+    mutationFn: (data: FormData | Record<string, unknown>) =>
       api.post(`/api/information/employees`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       }),
@@ -69,7 +69,7 @@ export const useCreateEmployeeMutation = () => {
 export const useUpdateEmployeeMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: FormData }) =>
+    mutationFn: ({ id, data }: { id: string; data: FormData | Record<string, unknown> }) =>
       api.put(`/api/information/employees/${id}`, data, {
         headers: { "Content-Type": "multipart/form-data" },
       }),

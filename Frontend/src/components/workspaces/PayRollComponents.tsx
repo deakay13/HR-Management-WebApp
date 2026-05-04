@@ -8,17 +8,13 @@ import { usePayrollsQuery } from "@/hooks/queries/usePayrollQueries";
 const PayRollComponents = () => {
   const { t } = useTranslation();
   const accessToken = useAuthStore((state) => state.accessToken);
-  const account = useAuthStore((state) => state.account);
   const role = useAuthorizeStore((state) => state.role);
 
   const isEmployee = hasRole(role, ROLE_EMPLOYEE);
 
   // React Query: cache 3 phút
-  // Nếu là Employee → truyền employeeId để lấy bảng lương cá nhân
-  const { data, isLoading } = usePayrollsQuery(
-    { size: 0 },
-    { employeeId: isEmployee && account?.MaNV ? account.MaNV : undefined }
-  );
+  // Lấy danh sách bảng lương (Backend đã tự động lọc đối với Nhân Viên)
+  const { data, isLoading } = usePayrollsQuery({ size: 0 });
 
   const PayRolls = data?.data ?? [];
 

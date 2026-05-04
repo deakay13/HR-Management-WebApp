@@ -22,7 +22,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AccountInputSchema,
@@ -52,7 +52,7 @@ export function CreateAccountDialog({
     formState: { errors, isSubmitting },
     reset,
     setValue,
-    watch,
+    control,
   } = useForm<AccountInput>({
     resolver: zodResolver(AccountInputSchema),
     defaultValues: {
@@ -63,6 +63,9 @@ export function CreateAccountDialog({
       MatKhau: "",
     },
   });
+
+  // useWatch được React Compiler hỗ trợ tốt hơn watch()
+  const maVTValue = useWatch({ control, name: "MaVT" });
 
   // Reset form whenever the dialog opens
   React.useEffect(() => {
@@ -123,7 +126,7 @@ export function CreateAccountDialog({
             <Field className="flex flex-col gap-2">
               <Label htmlFor="MaVT">{t("Mã Vai Trò")}</Label>
               <Select
-                value={watch("MaVT")}
+                value={maVTValue}
                 onValueChange={(value) =>
                   setValue("MaVT", value, { shouldValidate: true })
                 }

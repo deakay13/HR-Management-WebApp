@@ -32,6 +32,16 @@ import upload from "../config/multerConfig.js";
 
 const router = express.Router();
 
+const authorizeUpdateEmployee = (req, res, next) => {
+  const userPermissions = req.account?.permissions || [];
+  const hasEditPermission = userPermissions.includes("Sửa");
+  const isSelf = req.account?.MaNV === req.params.id;
+
+  if (hasEditPermission || isSelf) {
+    return next();
+  }
+  return res.status(403).json({ message: "Không có quyền truy cập" });
+};
 /* Routes for PhongBan */
 router.get("/departments/search", authorize(["Đọc"]), searchDepartments);
 router.get("/departments/export", authorize(["Đọc"]), exportDepartmentsToExcel);
@@ -54,7 +64,7 @@ router.post(
 );
 router.put(
   "/employees/:id",
-  authorize(["Sửa"]),
+  authorizeUpdateEmployee,
   upload.single("HinhAnh"),
   updateEmployee,
 );

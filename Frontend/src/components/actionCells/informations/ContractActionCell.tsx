@@ -20,12 +20,21 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   useUpdateContractMutation,
   useDeleteContractMutation,
 } from "@/hooks/queries/useContractsQuery";
 import { useEmployeesQuery } from "@/hooks/queries/useEmployeesQuery";
+import { useDepartmentsQuery } from "@/hooks/queries/useDepartmentsQuery";
+import { useBaseSalariesQuery, useAllowancesQuery } from "@/hooks/queries/usePayrollQueries";
 import { useEffect, useState } from "react";
 import type { Contract } from "@/types/informationTypes/contractTypes";
 import { getContractValidationSchema } from "@/types/informationTypes/contractTypes";
@@ -42,6 +51,11 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
   const [editOpen, setEditOpen] = useState(false);
   const { data: employeesData } = useEmployeesQuery({ size: 0 });
   const employees = employeesData?.data || [];
+  
+  const { data: departmentsData } = useDepartmentsQuery({ size: 0 });
+  const { data: baseSalariesData } = useBaseSalariesQuery({ size: 0 });
+  const { data: allowancesData } = useAllowancesQuery({ size: 0 });
+
   const [formDataState, setFormDataState] = useState<Contract>(contract);
   const [file, setFile] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -99,7 +113,7 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
 
       await updateContractMutation.mutateAsync({
         id: contract.MaHopDong,
-        data: formData as any,
+        data: formData,
       });
       setEditOpen(false);
     } catch (error) {
@@ -160,17 +174,26 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
 
                 <Field>
                   <Label htmlFor="MaNV">{t("Mã NV")}</Label>
-                  <Input
-                    id="MaNV"
-                    className="uppercase"
+                  <Select
                     value={formDataState.MaNV}
-                    onChange={(e) =>
+                    onValueChange={(val) =>
                       setFormDataState((prev: Contract) => ({
                         ...prev,
-                        MaNV: e.target.value,
+                        MaNV: val,
                       }))
                     }
-                  />
+                  >
+                    <SelectTrigger className={errors.MaNV ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t("Chọn nhân viên")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employeesData?.data?.map((emp) => (
+                        <SelectItem key={emp.MaNV} value={emp.MaNV}>
+                          {emp.MaNV} - {emp.HoVaTen}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.MaNV && (
                     <span className="text-xs text-red-500">{errors.MaNV}</span>
                   )}
@@ -276,17 +299,26 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
 
                 <Field>
                   <Label htmlFor="MaPB">{t("Mã PB")}</Label>
-                  <Input
-                    id="MaPB"
-                    className="uppercase"
+                  <Select
                     value={formDataState.MaPB || ""}
-                    onChange={(e) =>
+                    onValueChange={(val) =>
                       setFormDataState((prev: Contract) => ({
                         ...prev,
-                        MaPB: e.target.value,
+                        MaPB: val,
                       }))
                     }
-                  />
+                  >
+                    <SelectTrigger className={errors.MaPB ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t("Chọn phòng ban")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departmentsData?.data?.map((dept) => (
+                        <SelectItem key={dept.MaPB} value={dept.MaPB}>
+                          {dept.MaPB} - {dept.TenPB}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.MaPB && (
                     <span className="text-xs text-red-500">
                       {t(errors.MaPB || "")}
@@ -296,17 +328,26 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
 
                 <Field>
                   <Label htmlFor="MaLCB">{t("Mã LCB")}</Label>
-                  <Input
-                    id="MaLCB"
-                    className="uppercase"
+                  <Select
                     value={formDataState.MaLCB || ""}
-                    onChange={(e) =>
+                    onValueChange={(val) =>
                       setFormDataState((prev: Contract) => ({
                         ...prev,
-                        MaLCB: e.target.value,
+                        MaLCB: val,
                       }))
                     }
-                  />
+                  >
+                    <SelectTrigger className={errors.MaLCB ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t("Chọn lương cơ bản")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {baseSalariesData?.data?.map((bs) => (
+                        <SelectItem key={bs.MaLCB as string} value={bs.MaLCB as string}>
+                          {bs.MaLCB as string} - {bs.LuongCB?.toLocaleString()} VNĐ
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.MaLCB && (
                     <span className="text-xs text-red-500">
                       {t(errors.MaLCB || "")}
@@ -316,17 +357,26 @@ export function ContractActionCell({ contract }: { contract: Contract }) {
 
                 <Field>
                   <Label htmlFor="MaPC">{t("Mã PC")}</Label>
-                  <Input
-                    id="MaPC"
-                    className="uppercase"
+                  <Select
                     value={formDataState.MaPC || ""}
-                    onChange={(e) =>
+                    onValueChange={(val) =>
                       setFormDataState((prev: Contract) => ({
                         ...prev,
-                        MaPC: e.target.value,
+                        MaPC: val,
                       }))
                     }
-                  />
+                  >
+                    <SelectTrigger className={errors.MaPC ? "border-red-500" : ""}>
+                      <SelectValue placeholder={t("Chọn phụ cấp")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allowancesData?.data?.map((pc) => (
+                        <SelectItem key={pc.MaPC as string} value={pc.MaPC as string}>
+                          {pc.MaPC as string} - {pc.LoaiPC as string}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {errors.MaPC && (
                     <span className="text-xs text-red-500">
                       {t(errors.MaPC || "")}

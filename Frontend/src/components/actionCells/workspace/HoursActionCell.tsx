@@ -46,12 +46,11 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
     register,
     handleSubmit,
     setValue,
-    watch,
+    getValues,
     formState: { errors, isSubmitting },
     reset,
   } = useForm<HoursInput>({
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    resolver: zodResolver(HoursInputSchema) as any,
+    resolver: zodResolver(HoursInputSchema),
     defaultValues: {
       MaGL: hours.MaGL,
       SoGioLam: hours.SoGioLam,
@@ -73,12 +72,12 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
 
   const onSubmit = async (data: HoursInput) => {
     try {
-      await updateHours({ id: hours.MaGL, data: data as any });
+      await updateHours({ id: hours.MaGL, data: data as Record<string, unknown> });
       toast.success(t("Sửa ca làm việc thành công"));
       setEditOpen(false);
-    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    catch (error: any) {
-      toast.error(error.response?.data?.message || t("Sửa ca làm việc thất bại"));
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || t("Sửa ca làm việc thất bại"));
     }
   };
 
@@ -86,9 +85,9 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
     try {
       await deleteHours(hours.MaGL);
       toast.success(t("Xoá ca làm việc thành công"));
-    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    catch (error: any) {
-      toast.error(error.response?.data?.message || t("Xoá ca làm việc thất bại"));
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || t("Xoá ca làm việc thất bại"));
     }
   };
 
@@ -139,13 +138,13 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       type="number"
                       className="h-10"
                       placeholder={t("VD: 8")}
-                      {...register("SoGioLam")}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setValue("SoGioLam", val);
-                        /* eslint-disable-next-line react-hooks/incompatible-library */
-                        setValue("TongSoGio", val * Number(watch("SoNgayLam")));
-                      }}
+                      {...register("SoGioLam", {
+                        valueAsNumber: true,
+                        onChange: (e) => {
+                          const val = Number(e.target.value);
+                          setValue("TongSoGio", val * Number(getValues("SoNgayLam")));
+                        }
+                      })}
                     />
                     {errors.SoGioLam && (
                       <p className="text-red-500 text-sm">
@@ -161,12 +160,13 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       type="number"
                       placeholder="26"
                       className="h-10"
-                      {...register("SoNgayLam")}
-                      onChange={(e) => {
-                        const val = Number(e.target.value);
-                        setValue("SoNgayLam", val);
-                        setValue("TongSoGio", Number(watch("SoGioLam")) * val);
-                      }}
+                      {...register("SoNgayLam", {
+                        valueAsNumber: true,
+                        onChange: (e) => {
+                          const val = Number(e.target.value);
+                          setValue("TongSoGio", Number(getValues("SoGioLam")) * val);
+                        }
+                      })}
                     />
                     {errors.SoNgayLam && (
                       <p className="text-red-500 text-sm">
@@ -184,7 +184,7 @@ export function HoursActionCell({ hours }: { hours: Hours }) {
                       type="number"
                       className="h-10 bg-muted"
                       readOnly
-                      {...register("TongSoGio")}
+                      {...register("TongSoGio", { valueAsNumber: true })}
                     />
                   </Field>
                 </FieldGroup>

@@ -14,7 +14,7 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
+import { useForm, useWatch, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   HoursInputSchema,
@@ -40,11 +40,15 @@ export function CreateHoursDialog({
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-    watch,
+    control,
   } = useForm<HoursInput>({
     resolver: zodResolver(HoursInputSchema),
     defaultValues: { MaGL: "", SoGioLam: 0, SoNgayLam: 26, TongSoGio: 0 },
   });
+
+  // useWatch được React Compiler hỗ trợ tốt hơn watch()
+  const soGioLam = useWatch({ control, name: "SoGioLam" });
+  const soNgayLam = useWatch({ control, name: "SoNgayLam" });
 
   // Reset form whenever the dialog opens
   React.useEffect(() => {
@@ -59,9 +63,9 @@ export function CreateHoursDialog({
       toast.success(t("Tạo ca làm việc thành công"));
       onOpenChange(false);
       reset();
-    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    catch (error: any) {
-      toast.error(error.response?.data?.message || t("Tạo mới thất bại"));
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || t("Tạo mới thất bại"));
     }
   };
 
@@ -133,7 +137,7 @@ export function CreateHoursDialog({
                 id="TongSoGio"
                 type="number"
                 className="h-10 bg-muted"
-                value={(watch("SoGioLam") || 0) * (watch("SoNgayLam") || 0)}
+                value={(soGioLam || 0) * (soNgayLam || 0)}
                 disabled
               />
             </Field>

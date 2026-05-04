@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import axios from "axios";
 import { useAuthStore } from "@/stores/authStores/useAuthStore";
 
@@ -26,6 +27,7 @@ api.interceptors.response.use(
       originalRequest.url.includes("/api/auth/signin") ||
       originalRequest.url.includes("/api/auth/refresh")
     ) {
+      toast.error(error.response?.data?.message || "Đăng nhập thất bại");
       return Promise.reject(error);
     }
 
@@ -51,6 +53,18 @@ api.interceptors.response.use(
         return Promise.reject(refreshError);
       }
     }
+    
+    // Global Error Handling: Show toast for bad requests, server errors, permission denied, etc.
+    const errorMessage = error.response?.data?.message || "Đã xảy ra lỗi hệ thống";
+    
+    // Check if error response has 'errors' array (Zod validation error from backend)
+    if (error.response?.data?.errors && Array.isArray(error.response.data.errors)) {
+       const firstError = error.response.data.errors[0];
+       toast.error(`Lỗi dữ liệu: ${firstError.message || errorMessage}`);
+    } else {
+       toast.error(errorMessage);
+    }
+
     return Promise.reject(error);
   },
 );

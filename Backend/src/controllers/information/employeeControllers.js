@@ -256,6 +256,14 @@ const updateEmployee = async (req, res) => {
     }
 
     const updateData = { ...parsed.data };
+
+    // Bảo vệ các trường nhạy cảm nếu người dùng chỉ tự sửa (không có quyền Sửa toàn cục)
+    const userPermissions = req.account?.permissions || [];
+    if (!userPermissions.includes("Sửa")) {
+      delete updateData.MaPB;
+      delete updateData.NgayVaoLam;
+    }
+
     if (req.file) {
       updateData.HinhAnh = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
     }

@@ -14,15 +14,13 @@ export const useRolesStore = create<RolesTypes>()((set, get) => ({
   createRoles: async (data) => {
     set({ initializing: true });
     try {
-      const newdata = await RolesServices.createRoles(data);
+      await RolesServices.createRoles(data);
+      // getRoles sẽ tự cập nhật state Roles từ server
       await get().getRoles();
-      set({
-        Roles: [...get().Roles, newdata],
-      });
       toast.success(i18n.t("Thêm Vai trò thành công"));
     } catch (error) {
       console.error("Lỗi khi tạo Vai Trò", error);
-      toast.error(i18n.t("Không thể tạo vai trò"));
+      // Global axios interceptor handles error toast
     } finally {
       set({ initializing: false });
     }
@@ -34,7 +32,7 @@ export const useRolesStore = create<RolesTypes>()((set, get) => ({
       set({ Roles: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách Vai trò", error);
-      toast.error(i18n.t("Không thể lấy danh sách Vai trò"));
+      // Global axios interceptor handles error toast
     } finally {
       set({ initializing: false });
     }
@@ -46,7 +44,6 @@ export const useRolesStore = create<RolesTypes>()((set, get) => ({
       toast.success(i18n.t("Lưu thay đổi vai trò thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật Vai Trò", error);
-      toast.error(i18n.t("Không thể lưu thay đổi vai trò"));
     }
   },
   deleteRole: async (ID: string) => {
@@ -59,7 +56,6 @@ export const useRolesStore = create<RolesTypes>()((set, get) => ({
       toast.success(i18n.t("Xoá Vai trò thành công"));
     } catch (error) {
       console.error("Lỗi khi xoá Vai trò", error);
-      toast.error(i18n.t("Không thể xoá Vai trò"));
     }
   },
 }));

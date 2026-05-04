@@ -32,7 +32,6 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       toast.success(i18n.t("Tạo tài khoản thành công"));
     } catch (error) {
       console.error("Lỗi khi tạo tài khoản:", error);
-      toast.error(i18n.t("Không thể tạo tài khoản"));
       throw error;
     } finally {
       set({ initializing: false });
@@ -49,7 +48,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       }
     } catch (error) {
       console.error("Lỗi khi lấy danh sách tài khoản", error);
-      toast.error(i18n.t("Không thể lấy danh sách tài khoản"));
+      // Global axios interceptor handles error toast
     } finally {
       set({ initializing: false });
     }
@@ -70,7 +69,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       });
     } catch (error) {
       console.error("Lỗi khi tìm kiếm tài khoản:", error);
-      toast.error(i18n.t("Không thể thực hiện tìm kiếm"));
+      // Global axios interceptor handles error toast
     }
   },
 
@@ -80,7 +79,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       toast.success(i18n.t("Xuất file Excel thành công"));
     } catch (error) {
       console.error("Lỗi khi xuất file Excel", error);
-      toast.error(i18n.t("Không thể xuất file Excel"));
+      // Global axios interceptor handles error toast
     }
   },
 
@@ -92,7 +91,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       toast.success(i18n.t("Cập nhật tài khoản thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật tài khoản:", error);
-      toast.error(i18n.t("Không thể cập nhật tài khoản"));
+      // Global axios interceptor handles error toast
       throw error;
     } finally {
       set({ initializing: false });
@@ -108,7 +107,7 @@ export const useAccountsStore = create<AccountTypes>((set, get) => ({
       toast.success(i18n.t("Xoá tài khoản thành công"));
     } catch (error) {
       console.error("Lỗi khi xoá tài khoản", error);
-      toast.error(i18n.t("Không thể xoá tài khoản"));
+      // Global axios interceptor handles error toast
     }
   },
 }));

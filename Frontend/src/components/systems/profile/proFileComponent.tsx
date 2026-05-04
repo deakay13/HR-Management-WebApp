@@ -121,7 +121,7 @@ const ProfileComponent = () => {
       const formData = new FormData();
       formData.append("HinhAnh", selectedFile);
 
-      await updateEmployeeMutation({ id: account.MaNV, data: formData as any });
+      await updateEmployeeMutation({ id: account.MaNV, data: formData });
 
       // Refresh employee data
       const updatedData = await EmployeeServices.getEmployee(account.MaNV);
@@ -134,13 +134,12 @@ const ProfileComponent = () => {
 
       toast.success(t("Cập nhật ảnh đại diện thành công!"));
       handleClosePreview();
-      /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    } /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    catch (error: any) {
+    } catch (error: unknown) {
       console.error("Failed to upload avatar:", error);
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
       const message =
-        error.response?.data?.message ||
-        error.message ||
+        err.response?.data?.message ||
+        err.message ||
         t("Không thể tải ảnh lên. Vui lòng thử lại.");
       toast.error(message);
     } finally {
@@ -218,7 +217,7 @@ const ProfileComponent = () => {
         }
       });
 
-      await updateEmployeeMutation({ id: account.MaNV, data: formData as any });
+      await updateEmployeeMutation({ id: account.MaNV, data: formData });
 
       // Refresh data
       const updatedData = await EmployeeServices.getEmployee(account.MaNV);

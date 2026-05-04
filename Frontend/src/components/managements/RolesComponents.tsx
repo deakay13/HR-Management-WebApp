@@ -40,9 +40,10 @@ const RolesComponents = () => {
     });
   }, [Roles, GrantPermissions]);
 
+  // Chỉ hiển thị loading khi chưa có dữ liệu lần đầu (tránh màn hình trắng khi refresh)
   const initializing = rolesLoading || gpLoading;
-
-  if (initializing) {
+  const hasData = Roles.length > 0 || GrantPermissions.length > 0;
+  if (initializing && !hasData) {
     return (
       <div className="flex h-screen items-center justify-center">
         Đang tải trang...

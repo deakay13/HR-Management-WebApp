@@ -23,7 +23,7 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       toast.success(i18n.t("Thêm quyền thành công"));
     } catch (error) {
       console.error("Lỗi khi tạo quyền", error);
-      toast.error(i18n.t("Không thể tạo quyền"));
+      // Global axios interceptor handles error toast
     } finally {
       set({ initializing: false });
     }
@@ -35,7 +35,7 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       set({ Permissions: data });
     } catch (error) {
       console.error("Lỗi khi lấy danh sách quyền", error);
-      toast.error(i18n.t("Không thể lấy danh sách quyền"));
+      // Global axios interceptor handles error toast
     } finally {
       set({ initializing: false });
     }
@@ -52,7 +52,7 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       toast.success(i18n.t("Lưu thay đổi quyền thành công"));
     } catch (error) {
       console.error("Lỗi khi cập nhật phụ cấp", error);
-      toast.error(i18n.t("Không thể lưu thay đổi quyền"));
+      // Global axios interceptor handles error toast
     }
   },
   deletePermission: async (ID: string) => {
@@ -65,7 +65,7 @@ export const usePermissionsStore = create<PermissionsTypes>()((set, get) => ({
       toast.success(i18n.t("Xoá Quyền thành công"));
     } catch (error) {
       console.error("Lỗi khi xoá Quyền", error);
-      toast.error(i18n.t("Không thể xoá Quyền"));
+      // Global axios interceptor handles error toast
     }
   },
 }));

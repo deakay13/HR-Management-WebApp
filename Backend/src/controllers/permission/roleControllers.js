@@ -113,6 +113,8 @@ export const updateRole = async (req, res) => {
     res.status(500).json({ message: "Lỗi hệ thống" });
   }
 };
+import TaiKhoan from "../../models/auth/TaiKhoan.js";
+
 export const deleteRole = async (req, res) => {
   try {
     const { ID } = req.params;
@@ -125,6 +127,12 @@ export const deleteRole = async (req, res) => {
       return res.status(404).json({ message: "Vai Trò không tồn tại" });
     }
 
+    // Check if any account is using this role
+    const usersWithRole = await TaiKhoan.count({ where: { MaVT: ID } });
+    if (usersWithRole > 0) {
+      return res.status(400).json({ message: `Không thể xóa vai trò này vì đang có ${usersWithRole} tài khoản sử dụng nó. Vui lòng chuyển vai trò của các tài khoản này trước.` });
+    }
+
     // Xoá tất cả quyền liên quan trước khi xoá vai trò
     await VaiTro_Quyen.destroy({ where: { MaVT: ID } });
 
@@ -135,6 +143,9 @@ export const deleteRole = async (req, res) => {
     //respon status 200
     return res.status(200).json({ message: "Xoá Vai Trò thành công" });
   } catch (error) {
+    if (error.name === "SequelizeForeignKeyConstraintError") {
+      return res.status(400).json({ message: "Không thể xóa vì dữ liệu đang được sử dụng ở bảng khác" });
+    }
     //Only show error for dev, Can't show detail error for client
     console.error("Lỗi khi xóa Vai Trò", error);
     return res.status(500).json({ message: "Lỗi hệ thống" });

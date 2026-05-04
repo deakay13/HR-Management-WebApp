@@ -24,7 +24,7 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         toast.success(i18n.t("Cấp quyền thành công"));
       } catch (error) {
         console.error("Lỗi khi cấp quyền", error);
-        toast.error(i18n.t("Không thể cấp quyền"));
+        // Global axios interceptor handles error toast
       } finally {
         set({ initializing: false });
       }
@@ -36,7 +36,7 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         set({ GrantPermissions: data });
       } catch (error) {
         console.error("Lỗi khi lấy danh sách quyền", error);
-        toast.error(i18n.t("Không thể lấy danh sách quyền"));
+        // Global axios interceptor handles error toast
       } finally {
         set({ initializing: false });
       }
@@ -56,7 +56,7 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         toast.success(i18n.t("Thay đổi Quyền thành công"));
       } catch (error) {
         console.error("Lỗi khi cập nhật Quyền", error);
-        toast.error(i18n.t("Không thể cập nhật Quyền"));
+        // Global axios interceptor handles error toast
       }
     },
     deleteAllGrantPermissions: async (ID: string) => {
@@ -67,7 +67,7 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
         toast.success(i18n.t("Xoá tất cả quyền được cấp thành công"));
       } catch (error) {
         console.error("Lỗi khi xoá Vai trò được cấp quyền", error);
-        toast.error(i18n.t("Không thể xoá Vai trò được cấp quyền"));
+        // Global axios interceptor handles error toast
       }
     },
     deleteOneGrantPermissions: async (IDR: string, IDP: string) => {
@@ -81,9 +81,10 @@ export const useGrantPermissionsStore = create<GrantPermissionsTypes>()(
             gp.MaVT === IDR ? { ...gp, permissions: data.permissions } : gp,
           ),
         });
+        toast.success(i18n.t("Xoá quyền thành công"));
       } catch (error) {
         console.error("Lỗi khi xoá quyền khỏi vai trò", error);
-        toast.error(i18n.t("Không thể xoá quyền khỏi vai trò"));
+        // Global axios interceptor handles error toast
       }
     },
   }),

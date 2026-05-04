@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import {
@@ -14,7 +15,15 @@ import {
 import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-import { useForm, type SubmitHandler } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { useForm, type SubmitHandler, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   getContractValidationSchema,
@@ -22,6 +31,8 @@ import {
 } from "@/types/informationTypes/contractTypes";
 import { useCreateContractMutation } from "@/hooks/queries/useContractsQuery";
 import { useEmployeesQuery } from "@/hooks/queries/useEmployeesQuery";
+import { useDepartmentsQuery } from "@/hooks/queries/useDepartmentsQuery";
+import { useBaseSalariesQuery, useAllowancesQuery } from "@/hooks/queries/usePayrollQueries";
 
 interface CreateContractDialogProps {
   open: boolean;
@@ -38,9 +49,14 @@ export function CreateContractDialog({
   const createContractMutation = useCreateContractMutation();
   const { data: employeesData } = useEmployeesQuery({ size: 0 });
   const employeeCodes = React.useMemo(() => employeesData?.data?.map((emp) => emp.MaNV.toUpperCase()) || [], [employeesData]);
+  
+  const { data: departmentsData } = useDepartmentsQuery({ size: 0 });
+  const { data: baseSalariesData } = useBaseSalariesQuery({ size: 0 });
+  const { data: allowancesData } = useAllowancesQuery({ size: 0 });
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors: formErrors, isSubmitting },
     reset,
@@ -85,11 +101,14 @@ export function CreateContractDialog({
         dataToSubmit.append("HinhAnhHopDong", fileInput.files[0]);
       }
 
-      await createContractMutation.mutateAsync(dataToSubmit as any);
+      await createContractMutation.mutateAsync(dataToSubmit);
+      toast.success(t("Tạo hợp đồng thành công"));
       onOpenChange(false);
       reset();
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Lỗi khi tạo hợp đồng:", error);
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || t("Lỗi khi tạo hợp đồng"));
     }
   };
 
@@ -122,13 +141,26 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+            
             <Field className="flex flex-col gap-2">
               <Label htmlFor="MaNV">{t("Mã Nhân Viên")}</Label>
-              <Input
-                id="MaNV"
-                {...register("MaNV")}
-                placeholder={t("VD: NV001")}
-                className="uppercase h-10"
+              <Controller
+                control={control}
+                name="MaNV"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger className={`h-10 ${formErrors.MaNV ? "border-red-500" : ""}`}>
+                      <SelectValue placeholder={t("Chọn nhân viên")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {employeesData?.data?.map((emp) => (
+                        <SelectItem key={emp.MaNV} value={emp.MaNV}>
+                          {emp.MaNV} - {emp.HoVaTen}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {formErrors.MaNV && (
                 <span className="text-xs text-red-500">
@@ -136,6 +168,7 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="LoaiHD">{t("Loại Hợp Đồng")}</Label>
               <Input
@@ -150,6 +183,7 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="NgayBatDau">{t("Ngày Bắt Đầu")}</Label>
               <Input
@@ -164,6 +198,7 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="NgayKetThuc">{t("Ngày Kết Thúc")}</Label>
               <Input
@@ -178,6 +213,7 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="NgayKy">{t("Ngày Ký")}</Label>
               <Input
@@ -192,6 +228,7 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="ChucDanh">{t("Chức Danh")}</Label>
               <Input
@@ -206,13 +243,26 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="MaPB">{t("Mã Phòng Ban")}</Label>
-              <Input
-                id="MaPB"
-                {...register("MaPB")}
-                placeholder={t("VD: PB001")}
-                className={`uppercase h-10 ${formErrors.MaPB ? "border-red-500" : ""}`}
+              <Controller
+                control={control}
+                name="MaPB"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <SelectTrigger className={`h-10 ${formErrors.MaPB ? "border-red-500" : ""}`}>
+                      <SelectValue placeholder={t("Chọn phòng ban")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departmentsData?.data?.map((dept) => (
+                        <SelectItem key={dept.MaPB} value={dept.MaPB}>
+                          {dept.MaPB} - {dept.TenPB}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {formErrors.MaPB && (
                 <span className="text-xs text-red-500">
@@ -220,13 +270,26 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="MaLCB">{t("Mã Lương CB")}</Label>
-              <Input
-                id="MaLCB"
-                {...register("MaLCB")}
-                placeholder={t("VD: LCB001")}
-                className={`uppercase h-10 ${formErrors.MaLCB ? "border-red-500" : ""}`}
+              <Controller
+                control={control}
+                name="MaLCB"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <SelectTrigger className={`h-10 ${formErrors.MaLCB ? "border-red-500" : ""}`}>
+                      <SelectValue placeholder={t("Chọn lương cơ bản")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {baseSalariesData?.data?.map((bs) => (
+                        <SelectItem key={bs.MaLCB as string} value={bs.MaLCB as string}>
+                          {bs.MaLCB as string} - {bs.LuongCB?.toLocaleString()} VNĐ
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {formErrors.MaLCB && (
                 <span className="text-xs text-red-500">
@@ -234,13 +297,26 @@ export function CreateContractDialog({
                 </span>
               )}
             </Field>
+
             <Field className="flex flex-col gap-2">
               <Label htmlFor="MaPC">{t("Mã Phụ Cấp")}</Label>
-              <Input
-                id="MaPC"
-                {...register("MaPC")}
-                placeholder={t("VD: PC001")}
-                className={`uppercase h-10 ${formErrors.MaPC ? "border-red-500" : ""}`}
+              <Controller
+                control={control}
+                name="MaPC"
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value || ""}>
+                    <SelectTrigger className={`h-10 ${formErrors.MaPC ? "border-red-500" : ""}`}>
+                      <SelectValue placeholder={t("Chọn phụ cấp")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allowancesData?.data?.map((pc) => (
+                        <SelectItem key={pc.MaPC as string} value={pc.MaPC as string}>
+                          {pc.MaPC as string} - {pc.LoaiPC as string}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               />
               {formErrors.MaPC && (
                 <span className="text-xs text-red-500">

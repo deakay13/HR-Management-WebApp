@@ -76,7 +76,7 @@ export function EmployeesActionCell({ emp }: { emp: Employee }) {
       setErrors({});
       await updateEmployeeMutation.mutateAsync({
         id: emp.MaNV,
-        data: validatedData as any,
+        data: validatedData,
       });
       setEditOpen(false);
     } catch (error) {

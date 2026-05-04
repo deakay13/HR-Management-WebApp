@@ -97,17 +97,20 @@ export const getPermission_RoleById = async (req, res) => {
       return res.status(404).json({ message: "Vai trò không tồn tại" });
     }
 
-    const rolePermissions = await VaiTro_Quyen.findAll({
-      where: { MaVT: ID },
+    const roleWithPermissions = await VaiTro.findByPk(ID, {
       include: [
-        { model: Quyen, as: "Quyen", attributes: ["MaQuyen", "TenQuyen"] },
+        {
+          model: Quyen,
+          through: { attributes: [] },
+          attributes: ["MaQuyen", "TenQuyen"],
+        },
       ],
     });
 
-    const permissions = rolePermissions.map((rp) => ({
-      MaQuyen: rp.Quyen.MaQuyen,
-      TenQuyen: rp.Quyen.TenQuyen,
-    }));
+    const permissions = roleWithPermissions && roleWithPermissions.Quyens ? roleWithPermissions.Quyens.map((q) => ({
+      MaQuyen: q.MaQuyen,
+      TenQuyen: q.TenQuyen,
+    })) : [];
 
     return res.status(200).json({
       role: { MaVT: role.MaVT, TenVaiTro: role.TenVaiTro },
@@ -148,17 +151,20 @@ export const updatePermission_Role = async (req, res) => {
     await mapping.destroy();
     await VaiTro_Quyen.create({ MaVT: ID, MaQuyen: newQuyen });
 
-    const updatedPermissions = await VaiTro_Quyen.findAll({
-      where: { MaVT: ID },
+    const roleWithPermissions = await VaiTro.findByPk(ID, {
       include: [
-        { model: Quyen, as: "Quyen", attributes: ["MaQuyen", "TenQuyen"] },
+        {
+          model: Quyen,
+          through: { attributes: [] },
+          attributes: ["MaQuyen", "TenQuyen"],
+        },
       ],
     });
 
-    const permissions = updatedPermissions.map((rp) => ({
-      MaQuyen: rp.Quyen.MaQuyen,
-      TenQuyen: rp.Quyen.TenQuyen,
-    }));
+    const permissions = roleWithPermissions && roleWithPermissions.Quyens ? roleWithPermissions.Quyens.map((q) => ({
+      MaQuyen: q.MaQuyen,
+      TenQuyen: q.TenQuyen,
+    })) : [];
 
     return res.status(200).json({
       message: `Cập nhật quyền cho vai trò ${ID} - ${role.TenVaiTro} thành công: ${oldQuyen} → ${newQuyen}`,
@@ -212,17 +218,20 @@ export const deletePermission_RoleOnePermission = async (req, res) => {
 
     await mapping.destroy();
 
-    const updatedPermissions = await VaiTro_Quyen.findAll({
-      where: { MaVT: IDR },
+    const roleWithPermissions = await VaiTro.findByPk(IDR, {
       include: [
-        { model: Quyen, as: "Quyen", attributes: ["MaQuyen", "TenQuyen"] },
+        {
+          model: Quyen,
+          through: { attributes: [] },
+          attributes: ["MaQuyen", "TenQuyen"],
+        },
       ],
     });
 
-    const permissions = updatedPermissions.map((rp) => ({
-      MaQuyen: rp.Quyen.MaQuyen,
-      TenQuyen: rp.Quyen.TenQuyen,
-    }));
+    const permissions = roleWithPermissions && roleWithPermissions.Quyens ? roleWithPermissions.Quyens.map((q) => ({
+      MaQuyen: q.MaQuyen,
+      TenQuyen: q.TenQuyen,
+    })) : [];
 
     return res.status(200).json({
       message: `Đã xóa quyền ${IDP} khỏi vai trò ${IDR} - ${role.TenVaiTro}`,

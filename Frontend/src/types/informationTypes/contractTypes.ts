@@ -71,7 +71,11 @@ export const getContractValidationSchema = (
   ContractSchema.extend({
     MaHopDong: z
       .string()
-      .min(1)
+      .min(1, "Mã hợp đồng không được để trống")
+      .transform((val) => val.toUpperCase())
+      .refine((val) => /^HD\d+$/.test(val), {
+        message: "Mã hợp đồng phải có định dạng HDxxx (Ví dụ: HD001, HD123)",
+      })
       .refine((val) => isEdit || !existingCodes.includes(val), {
         message: "Mã hợp đồng này đã tồn tại",
       }),

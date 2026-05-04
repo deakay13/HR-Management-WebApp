@@ -93,16 +93,12 @@ export const useHoursQuery = (params: Record<string, unknown> = {}) =>
   });
 
 export const usePayrollsQuery = (
-  params: Record<string, unknown> = {},
-  options?: { employeeId?: string }
+  params: Record<string, unknown> = {}
 ) =>
   useQuery({
-    queryKey: payrollKeys.list({ ...params, ...options }),
+    queryKey: payrollKeys.list(params),
     queryFn: async (): Promise<PaginatedResponse<Record<string, unknown>>> => {
-      const url = options?.employeeId
-        ? `/api/payroll/payrolls/employee/${options.employeeId}`
-        : `/api/payroll/payrolls`;
-      const res = await api.get(url, { params });
+      const res = await api.get(`/api/payroll/payrolls`, { params });
       return res.data;
     },
     staleTime: 3 * 60 * 1000,

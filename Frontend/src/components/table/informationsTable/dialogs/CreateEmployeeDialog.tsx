@@ -67,7 +67,7 @@ export function CreateEmployeeDialog({
         formValues
       );
       setErrors({});
-      await createEmployeeMutation.mutateAsync(validatedData as any);
+      await createEmployeeMutation.mutateAsync(validatedData);
       onOpenChange(false);
       setSelectedDept("");
       setSelectedGender("");
@@ -84,11 +84,6 @@ export function CreateEmployeeDialog({
     }
   };
 
-  React.useEffect(() => {
-    if (!open) {
-      setErrors({});
-    }
-  }, [open]);
 
   return (
     <Dialog
